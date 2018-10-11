@@ -108,7 +108,7 @@ Go to register page by clicking "register an account". By now you may login with
 ![screenshot](img/login2.png)
 
 * user register page
-![screenshot](img/register.png)
+![screenshot](img/registration.png)
 
 * user home page, notification box 
 ![screenshot](img/home.png)
@@ -120,7 +120,7 @@ Click on the "new message" to go to the code review page.
 You may upload source code and select reviewer.
 
 * code review page
-![screenshot](img/code/review.png)
+![screenshot](img/code_review.png)
 "Exit reviewing" will take you back to the home page.
 
 
