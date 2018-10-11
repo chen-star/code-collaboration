@@ -104,16 +104,24 @@ jiaxinc1, wenxuanx, weitongz, jinyil1
 ## Wireframes or HTML
 * user login page
 ![screenshot](img/login.png)
+Go to register page by clicking "register an account". By now you may login with any email address and password.    
+![screenshot](img/login2.png)
 
-* user profile page 
+* user register page
+![screenshot](img/register.png)
 
-* view and edit profile info
+* user home page, notification box 
+![screenshot](img/home.png)
+Click on the "new message" to go to the code review page.
+"Log out" will take you back to the login page.
 
-* notification box
-
-* ource code upload and select reviewer page
+* user profile page, view and edit profile info
+![screenshot](img/account.png)
+You may upload source code and select reviewer.
 
 * code review page
+![screenshot](img/code/review.png)
+"Exit reviewing" will take you back to the home page.
 
 
 ## APIs
