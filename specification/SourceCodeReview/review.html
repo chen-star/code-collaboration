@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Home4</title>
+    <title>Review My Code</title>
 
     <!-- Bootstrap CSS CDN -->
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
@@ -39,7 +39,7 @@
     <!-- Sidebar  -->
     <nav id="sidebar">
         <div class="sidebar-header">
-            <h3>Source code viewer</h3>
+            <h3>Source Code Reviewer</h3>
         </div>
 
         <ul class="list-unstyled components">
@@ -81,36 +81,35 @@
 
         <ul class="list-unstyled contacts">
             <li>
-                <a href="#" class="email">Contact Us</a>
+                <a href="account.html" class="email">Exit Reviewing</a>
             </li>
         </ul>
     </nav>
 
     <!-- Page Content  -->
-    <div id="content" class="container-fluid">
-        <nav class="navbar navbar-expand-lg">
+    <div id="content"  class="container-fluid">
+        <nav class="navbar navbar-expand-lg" style="transparent=50%">
             <div>
-                <i class="fa fa-institution" style="font-size:30px"></i><a href="#"
-                                                                           class="font-weight-bold">Home</a>
-                <i class="fa fa-user-circle pl-1" style="font-size:30px"></i><a href="account.html">Setting</a>
-                <i class="fa fa-user pl-1" style="font-size:30px"></i><a href="#">Add members</a>
+                <p>Coder: weitongz (weitongz@andrew.cmu.edu) File: HelloWorld.java</p>
             </div>
             <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
                 <form class="form-inline my-2 my-md-0 pl-5">
-                    <input class="form-control" type="text" name="search" placeholder="Search file name"
-                           aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                    <p>wenxuanx is also reviewing this file...</p>
                 </form>
             </div>
         </nav>
         <!--API!!!!-->
+
         <pre>
-            <code> line 1</code>
-            <code> line 2</code>
-            <code> line 3</code>
-            <code> line 4</code>
-            <code> line 5</code>
+            <code> <font color="grey">line 1</font> public class HelloWorld{</code>
+            <code> <font color="grey">line 2</font>     public static void main(String[] args){</code>
+            <code> <font color="grey">line 3</font>         for(int i=0;i<5;i++){</code>
+            <code> <font color="grey">line 4</font>             System.out.println("Hello Web Dev!");</code>
+            <code> <font color="grey">line 5</font>         }</code>
+            <code> <font color="grey">line 6</font>     }</code>
+            <code> <font color="grey">line 7</font> }</code>
         </pre>
+
     </div>
 </div>
 
