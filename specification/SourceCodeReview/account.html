@@ -86,13 +86,11 @@
 
     <!-- Page Content  -->
     <div id="content">
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg sticky-top">
             <div class="container-fluid">
                 <div>
-                    <i class="fa fa-institution" style="font-size:30px"></i><a href="#"
-                                                                               class="font-weight-bold">Home</a>
+                    <i class="fa fa-institution" style="font-size:30px"></i><a href="#" class="font-weight-bold">Home</a>
                     <i class="fa fa-user-circle pl-1" style="font-size:30px"></i><a href="account.html">Setting</a>
-                    <i class="fa fa-user pl-1" style="font-size:30px"></i><a href="#">Add members</a>
                 </div>
                 <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
                     <form class="form-inline my-2 my-md-0 pl-5">
@@ -103,43 +101,176 @@
             </div>
         </nav>
         <div class="row">
-            <div class="col-sm-10"><h1>User name</h1></div>
+            <div class="col-sm-10"><h1>Username</h1></div>
         </div>
         <div class="row">
             <div class="col-sm-3"><!--left col-->
                 <div class="text-center">
-                    <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar">
-                    <h6>Upload a different photo...</h6>
-                    <input type="file" class="text-center center-block file-upload"> <br><br>
-                    <input type="submit" class="btn btn-primary">
-                </div></hr><br>
-
-        </div>
+                    <hr><h6>Create a new repository...</h6><hr>
+                    <form action="#" method="post">
+                        <input class="form-control" type="text" name="repo" value="Repository name"><br>
+                        <input class="btn btn-primary" type="submit" value="Create">
+                    </form>
+                </div>
+            </div>
             <div class="col-sm-9 ">
                 <div class="nav nav-tabs">
                     <!--Tab有问题！！！ 无法回按-->
-                    <li class="active"><a data-toggle="tab" href="#create">Create repository</a></li>
                     <li><a class="pl-5" data-toggle="tab" href="#manage">Manage repository</a></li>
                     <li><a class="pl-5" data-toggle="tab" href="#settings">Profile setting</a></li>
                 </div>
 
 
                 <div class="tab-content">
-                    <div class="tab-pane active" id="create">
-                        <form action="#" method="post">
-                            <!---->
+                    <div class="tab-pane active" id="manage">
+                        <form action="#manage" method="get">
+                            <div class="form-group">
+                                <div class="my-3 p-3 bg-white rounded box-shadow">
+                                    <h6 class="border-bottom border-gray pb-2 mb-0">Project 1</h6>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <small class="d-block text-right mt-3">
+                                        <a href="#">All permitted coder</a>
+                                    </small>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
-
-                    </div><!--/tab-pane-->
-
-                    <div class="tab-pane" id="manage">
-                        <form action="#" method="post">
-                            <!---->
+                        <form action="#manage" method="get">
+                            <div class="form-group">
+                                <div class="my-3 p-3 bg-white rounded box-shadow">
+                                    <h6 class="border-bottom border-gray pb-2 mb-0">Project 2</h6>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <small class="d-block text-right mt-3">
+                                        <a href="#">All permitted coder</a>
+                                    </small>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form action="#manage" method="get">
+                            <div class="form-group">
+                                <div class="my-3 p-3 bg-white rounded box-shadow">
+                                    <h6 class="border-bottom border-gray pb-2 mb-0">Project 3</h6>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <strong class="text-gray-dark">Full Name</strong>
+                                                <a id="add_delete" href="#">Remove</a>
+                                            </div>
+                                            <span class="d-block"><a href="#">@Email</a> </span>
+                                        </div>
+                                    </div>
+                                    <small class="d-block text-right mt-3">
+                                        <a href="#">All permitted coder</a>
+                                    </small>
+                                    <div class="media text-muted pt-3">
+                                        <img src="#" alt="" class="mr-2 rounded">
+                                        <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                            <div class="d-flex justify-content-between align-items-center w-100">
+                                                <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </form>
                     </div><!--/tab-pane-->
 
                     <div class="tab-pane" id="settings">
-                        <form class="form" action="#" method="post">
+                        <form class="form" action="#settings" method="post">
                             <div class="form-group">
                                 <div class="col-xs-6">
                                     <label for="first_name"><h4>First name</h4></label>
