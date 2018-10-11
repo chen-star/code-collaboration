@@ -169,8 +169,11 @@ a.email {
     }
 }
 
+pre {
+  background-color: #071540;
+}
 
-pre, code {
+code {
   width: 70%;
     padding:2px;
     box-sizing:border-box;
