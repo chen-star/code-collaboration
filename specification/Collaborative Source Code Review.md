@@ -115,3 +115,18 @@ jiaxinc1, wenxuanx, weitongz, jinyil1
 * code review page
 
 
+## APIs
+
+*  https://help.github.com/articles/creating-and-highlighting-code-blocks/
+
+* https://github.com/substack/highlight-syntax
+
+* https://highlightjs.org/
+
+* https://codepen.io/peternguyen/pen/nDEFI
+
+* https://pusher.com/tutorials/live-comments-javascript/ 
+
+* https://about.sourcegraph.com/docs/
+
+* https://plot.ly/python/
