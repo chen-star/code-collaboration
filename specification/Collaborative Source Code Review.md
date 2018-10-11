@@ -19,7 +19,7 @@ jiaxinc1, wenxuanx, weitongz, jinyil1
 	* Team creation and management: Only project manager has the permission to create, manage, and remove repositories. Project members must be selected by the manager and join the team through email invitation and verification. If the invitee is new to our website, he/she will receive an email and go through verification. Otherwise the invitee will receive a notification email and a “new message” in the notification box
 
 
-* **Code review** *(backend: jiaxinc1, frontend: wenxuanx)*
+* **Code review** *(backend: jiaxinc1, frontend: weitongz)*
 	* Code representation with syntax highlighting (Java and C/C++)
 	
 	* Line-level comment: create, edit, delete comments. Tag comments according to type(to-do, delete, create, modify..) and priority(urgent, medium, normal)
@@ -55,7 +55,7 @@ jiaxinc1, wenxuanx, weitongz, jinyil1
 	* User-level statistics dashboard
 
 
-* **Upload to Github** *(backend: jinyil1, frontend: weitongz)*
+* **Upload to Github** *(backend: jinyil1, frontend: wenxuanz)*
 
 	Reviewers can upload source code or a link to a Github repo, which gets processed on the backend for metadata information. 
 	
@@ -103,6 +103,7 @@ jiaxinc1, wenxuanx, weitongz, jinyil1
 
 ## Wireframes or HTML
 * user login page
+![screenshot](img/login.png)
 
 * user profile page 
 
