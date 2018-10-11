@@ -171,6 +171,7 @@ a.email {
 
 
 pre, code {
+  width: 70%;
     padding:2px;
     box-sizing:border-box;
     -moz-box-sizing:border-box;
@@ -185,6 +186,8 @@ pre, code {
 
     /* counter-reset: line; */
     counter-increment: line;
+    background-color: #071540;
+    color: white;
 }
 
 /* code:before{
