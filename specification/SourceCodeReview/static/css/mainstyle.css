@@ -174,8 +174,8 @@ pre {
 }
 
 code {
-  width: 70%;
-    padding:2px;
+  /* width: 70%; */
+    /* padding:2px; */
     box-sizing:border-box;
     -moz-box-sizing:border-box;
     webkit-box-sizing:border-box;
