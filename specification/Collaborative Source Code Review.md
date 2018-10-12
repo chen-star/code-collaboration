@@ -71,7 +71,7 @@ With these features, reviewers can collaboratively perform analysis of source co
 	* User-level statistics dashboard
 
 
-* **Upload to Github** *(backend: jinyil1, frontend: wenxuanz)*
+* **Upload to Github** *(backend: jinyil1, frontend: wenxuanx)*
 
 	Reviewers can upload source code or a link to a Github repo, which gets processed on the backend for metadata information. 
 	
