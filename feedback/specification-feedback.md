@@ -12,13 +12,13 @@ Commit graded: 04752a6df63b9900e3b0a7005bf16189ab4663db
 •	We were expecting a more formal specification of the models, it didn’t have to be code however if not code should have been something like uml to more rigorously show the relationship between models. 
 •	It is unclear why you would create a model for word and keyword. Seems to be unnecessary when you should just search the file. 
 
-### Wireframes or mock-ups (9/10)
+### Wireframes or mock-ups (10/10)
 •	One of the key features in your project that you describe is being able to navigate between files and find files where functions are defined. Neither your models or your wireframes demonstrate an idea of how you plan on doing this. 
 
 ### Additional Information
 
 ---
-#### Total score (26/30)
+#### Total score (27/30)
 ---
 Graded by: Michael Chang (machang@andrew.cmu.edu)
 
