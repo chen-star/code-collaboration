@@ -1,6 +1,10 @@
 # Sprint1 Backlog
 1. Refractor log in html page, with `Form`, `base.html` ~ 1hrs, wenxuanx
+ - reduce the redundancy for html codes with reverse URL resolution template tags `Login`
+ - form-based validation
 2. Refractor registration html page, with `Form`, `base.html` ~ 0.5hrs, wenxuanx
+ - reduce the redundancy for html codes with reverse URL resolution template tags `Register`
+ - form-based validation
 3. Refractor home page/profile page ~ 1.5hrs, weitongz
  - refractor for a clear structure and page navigation, with base html
  - use `Form` to update profile
@@ -50,6 +54,7 @@
  -  use `javascript` for adding/editing new comments
  -  use `javascript` for user interaction (auto reload new comments)
 16. Create stat dashboard for current user activity ~ 4hrs, wenxuanx
+-  visualize the number of committed works of each project member
 
 ----
 # Task Summary
