@@ -11,15 +11,26 @@
 5. Refractor Code review page ~ 3hrs, weitongz
  - refractor for a clear structure and page navigation, with base html
 6. New user registration/login ~ 1hr, jiaxinc1
+ - user can log in and register user by form and model
 7. email confirmation ~ 1hr, jiaxinc1
+ - send email with token to verify email
 8. reset password via confirmed email ~ 1hr, jiaxinc1
+<<<<<<< HEAD
  - using token to verify email
  - send email on console instead of actual email
 9. User profile display and settings page logic, avatar upload ~ 1hr, jinyil1
 10. User profile - avatar upload ~ 1hr, jinyil1
+||||||| merged common ancestors
+9. User profile display and settings page logic, avatar upload ~ 1hr, jinyil1
+10. User profile - avatar upload ~ 1hr, jinyil1
+=======
+9. User profile display and settings page logic with `models.py`, `forms.py`, `views.py` and `profile.html`  ~ 1hr, jinyil1
+10. User profile - avatar upload with `models.py`, `forms.py`, `views.py` and `profile.html` ~ 1hr, jinyil1
+>>>>>>> 1be5464ba052e8360221515f72c82681836e974c
 11. Message center backend login ~ 1.5hrs, jiaxinc1
  - User who logged in can automatically log into message center
 12. User invitation via email (from repository) ~ 3hrs, jiaxinc1
+<<<<<<< HEAD
  - User can invite other contributor to do code edition
  - User who are invited can receive message notification
 13. Create repositories and upload code files only (not entire projects) ~ 3hrs, jinyil1
@@ -27,12 +38,22 @@
  - use `javascript` to highlight code
  - different keywords can be highlighted by different colors
 15. Add and Edit line-level comments (js) ~ 5hrs, weitongz, jinyil1
+||||||| merged common ancestors
+13. Create repositories and upload code files only (not entire projects) ~ 3hrs, jinyil1
+14. Highlight keywords for `Java` (js) ~ 5hrs, wenxuanx, jiaxinc1
+15. Add and Edit line-level comments (js) ~ 5hrs, weitongz, jinyil1
+=======
+13. Create repositories and upload code files only (not entire projects) with `models.py`, `forms.py`, `views.py` and `repository.html` ~ 3hrs, jinyil1
+14. Highlight keywords for `Java` (in JavaScript) ~ 5hrs, wenxuanx, jiaxinc1
+15. Add and Edit line-level comments (in JavaScript) ~ 5hrs, weitongz, jinyil1
+>>>>>>> 1be5464ba052e8360221515f72c82681836e974c
  -  use `javascript` for adding/editing new comments
  -  use `javascript` for user interaction (auto reload new comments)
 16. Create stat dashboard for current user activity ~ 4hrs, wenxuanx
 
 ----
-(Same content as above)
+# Task Summary
+(Same content as above; the tasks are grouped by functional catagories)
 ## Refractor HTML
 1. Log in/registration html page, with `Form`, `base.html` ~ 1.5hrs, wenxuanx
 2. Home page/profile page/repositories management, with `Form`, `base.html` ~ 4hrs, weitongz
@@ -48,5 +69,5 @@
 2. Highlight keywords for `Java` (js) ~ 5hrs, wenxuanx, jiaxinc1
 3. Add and Edit line-level comments (js) ~ 5hrs, weitongz, jinyil1
 
-## Statistics
+## Statistics Representation
 1. Create stat dashboard for current user activity ~ 4hrs, wenxuanx
