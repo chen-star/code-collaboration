@@ -13,12 +13,19 @@
 6. New user registration/login ~ 1hr, jiaxinc1
 7. email confirmation ~ 1hr, jiaxinc1
 8. reset password via confirmed email ~ 1hr, jiaxinc1
+ - using token to verify email
+ - send email on console instead of actual email
 9. User profile display and settings page logic, avatar upload ~ 1hr, jinyil1
 10. User profile - avatar upload ~ 1hr, jinyil1
 11. Message center backend login ~ 1.5hrs, jiaxinc1
+ - User who logged in can automatically log into message center
 12. User invitation via email (from repository) ~ 3hrs, jiaxinc1
+ - User can invite other contributor to do code edition
+ - User who are invited can receive message notification
 13. Create repositories and upload code files only (not entire projects) ~ 3hrs, jinyil1
 14. Highlight keywords for `Java` (js) ~ 5hrs, wenxuanx, jiaxinc1
+ - use `javascript` to highlight code
+ - different keywords can be highlighted by different colors
 15. Add and Edit line-level comments (js) ~ 5hrs, weitongz, jinyil1
  -  use `javascript` for adding/editing new comments
  -  use `javascript` for user interaction (auto reload new comments)
