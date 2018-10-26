@@ -19,15 +19,6 @@
 7. email confirmation ~ 1hr, jiaxinc1
  - send email with token to verify email
 8. reset password via confirmed email ~ 1hr, jiaxinc1
-<<<<<<< HEAD
- - using token to verify email
- - send email on console instead of actual email
-9. User profile display and settings page logic, avatar upload ~ 1hr, jinyil1
-10. User profile - avatar upload ~ 1hr, jinyil1
-||||||| merged common ancestors
-9. User profile display and settings page logic, avatar upload ~ 1hr, jinyil1
-10. User profile - avatar upload ~ 1hr, jinyil1
-=======
 9. User profile display and settings page logic with `models.py`, `forms.py`, `views.py` and `profile.html`  ~ 1hr, jinyil1
 10. User profile - avatar upload with `models.py`, `forms.py`, `views.py` and `profile.html` ~ 1hr, jinyil1
 
