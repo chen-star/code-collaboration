@@ -90,14 +90,14 @@
     <div id="content" class="container-fluid">
         <nav class="navbar navbar-expand-lg">
             <div>
-                <i class="fa fa-institution" style="font-size:30px"></i><a href="#"
+                <i class="fa fa-institution" style="font-size:30px"></i><a href="/"
                                                                            class="font-weight-bold">Home</a>
-                <i class="fa fa-user-circle pl-1" style="font-size:30px"></i><a href="account.html">Setting</a>
-                <i class="fa fa-user pl-1" style="font-size:30px"></i><a href="#">Add members</a>
+                <i class="fa fa-user-circle pl-1" style="font-size:30px"></i><a href="{% url 'settings' %}">Setting</a>
+                <i class="fa fa-user pl-1" style="font-size:30px"></i><a href="{% url 'repo' %}">Repositories</a>
             </div>
             <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
                 <form class="form-inline my-2 my-md-0 pl-5">
-                    <input class="form-control" type="text" name="search" placeholder="Search file name"
+                    <input class="form-control" type="text" name="search" placeholder="Search file name(not functional)"
                            aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>

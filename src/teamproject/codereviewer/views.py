@@ -8,3 +8,11 @@ def index(request):
     user = request.user
 
     return render(request,'home.html',context)
+
+def settings(request):
+    context={}
+    return render(request,'settings.html',context)
+
+def repositories(request):
+    context={}
+    return render(request,'repo.html',context)
