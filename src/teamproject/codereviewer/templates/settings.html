@@ -89,8 +89,9 @@
         <nav class="navbar navbar-expand-lg sticky-top">
             <div class="container-fluid">
                 <div>
-                    <i class="fa fa-institution" style="font-size:30px"></i><a href="home.html" class="font-weight-bold">Home</a>
-                    <i class="fa fa-user-circle pl-1" style="font-size:30px"></i><a href="account.html">Setting</a>
+                    <a href="/">Home</a>
+                    <a class="active" href="{% url 'settings'%}">Settings</a>
+                    <a href="{% url 'repo' %}">Repositories</a>
                 </div>
                 <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
                     <form class="form-inline my-2 my-md-0 pl-5">

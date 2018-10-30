@@ -48,7 +48,9 @@ a:focus {
     width: 100%;
     align-items: stretch;
 }
-
+a.avtive{
+  font-weight: bold;
+}
 #sidebar {
     min-width: 250px;
     max-width: 250px;
