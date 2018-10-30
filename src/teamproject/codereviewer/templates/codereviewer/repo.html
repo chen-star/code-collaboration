@@ -1,0 +1,182 @@
+{% extends "codereviewer/base_home.html" %}
+{% load static %}
+
+{% block title %}
+  <title>Review My Code - Repositories</title>
+{% endblock %}
+
+{% block navbar %}
+<a href="/">Home</a>
+<a href="{% url 'settings'%}">Settings</a>
+<a class="active" href="{% url 'repo' %}">Repositories</a>
+{% endblock %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-10"><h1>Username</h1></div>
+</div>
+<div class="row">
+    <div class="col-sm-3"><!--left col-->
+        <div class="text-center">
+            <hr><h6>Create a new repository...</h6><hr>
+            <form action="#" method="post">
+                <input class="form-control" type="text" name="repo" value="Repository name"><br>
+                <input class="btn btn-primary" type="submit" value="Create">
+            </form>
+        </div>
+    </div>
+    <div class="col-sm-9 ">
+        <div class="tab-content">
+            <div class="tab-pane active" id="manage">
+                <form action="#manage" method="get">
+                    <div class="form-group">
+                        <div class="my-3 p-3 bg-white rounded box-shadow">
+                            <h6 class="border-bottom border-gray pb-2 mb-0">Project 1</h6>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <small class="d-block text-right mt-3">
+                                <a href="#">All permitted coder</a>
+                            </small>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <form action="#manage" method="get">
+                    <div class="form-group">
+                        <div class="my-3 p-3 bg-white rounded box-shadow">
+                            <h6 class="border-bottom border-gray pb-2 mb-0">Project 2</h6>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <small class="d-block text-right mt-3">
+                                <a href="#">All permitted coder</a>
+                            </small>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <form action="#manage" method="get">
+                    <div class="form-group">
+                        <div class="my-3 p-3 bg-white rounded box-shadow">
+                            <h6 class="border-bottom border-gray pb-2 mb-0">Project 3</h6>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <a id="add_delete" href="#">Remove</a>
+                                    </div>
+                                    <span class="d-block"><a href="#">@Email</a> </span>
+                                </div>
+                            </div>
+                            <small class="d-block text-right mt-3">
+                                <a href="#">All permitted coder</a>
+                            </small>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div><!--/tab-pane-->
+
+
+        </div>
+    </div>
+</div>
+{% endblock %}

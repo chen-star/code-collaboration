@@ -7,16 +7,16 @@ def index(request):
     context={}
     user = request.user
 
-    return render(request,'home.html',context)
+    return render(request,'codereviewer/home.html',context)
 
 def settings(request):
     context={}
-    return render(request,'settings.html',context)
+    return render(request,'codereviewer/settings.html',context)
 
 def repositories(request):
     context={}
-    return render(request,'repo.html',context)
+    return render(request,'codereviewer/repo.html',context)
 
 def review(request,project_id,file_name):
     context={}
-    return render(request,'review.html',context)
+    return render(request,'codereviewer/review.html',context)

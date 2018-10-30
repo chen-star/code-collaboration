@@ -1,0 +1,22 @@
+{% extends "codereviewer/base_home.html" %}
+{% load static %}
+{% block title %}
+    <title>Review My Code - Home</title>
+{% endblock %}
+
+
+{% block navbar %}
+  <a href="/" class="active">Home</a>
+  <a class="active" href="{% url 'settings'%}">Settings</a>
+  <a href="{% url 'repo' %}">Repositories</a>
+{% endblock %}
+
+
+{% block content %}
+        <div id="notification-box">
+          <h4>Message Box</h4><br>
+          <p><a href="review.html" style="font-weight:bold;">[New Message] Jiaxinc1 invites you to review new code!</a></p>
+          <p><a href="#">Wenxuanx has reviwed the code you commented on.</a></p>
+          <p><a href="#">Jinyil1 invites you to review new code!</a></p>
+        </div>
+{% endblock %}
