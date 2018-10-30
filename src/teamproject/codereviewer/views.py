@@ -16,3 +16,7 @@ def settings(request):
 def repositories(request):
     context={}
     return render(request,'repo.html',context)
+
+def review(request,project_id,file_name):
+    context={}
+    return render(request,'review.html',context)
