@@ -28,6 +28,6 @@ def repositories(request):
     context['form'] = CreateRepoForm()
     return render(request, 'codereviewer/repo.html', context)
 
-def review(request,project_id,file_name):
+def review(request):
     context={}
     return render(request,'codereviewer/review.html',context)
