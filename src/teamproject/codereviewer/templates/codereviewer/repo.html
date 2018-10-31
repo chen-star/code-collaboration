@@ -27,9 +27,8 @@
 
 {% block content %}
 <div class="row">
-    <div class="col-sm-10"><h1>Username</h1></div>
-</div>
-<div class="row">
+<div class="col-sm-10"><h1>Username</h1></div>
+
 <div class="col-sm-12 tab-content tab-pane active" name="new-repo">
   <div class="my-3 p-3 bg-white rounded box-shadow">
       <h6>Create a new repository from local files...</h6>
@@ -43,6 +42,7 @@
         </div>
     </div>
     <hr>
+    <div class="col-sm-10"><h2>Managing Repos</h2></div>
 
     <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
                 <form action="#manage" method="get">
@@ -52,7 +52,8 @@
                                 <img src="#" alt="" class="mr-2 rounded">
                                 <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                                     <div class="d-flex justify-content-between align-items-center w-100">
-                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <strong class="text-gray-dark">Full Name (Manager)</strong>
+
                                         <a id="add_delete" href="#">Remove</a>
                                     </div>
                                     <span class="d-block"><a href="#">@Email</a> </span>
@@ -62,7 +63,8 @@
                                 <img src="#" alt="" class="mr-2 rounded">
                                 <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                                     <div class="d-flex justify-content-between align-items-center w-100">
-                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <strong class="text-gray-dark">Full Name (Reviewer)</strong>
+                                          <a id="add_delete" href="#">Add Manager</a>
                                         <a id="add_delete" href="#">Remove</a>
                                     </div>
                                     <span class="d-block"><a href="#">@Email</a> </span>
@@ -72,7 +74,8 @@
                                 <img src="#" alt="" class="mr-2 rounded">
                                 <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                                     <div class="d-flex justify-content-between align-items-center w-100">
-                                        <strong class="text-gray-dark">Full Name</strong>
+                                        <strong class="text-gray-dark">Full Name (Reviewer)</strong>
+                                        <a id="add_delete" href="#">Add Manager</a>
                                         <a id="add_delete" href="#">Remove</a>
                                     </div>
                                     <span class="d-block"><a href="#">@Email</a> </span>
@@ -92,6 +95,55 @@
       </div>
     </form>
   </div>
+  <div class="col-sm-10"><h2>Reviewing Repos</h2></div>
+  <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
+              <form action="#manage" method="get">
+                      <div class="my-3 p-3 bg-white rounded box-shadow">
+                          <h6 class="border-bottom border-gray pb-2 mb-0">Project 2</h6>
+                          <div class="media text-muted pt-3">
+                              <img src="#" alt="" class="mr-2 rounded">
+                              <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                  <div class="d-flex justify-content-between align-items-center w-100">
+                                      <strong class="text-gray-dark">Full Name (Manager)</strong>
+
+                                  </div>
+                                  <span class="d-block"><a href="#">@Email</a> </span>
+                              </div>
+                          </div>
+                          <div class="media text-muted pt-3">
+                              <img src="#" alt="" class="mr-2 rounded">
+                              <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                  <div class="d-flex justify-content-between align-items-center w-100">
+                                      <strong class="text-gray-dark">Full Name (Manager)</strong>
+
+                                  </div>
+                                  <span class="d-block"><a href="#">@Email</a> </span>
+                              </div>
+                          </div>
+                          <div class="media text-muted pt-3">
+                              <img src="#" alt="" class="mr-2 rounded">
+                              <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                  <div class="d-flex justify-content-between align-items-center w-100">
+                                      <strong class="text-gray-dark">Full Name (Reviewer)</strong>
+
+                                  </div>
+                                  <span class="d-block"><a href="#">@Email</a> </span>
+                              </div>
+                          </div>
+                          <small class="d-block text-right mt-3">
+                              <a href="#">All permitted coder</a>
+                          </small>
+                          <div class="media text-muted pt-3">
+                              <img src="#" alt="" class="mr-2 rounded">
+                              <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                  <div class="d-flex justify-content-between align-items-center w-100">
+                                      <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                                  </div>
+                              </div>
+                          </div>
+    </div>
+  </form>
+</div>
 </div>
 
 {% endblock %}
