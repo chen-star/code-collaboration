@@ -30,15 +30,16 @@
     <div class="col-sm-10"><h1>Username</h1></div>
 </div>
 <div class="row">
-    <div class="col-sm-3"><!--left col-->
-        <div class="text-center">
-            <hr><h6>Create a new repository...</h6><hr>
+<div class="col-sm-12 tab-content tab-pane active" name="new-repo">
+  <div class="my-3 p-3 bg-white rounded box-shadow">
+      <h6>Create a new repository from local files...</h6>
             <form action="{% url 'repo' %}" method="post" enctype="multipart/form-data">
                 {{ form }}
-                <!-- <input class="form-control" type="text" name="repo" value="Repository name"><br> -->
                 <input class="btn btn-primary" type="submit" value="Create">
                 {% csrf_token %}
             </form>
+            <hr>
+            <h6>Or, upload from a Github Link</h6>
         </div>
     </div>
     <hr>
