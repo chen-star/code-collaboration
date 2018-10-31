@@ -1,13 +1,12 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.auth.models import User
 
 
 # Data model of project repository.
-class Repo(models.Model):
-	# repo_id, users, files, project_name, create_time, modified_time, modify_frequency
-
-	# owners = models.ManyToManyField(User, related_name='owners',blank=False)
-	# members =  models.ManyToManyField(User, related_name='members',blank=True)	
+class Repo(models.Model):	
+	owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)	
+	members =  models.ManyToManyField(User, related_name='members',blank=True)	
 	files = models.FileField(upload_to='sourcecode', blank=True)
 	project_name = models.CharField(max_length=128, blank=False)
 	create_time = models.DateTimeField(auto_now_add=True)
@@ -19,6 +18,3 @@ class Repo(models.Model):
 
 	def __str__(self):
 		return self.__unicode__()
-
-
-
