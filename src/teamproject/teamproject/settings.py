@@ -117,15 +117,13 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
 STATIC_URL = '/static/'
 
 SITE_ID = 1
 
 # media
-# MEDIA_ROOT = PROJECT_ROOT +"media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = "media/"
 
 # print email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

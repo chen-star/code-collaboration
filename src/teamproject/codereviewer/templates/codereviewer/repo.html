@@ -20,9 +20,11 @@
     <div class="col-sm-3"><!--left col-->
         <div class="text-center">
             <hr><h6>Create a new repository...</h6><hr>
-            <form action="#" method="post">
-                <input class="form-control" type="text" name="repo" value="Repository name"><br>
+            <form action="{% url 'repo' %}" method="post" enctype="multipart/form-data">
+                {{ form }}
+                <!-- <input class="form-control" type="text" name="repo" value="Repository name"><br> -->
                 <input class="btn btn-primary" type="submit" value="Create">
+                {% csrf_token %}
             </form>
         </div>
     </div>

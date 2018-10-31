@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django import forms
+from codereviewer.models import *
 
-# Create your views here.
+class CreateRepoForm(forms.ModelForm):	
+	class Meta:
+		model = Repo
+		fields = ['project_name', 'files']
+		widgets = {'files': forms.FileInput()}
