@@ -1,3 +1,4 @@
+{% load widget_tweaks %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,32 +16,17 @@
             <div class="card card-signin my-5">
                 <div class="card-body">
                     <h5 class="card-title text-center">Register</h5>
-                    <form class="form-signin" action="home.html" method="POST">
-                        <div class="form-label-group">
-                            <input type="username" id="inputUsername" name="username" class="form-control"
-                                   placeholder="Username" required autofocus>
-                        </div>
-
-                        <div class="form-label-group">
-                            <input type="email" id="inputEmail" name="email" class="form-control"
-                                   placeholder="Email address" required>
-                        </div>
-
-                        <div class="form-label-group">
-                            <input type="password" id="inputPassword1" name="password1" class="form-control"
-                                   placeholder="Password" required>
-                        </div>
-
-                        <div class="form-label-group">
-                            <input type="password" id="inputPassword2" name="password2" class="form-control"
-                                   placeholder="Confirm password" required>
-                        </div>
-                        <!-- <button class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Create an account</button> -->
-
-
-                        <button class="btn btn-lg btn-primary btn-block text-uppercase" href="home.html">Create an
-                            account
-                        </button>
+                    <form class="form-signin" action="{% url 'registration' %}" method="POST">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {{ field.errors }}
+                            {% if field.help_text %}
+                                <p class="help text-sm text-muted">{{ field.help_text|safe }}</p>
+                            {% endif %}
+                        {% endfor %}
+                        <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">Create an account</button>
                         <hr class="my-4">
                         <button class="btn btn-lg btn-google btn-block text-uppercase"><a href="login.html">Already have
                             an account?</a></button>
