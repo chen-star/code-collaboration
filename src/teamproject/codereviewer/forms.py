@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+
 from codereviewer.models import *
 
 
@@ -11,25 +13,37 @@ class CreateRepoForm(forms.ModelForm):
 
 
 # developer registration form
-class DeveloperRegForm(forms.ModelForm):
-    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
-    password = forms.CharField(widget=forms.PasswordInput())
-    confirm_password = forms.CharField(widget=forms.PasswordInput())
+class DeveloperRegForm(forms.Form):
+    username = forms.CharField(max_length=30,
+                               label='Username',
+                               widget=forms.TextInput())
+    first_name = forms.CharField(max_length=30,
+                                 label='First name',
+                                 widget=forms.TextInput())
+    last_name = forms.CharField(label='Last name',
+                                widget=forms.TextInput())
+    email = forms.EmailField(label='Email address',
+                             widget=forms.TextInput())
+    password1 = forms.CharField(widget=forms.PasswordInput())
+    password2 = forms.CharField(widget=forms.PasswordInput())
     company = forms.CharField(max_length=30, required=False)
     department = forms.CharField(max_length=30, required=False)
     group = forms.CharField(max_length=30, required=False)
     title = forms.CharField(max_length=20, required=False)
 
-    class Meta:
-        model = User
-        fields = (
-            'username', 'first_name', 'last_name', 'email',
-            'password', 'confirm_password', 'company', 'department', 'group', 'title')
+    #
+    # class Meta:
+    #     model = Developer
+    #     fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'company',
+    #               'department', 'group', 'title')
 
     def clean(self):
+        super(DeveloperRegForm, self).clean()
+
+    def clean_password(self):
         cleaned_data = super(DeveloperRegForm, self).clean()
-        pw1 = cleaned_data.get('password')
-        pw2 = cleaned_data.get('confirm_password')
+        pw1 = cleaned_data.get('password1')
+        pw2 = cleaned_data.get('password2')
         if not pw1 or not pw2 and pw1 != pw2:
             raise forms.ValidationError('Password and Password Confirmation did not match')
 

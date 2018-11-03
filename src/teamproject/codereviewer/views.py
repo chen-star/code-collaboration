@@ -1,5 +1,7 @@
 from django.contrib import auth
+from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
@@ -67,20 +69,33 @@ def registration(request):
         print(form.errors)
         return render(request, 'codereviewer/registration.html', context)
 
-    if form.is_valid():
-        user = form.save(commit=False)
-        user.is_active = False
-        user.save()
-        confirm_email(request, user)
-        return confirm_email(request, user)
+    new_user = User.objects.create_user(username=form.cleaned_data['username'],
+                                        password=form.cleaned_data['password1'],
+                                        email=form.cleaned_data['email'])
+    new_user.first_name = form.cleaned_data['first_name']
+    new_user.last_name = form.cleaned_data['last_name']
+    new_user.is_active = False
+    new_user.save()
+
+    new_developer = Developer(user=new_user,
+                              company=form.cleaned_data['company'],
+                              department=form.cleaned_data['department'],
+                              group=form.cleaned_data['group'],
+                              title=form.cleaned_data['title'])
+    new_developer.save()
+
+    new_user1 = authenticate(username=form.cleaned_data['username'],
+                             password=form.cleaned_data['password1'])
+    return confirm_email(request, new_user1)
 
 
 # email confirmation when registration
 def confirm_email(request, new_user):
     sbj = 'Code Viewer Registration Confirmation'
+    current_site = get_current_site(request)
     msg = render_to_string('codereviewer/fakeEmail.html', {
         'user': new_user,
-        'domain': "127.0.0.1:8000",
+        'domain': current_site.domain,
         'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
         'token': account_activation_token.make_token(new_user),
     })
@@ -101,9 +116,9 @@ def activate(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.profile.email_confirmed = True
+        user.developer.email_confirmed = True
         user.save()
+        user.developer.save()
         auth.login(request, user)
         # TODO: maybe change redirect page
         return redirect(reverse('codereviewer/repo.html'))
