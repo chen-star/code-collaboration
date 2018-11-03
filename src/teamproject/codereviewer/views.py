@@ -19,32 +19,32 @@ from codereviewer.tokens import account_activation_token
 
 
 def index(request):
-    context={}
+    context = {}
     user = request.user
 
-    return render(request,'codereviewer/home.html',context)
+    return render(request, 'codereviewer/home.html', context)
 
 
 def settings(request):
-    context={}
-    return render(request,'codereviewer/settings.html',context)
+    context = {}
+    return render(request, 'codereviewer/settings.html', context)
 
 
-def repositories(request):    
+def repositories(request):
     context = {}
     errors = []
-    if request.method == 'POST':    	
-    	form = CreateRepoForm(request.POST, request.FILES)
-    	if form.is_valid():
-    		new_repo = form.save()
-    		return render(request, 'codereviewer/repo.html', context)    
+    if request.method == 'POST':
+        form = CreateRepoForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_repo = form.save()
+            return render(request, 'codereviewer/repo.html', context)
     context['form'] = CreateRepoForm()
     return render(request, 'codereviewer/repo.html', context)
 
 
 def review(request):
-    context={}
-    return render(request,'codereviewer/review.html',context)
+    context = {}
+    return render(request, 'codereviewer/review.html', context)
 
 
 # handle user registration
@@ -90,11 +90,11 @@ def registration(request):
 def confirm_email(request, new_user):
     sbj = 'Code Viewer Registration Confirmation'
     msg = render_to_string('codereviewer/fakeEmail.html', {
-                'user': new_user,
-                'domain': "127.0.0.1:8000",
-                'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
-                'token': account_activation_token.make_token(new_user),
-            })
+        'user': new_user,
+        'domain': "127.0.0.1:8000",
+        'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
+        'token': account_activation_token.make_token(new_user),
+    })
     send_mail([new_user.email], sbj, msg)
     return HttpResponse("Please confirm your email address to complete the registration!", content_type='text/plain')
 
@@ -118,7 +118,3 @@ def activate(request, uidb64, token):
         return redirect(reverse('codereviewer/repo.html'))
     else:
         return HttpResponse('Activation link is invalid!', content_type='text/plain')
-
-
-
-
