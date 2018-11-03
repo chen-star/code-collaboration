@@ -13,17 +13,17 @@ class CreateRepoForm(forms.ModelForm):
 # developer registration form
 class DeveloperRegForm(forms.Form):
 	user_name = forms.CharField(max_length=20, label="User Name")
-	first_name = models.CharField(max_length=50, label="First Name")
-	last_name = models.CharField(max_length=20, label="Last Name")
-	email = models.EmailField(max_length=40, label="Email Address", widget=forms.EmailInput())
+	first_name = forms.CharField(max_length=50, label="First Name")
+	last_name = forms.CharField(max_length=20, label="Last Name")
+	email = forms.EmailField(max_length=40, label="Email Address", widget=forms.EmailInput())
 
-	password = models.CharField(max_length=50, label="Password", widget=forms.PasswordInput())
-	password_confirm = models.CharField(max_length=50, label="Password Confirmation", widget=forms.PasswordInput())
+	password = forms.CharField(max_length=50, label="Password", widget=forms.PasswordInput())
+	password_confirm = forms.CharField(max_length=50, label="Password Confirmation", widget=forms.PasswordInput())
 
-	company = models.CharField(max_length=30, required=False)
-	department = models.CharField(max_length=30, required=False)
-	group = models.CharField(max_length=30, required=False)
-	title = models.CharField(max_length=20, required=False)
+	company = forms.CharField(max_length=30, required=False)
+	department = forms.CharField(max_length=30, required=False)
+	group = forms.CharField(max_length=30, required=False)
+	title = forms.CharField(max_length=20, required=False)
 
 	def clean(self):
 		super(DeveloperRegForm, self).clean()
@@ -50,7 +50,7 @@ class DeveloperRegForm(forms.Form):
 			raise forms.ValidationError('This email address has already been taken')
 		return email
 
-	
+
 
 
 
