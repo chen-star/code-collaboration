@@ -88,7 +88,8 @@
             {% endif %}
             {% if user.is_anonymous %}
                 {#           接入 LOGIN  #}
-                <li><a href="login.html">Log in</a></li>
+                <li><a href="{% url 'login' %}">Log in</a></li>
+                <li><a href="{% url 'registration' %}">Register</a > </li>
             {% endif %}
 
         </ul>

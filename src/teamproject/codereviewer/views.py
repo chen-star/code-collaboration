@@ -19,32 +19,32 @@ from codereviewer.tokens import account_activation_token
 
 
 def index(request):
-    context={}
+    context = {}
     user = request.user
 
-    return render(request,'codereviewer/home.html',context)
+    return render(request, 'codereviewer/home.html', context)
 
 
 def settings(request):
-    context={}
-    return render(request,'codereviewer/settings.html',context)
+    context = {}
+    return render(request, 'codereviewer/settings.html', context)
 
 
-def repositories(request):    
+def repositories(request):
     context = {}
     errors = []
-    if request.method == 'POST':    	
-    	form = CreateRepoForm(request.POST, request.FILES)
-    	if form.is_valid():
-    		new_repo = form.save()
-    		return render(request, 'codereviewer/repo.html', context)    
+    if request.method == 'POST':
+        form = CreateRepoForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_repo = form.save()
+            return render(request, 'codereviewer/repo.html', context)
     context['form'] = CreateRepoForm()
     return render(request, 'codereviewer/repo.html', context)
 
 
 def review(request):
-    context={}
-    return render(request,'codereviewer/review.html',context)
+    context = {}
+    return render(request, 'codereviewer/review.html', context)
 
 
 # handle user registration
@@ -64,41 +64,27 @@ def registration(request):
     context['form'] = form
 
     if not form.is_valid():
+        print(form.errors)
         return render(request, 'codereviewer/registration.html', context)
 
-    new_user = User.objects.create_user(username=form.cleaned_data['user_name'],
-                                        password=form.cleaned_data['password'],
-                                        email=form.cleaned_data['email'],
-                                        first_name=form.cleaned_data['first_name'],
-                                        last_name=form.cleaned_data['last_name'])
-
-    new_developer = Developer(user_name=form.cleaned_data['user_name'],
-                              first_name=form.cleaned_data['first_name'],
-                              last_name=form.cleaned_data['last_name'],
-                              email=form.cleaned_data['email'],
-                              password=form.cleaned_data['password'],
-                              company=form.cleaned_data['company'],
-                              department=form.cleaned_data['department'],
-                              group=form.cleaned_data['group'],
-                              title=form.cleaned_data['title'])
-
-    new_user.save()
-    new_developer.save()
-    new_user.is_active = False
-
-    return confirm_email(request, new_developer)
+    if form.is_valid():
+        user = form.save(commit=False)
+        user.is_active = False
+        user.save()
+        confirm_email(request, user)
+        return confirm_email(request, user)
 
 
 # email confirmation when registration
 def confirm_email(request, new_user):
     sbj = 'Code Viewer Registration Confirmation'
     msg = render_to_string('codereviewer/fakeEmail.html', {
-                'user': new_user,
-                'domain': "127.0.0.1:8000",
-                'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
-                'token': account_activation_token.make_token(new_user),
-            })
-    send_mail([new_user.email], sbj, msg)
+        'user': new_user,
+        'domain': "127.0.0.1:8000",
+        'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
+        'token': account_activation_token.make_token(new_user),
+    })
+    send_email([new_user.email], sbj, msg)
     return HttpResponse("Please confirm your email address to complete the registration!", content_type='text/plain')
 
 
@@ -116,6 +102,7 @@ def activate(request, uidb64, token):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
+        user.profile.email_confirmed = True
         user.save()
         auth.login(request, user)
         # TODO: maybe change redirect page
@@ -147,5 +134,9 @@ def login(request):
         return render(request, 'codereviewer/login.html')
 
 
-
-
+# user logout
+@ensure_csrf_cookie
+@login_required
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect("/")

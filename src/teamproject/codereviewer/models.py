@@ -4,23 +4,31 @@ from django.contrib.auth.models import User
 
 
 # User login and registration model
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
 class Developer(models.Model):
-	user_name = models.CharField(max_length=20)
-	first_name = models.CharField(max_length=50)
-	last_name = models.CharField(max_length=20)
-	email = models.EmailField(max_length=40)
-	password = models.CharField(max_length=50)
+	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	email = models.EmailField(max_length=50, blank=False)
 	company = models.CharField(max_length=30, blank=True)
 	department = models.CharField(max_length=30, blank=True)
 	group = models.CharField(max_length=30, blank=True)
 	title = models.CharField(max_length=20, blank=True)
 	avatar = models.ImageField(upload_to='avatars/', blank=True)
+	email_confirmed = models.BooleanField(default=False)
 
 	def __unicode__(self):
-		return self.user_name
+		return self.user.username
 
 	def __str__(self):
 		return self.__unicode__()
+
+	@receiver(post_save, sender=User)
+	def update_user_profile(sender, instance, created, **kwargs):
+		if created:
+			Developer.objects.create(user=instance)
+		instance.profile.save()
 
 
 # Data model of project repository.

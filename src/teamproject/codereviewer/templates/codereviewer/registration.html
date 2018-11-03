@@ -16,17 +16,28 @@
             <div class="card card-signin my-5">
                 <div class="card-body">
                     <h5 class="card-title text-center">Register</h5>
-                    <form class="form-signin" action="{% url 'registration' %}" method="POST">
+                    <form method="post">
                         {% csrf_token %}
-                        {% for field in form %}
-                            {{ field.label_tag }}
-                            {{ field }}
-                            {{ field.errors }}
-                            {% if field.help_text %}
-                                <p class="help text-sm text-muted">{{ field.help_text|safe }}</p>
+                        {% include 'codereviewer/base_form.html' with form=form %}
+                        <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">Create an account
+                        </button>
+                        <br><br>
+                        <div>
+                            {% if f.errors %}
+                                {% for field in f %}
+                                    {% for error in field.errors %}
+                                        <div class="alert alert-danger">
+                                            <strong>{{ error|escape }}</strong>
+                                        </div>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in f.non_field_errors %}
+                                    <div class="alert alert-danger">
+                                        <strong>{{ error|escape }}</strong>
+                                    </div>
+                                {% endfor %}
                             {% endif %}
-                        {% endfor %}
-                        <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">Create an account</button>
+                        </div>
                         <hr class="my-4">
                         <button class="btn btn-lg btn-google btn-block text-uppercase"><a href="login.html">Already have
                             an account?</a></button>
