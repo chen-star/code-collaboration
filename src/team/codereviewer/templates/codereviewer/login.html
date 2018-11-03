@@ -16,9 +16,10 @@
                     <div class="card-body">
                         <h5 class="card-title text-center">Sign In</h5>
                         <form action="{% url 'login' %}" method="POST">
+                            {% csrf_token %}
                             <div class="form-label-group">
-                                <input type="email" id="inputEmail" name="email" class="form-control"
-                                       placeholder="Email address" required autofocus>
+                                <input type="username" id="inputUsername" name="username" class="form-control"
+                                       placeholder="Username" required autofocus>
                             </div>
 
                             <div class="form-label-group">
