@@ -98,7 +98,7 @@ def confirm_email(request, new_user):
         'token': account_activation_token.make_token(new_user),
     })
     send_email([new_user.email], sbj, msg)
-    return HttpResponse("Please confirm your email address to complete the registration!", content_type='text/plain')
+    return render(request, 'codereviewer/registration_done.html')
 
 
 # send email helper function
@@ -119,7 +119,7 @@ def activate(request, uidb64, token):
         user.developer.save()
         auth.login(request, user)
         # TODO: maybe change redirect page
-        return redirect(reverse('codereviewer/repo.html'))
+        return render(request, 'codereviewer/home.html')
     else:
         return HttpResponse('Activation link is invalid!', content_type='text/plain')
 
@@ -136,10 +136,11 @@ def login(request):
         password = request.POST.get('password', '')
 
         user = auth.authenticate(username=username, password=password)
+        user.is_active = True
 
         if user is not None and user.is_active:
             auth.login(request, user)
-            return HttpResponseRedirect(reverse('repo'))
+            return render(request, 'codereviewer/home.html')
         else:
             return HttpResponseRedirect(reverse('login'))
 
