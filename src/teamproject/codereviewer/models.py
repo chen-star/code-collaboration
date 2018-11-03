@@ -1,19 +1,16 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 
 
 # User login and registration model
 class Developer(models.Model):
-	user = models.OneToOneField(User, on_delete=models.CASCADE)
+	user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
 	company = models.CharField(max_length=30, blank=True)
 	department = models.CharField(max_length=30, blank=True)
 	group = models.CharField(max_length=30, blank=True)
 	title = models.CharField(max_length=20, blank=True)
 	avatar = models.ImageField(upload_to='avatars/', blank=True)
-	email_confirmed = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return self.user.username

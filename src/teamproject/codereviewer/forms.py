@@ -38,13 +38,10 @@ class DeveloperRegForm(forms.Form):
     #               'department', 'group', 'title')
 
     def clean(self):
-        super(DeveloperRegForm, self).clean()
-
-    def clean_password(self):
         cleaned_data = super(DeveloperRegForm, self).clean()
         pw1 = cleaned_data.get('password1')
         pw2 = cleaned_data.get('password2')
-        if not pw1 or not pw2 and pw1 != pw2:
+        if pw1 and pw2 and pw1 != pw2:
             raise forms.ValidationError('Password and Password Confirmation did not match')
 
     def clean_user(self):
