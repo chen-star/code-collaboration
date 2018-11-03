@@ -2,7 +2,7 @@ from django.contrib import auth
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -19,38 +19,41 @@ from codereviewer.tokens import account_activation_token
 
 
 def index(request):
-    context = {}
+    context={}
     user = request.user
 
-    return render(request, 'codereviewer/home.html', context)
+    return render(request,'codereviewer/home.html',context)
 
 
 def settings(request):
-    context = {}
-    return render(request, 'codereviewer/settings.html', context)
+    context={}
+    return render(request,'codereviewer/settings.html',context)
 
 
-def repositories(request):
+def repositories(request):    
     context = {}
     errors = []
-    if request.method == 'POST':
-        form = CreateRepoForm(request.POST, request.FILES)
-        if form.is_valid():
-            new_repo = form.save()
-            return render(request, 'codereviewer/repo.html', context)
+    if request.method == 'POST':    	
+    	form = CreateRepoForm(request.POST, request.FILES)
+    	if form.is_valid():
+    		new_repo = form.save()
+    		return render(request, 'codereviewer/repo.html', context)    
     context['form'] = CreateRepoForm()
     return render(request, 'codereviewer/repo.html', context)
 
 
 def review(request):
-    context = {}
-    return render(request, 'codereviewer/review.html', context)
+    context={}
+    return render(request,'codereviewer/review.html',context)
 
 
 # handle user registration
 @transaction.atomic
 @ensure_csrf_cookie
 def registration(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('repo'))
+
     context = {}
 
     if request.method == 'GET':
@@ -90,11 +93,11 @@ def registration(request):
 def confirm_email(request, new_user):
     sbj = 'Code Viewer Registration Confirmation'
     msg = render_to_string('codereviewer/fakeEmail.html', {
-        'user': new_user,
-        'domain': "127.0.0.1:8000",
-        'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
-        'token': account_activation_token.make_token(new_user),
-    })
+                'user': new_user,
+                'domain': "127.0.0.1:8000",
+                'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
+                'token': account_activation_token.make_token(new_user),
+            })
     send_mail([new_user.email], sbj, msg)
     return HttpResponse("Please confirm your email address to complete the registration!", content_type='text/plain')
 
@@ -115,6 +118,34 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         auth.login(request, user)
+        # TODO: maybe change redirect page
         return redirect(reverse('codereviewer/repo.html'))
     else:
         return HttpResponse('Activation link is invalid!', content_type='text/plain')
+
+
+# user login
+@ensure_csrf_cookie
+@transaction.atomic
+def login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('repo'))
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+
+        user = auth.authenticate(username=username, password=password)
+
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return HttpResponseRedirect(reverse('repo'))
+        else:
+            return HttpResponseRedirect(reverse('login'))
+
+    else:
+        return render(request, 'codereviewer/login.html')
+
+
+
+
