@@ -9,7 +9,7 @@ class Developer(models.Model):
 	first_name = models.CharField(max_length=50)
 	last_name = models.CharField(max_length=20)
 	email = models.EmailField(max_length=40)
-	password = models.CharField(max_length=20)
+	password = models.CharField(max_length=50)
 	company = models.CharField(max_length=30, blank=True)
 	department = models.CharField(max_length=30, blank=True)
 	group = models.CharField(max_length=30, blank=True)
