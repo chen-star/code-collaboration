@@ -115,9 +115,12 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         auth.login(request, user)
+        # TODO: maybe change redirect page
         return redirect(reverse('codereviewer/repo.html'))
     else:
         return HttpResponse('Activation link is invalid!', content_type='text/plain')
+
+
 
 
 
