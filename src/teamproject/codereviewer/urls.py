@@ -12,5 +12,5 @@ urlpatterns = [
     url(r'^repositories/?$', views.repositories, name='repo'),
     url(r'^review/?$', views.review, name='review'),#to be deleted
     # url(r'^review/(?P<project_id>.+)/(?P<file_name>.+)$', views.review, name='review'),
-    url(r'^registration/?$', views.registration, name='registration'),
+    path('registration/', views.registration, name='registration'),
 ]
