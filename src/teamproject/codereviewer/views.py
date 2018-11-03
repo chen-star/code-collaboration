@@ -2,7 +2,7 @@ from django.contrib import auth
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.db import transaction
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -51,6 +51,9 @@ def review(request):
 @transaction.atomic
 @ensure_csrf_cookie
 def registration(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('repo'))
+
     context = {}
 
     if request.method == 'GET':
@@ -121,6 +124,27 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!', content_type='text/plain')
 
 
+# user login
+@ensure_csrf_cookie
+@transaction.atomic
+def login(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect(reverse('repo'))
+
+    if request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+
+        user = auth.authenticate(username=username, password=password)
+
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return HttpResponseRedirect(reverse('repo'))
+        else:
+            return HttpResponseRedirect(reverse('login'))
+
+    else:
+        return render(request, 'codereviewer/login.html')
 
 
 
