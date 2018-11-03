@@ -3,10 +3,30 @@ from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 
 
+# User login and registration model
+class Developer(models.Model):
+	user_name = models.CharField(max_length=20)
+	first_name = models.CharField(max_length=50)
+	last_name = models.CharField(max_length=20)
+	email = models.EmailField(max_length=40)
+	password = models.CharField(max_length=20)
+	company = models.CharField(max_length=30, blank=True)
+	department = models.CharField(max_length=30, blank=True)
+	group = models.CharField(max_length=30, blank=True)
+	title = models.CharField(max_length=20, blank=True)
+	avatar = models.ImageField(upload_to='avatars/', blank=True)
+
+	def __unicode__(self):
+		return self.user_name
+
+	def __str__(self):
+		return self.__unicode__()
+
+
 # Data model of project repository.
 class Repo(models.Model):	
-	owner = models.ForeignKey(User, related_name='owner', on_delete=models.CASCADE)	
-	members =  models.ManyToManyField(User, related_name='members',blank=True)	
+	owner = models.ForeignKey(Developer, related_name='owner', on_delete=models.CASCADE)
+	members = models.ManyToManyField(Developer, related_name='members', blank=True)
 	files = models.FileField(upload_to='sourcecode', blank=True)
 	project_name = models.CharField(max_length=128, blank=False)
 	create_time = models.DateTimeField(auto_now_add=True)
@@ -18,3 +38,6 @@ class Repo(models.Model):
 
 	def __str__(self):
 		return self.__unicode__()
+
+
+
