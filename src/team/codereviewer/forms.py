@@ -65,6 +65,8 @@ class ResetForm(forms.Form):
 
 
 class ResetpwdForm(forms.Form):
+    email = forms.EmailField(required=True, label="Email address", error_messages={'required': "enter email address"},
+                             widget=forms.EmailInput(attrs={'rows': 1, 'cols': 20, }), )
     newpassword1 = forms.CharField(
         required=True,
         label="New password",
