@@ -48,9 +48,11 @@ def repositories(request):
 
         owning_repos = Repo.get_owning_repos(request.user)
         context['owning_repos'] = owning_repos
+        # print(context['owning_repos'])
 
         membering_repos = Repo.get_membering_repos(request.user)
         context['membering_repos'] = membering_repos
+        # print(context['membering_repos'])
 
     return render(request, 'codereviewer/repo.html', context)
 
