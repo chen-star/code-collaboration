@@ -36,6 +36,20 @@ class Repo(models.Model):
 	def __str__(self):
 		return self.__unicode__()
 
+	@staticmethod
+	def get_membering_repos(user):
+		member = Developer.get_developer(user)
+		return Repo.objects.filter(members__in=[member])
+
+	@staticmethod
+	def get_owning_repos(user):
+		owner = Developer.get_developer(user)
+		return Repo.objects.filter(owner=owner)
+	@staticmethod
+	def get_owning_repos(user):
+		owner = Developer.get_developer(user)
+		return Repo.objects.filter(owner=owner)
+
 
 # User Invitation Message
 class InvitationMessage(models.Model):
@@ -51,17 +65,3 @@ class InvitationMessage(models.Model):
 
 	def __str__(self):
 		return 'sender: {0}, receiver: {1}'.format(self.sender, self.receiver)
-
-	@staticmethod
-	def get_membering_repos(user):
-		member = Developer.get_developer(user)
-		return Repo.objects.filter(members__in=[member])
-
-	@staticmethod
-	def get_owning_repos(user):
-		owner = Developer.get_developer(user)
-		return Repo.objects.filter(owner=owner)
-	@staticmethod
-	def get_owning_repos(user):
-		owner = Developer.get_developer(user)
-		return Repo.objects.filter(owner=owner)
