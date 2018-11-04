@@ -75,9 +75,16 @@ def create_repo(request):
 
 
 @login_required
-def review(request):
+def review(request,repo_id):
     context = {}
-
+    # TODO check existance
+    repo = Repo.objects.get(id=repo_id)
+    f = open(repo.files.url, 'r')
+    code = f.read().splitlines()
+    f.close()
+    context['codes']=code
+    context['repo']=repo
+    context['filename']=repo.files
     return render(request, 'codereviewer/review.html', context)
 
 
