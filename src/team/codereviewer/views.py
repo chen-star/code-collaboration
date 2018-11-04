@@ -78,7 +78,7 @@ def registration(request):
         return render(request, 'codereviewer/registration.html', context)
 
     new_user = User.objects.create_user(username=form.cleaned_data['username'],
-                                        password=form.cleaned_data['password1'],)
+                                        password=form.cleaned_data['password1'], )
     new_user.email = form.cleaned_data['email']
     new_user.first_name = form.cleaned_data['first_name']
     new_user.last_name = form.cleaned_data['last_name']
@@ -232,18 +232,27 @@ def resetpassword(request):
 
 @ensure_csrf_cookie
 def confirmpassword(request, uidb64, token):
+    form = ResetpwdForm()
     try:
         uid = force_text(urlsafe_base64_decode())
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-        return TemplateResponse(request, 'codereviewer/password_reset_confirm.html', {'isValidLink': False})
+        return TemplateResponse(request, 'codereviewer/password_reset_confirm.html',
+                                {'form': form, 'isValidLink': False})
     if password_reset_token.check_token(user, token):
-        if request.method == 'POST':
-            form = ResetpwdForm(request.POST)
-            if form.is_valid():
-                form.save(user)
-                return render(request, 'codereviewer/password_reset_complete.html')
-        form = ResetpwdForm()
-        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form})
+        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form, 'isValidLink': True})
     else:
         return HttpResponse('Activation link is invalid!')
+
+
+@ensure_csrf_cookie
+def confirmpassword_helper(request):
+    email = request.POST.get('email', '')
+    user = User.objects.get(email=email)
+    if request.method == 'POST' and Developer.objects.filter(user__email=email).exists():
+        form = ResetpwdForm(request.POST)
+        if form.is_valid():
+            user.set_password(request.POST.get('newpassword1'))
+            user.save()
+            return render(request, 'codereviewer/password_reset_complete.html')
+        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form, 'validate': form.non_field_errors()})
