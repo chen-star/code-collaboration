@@ -10,6 +10,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^settings/?$', views.settings, name='settings'),
     url(r'^repositories/?$', views.repositories, name='repo'),
+    url(r'create_repo', views.create_repo, name='create_repo'),
     url(r'^review/?$', views.review, name='review'),#to be deleted
     # url(r'^review/(?P<project_id>.+)/(?P<file_name>.+)$', views.review, name='review'),
     url(r'^registration/?$', views.registration, name='registration'),

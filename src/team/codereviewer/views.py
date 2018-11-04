@@ -22,8 +22,6 @@ from codereviewer.tokens import account_activation_token
 
 def index(request):
     context = {}
-    user = request.user
-
     return render(request, 'codereviewer/home.html', context)
 
 
@@ -34,18 +32,40 @@ def settings(request):
 
 def repositories(request):
     context = {}
-    errors = []
+    if request.method == 'GET':
+        form = CreateRepoForm()
+        context['form'] = form
+        
+        owning_repos = Repo.get_owning_repos(request.user)
+        context['owning_repos'] = owning_repos
+
+        membering_repos = Repo.get_membering_repos(request.user)        
+        context['membering_repos'] = membering_repos
+        
+    return render(request, 'codereviewer/repo.html', context)
+
+# create a new repository owned by the requesting user
+@login_required
+def create_repo(request):
+    context = {}        
     if request.method == 'POST':
         form = CreateRepoForm(request.POST, request.FILES)
         if form.is_valid():
-            new_repo = form.save()
-            return render(request, 'codereviewer/repo.html', context)
+            owner = Developer.objects.get(user=request.user)
+            files = form.cleaned_data['files']
+            project_name = form.cleaned_data['project_name']
+            modify_frequency = 0
+            new_repo = Repo(owner=owner, files=files, project_name=project_name, modify_frequency=modify_frequency)
+            new_repo.save()            
+            return render(request, reverse('repo'), context)
     context['form'] = CreateRepoForm()
-    return render(request, 'codereviewer/repo.html', context)
+    return render(request, reverse('repo'), context)
 
 
+@login_required
 def review(request):
     context = {}
+
     return render(request, 'codereviewer/review.html', context)
 
 

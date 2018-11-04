@@ -31,10 +31,17 @@ class Repo(models.Model):
 	modify_frequency = models.IntegerField(null=True, blank=True, validators=[MinValueValidator(0)])	
 
 	def __unicode__(self):
-		return self.project_name
+		return "project_name=" + self.project_name + " owner=" + self.owner.user.username + " create_time=" + self.create_time
 
 	def __str__(self):
 		return self.__unicode__()
 
+	@staticmethod
+	def get_membering_repos(user):
+		member = Developer.get_developer(user)
+		return Repo.objects.filter(members__in=[member])
 
-
+	@staticmethod
+	def get_owning_repos(user):
+		owner = Developer.get_developer(user)
+		return Repo.objects.filter(owner=owner)
