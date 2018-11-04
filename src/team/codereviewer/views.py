@@ -24,6 +24,13 @@ def index(request):
     context = {}
     user = request.user
 
+    # if not request.user.is_authenticated:
+    return render(request, 'codereviewer/home.html', context)
+
+    msg = Developer.objects.get(user=user).receiver_msg.all.order_by('-time')
+    print(msg)
+    context['messages'] = msg
+
     return render(request, 'codereviewer/home.html', context)
 
 
@@ -67,6 +74,7 @@ def registration(request):
 
     if not form.is_valid():
         print(form.errors)
+        context['err'] = form.non_field_errors()
         return render(request, 'codereviewer/registration.html', context)
 
     new_user = User.objects.create_user(username=form.cleaned_data['username'],
@@ -172,8 +180,12 @@ def invite(request):
     invitationMessage = InvitationMessage(receiver=receiver,
                                           sender=sender,
                                           project=project)
+    print(invitationMessage)
+    invitationMessage.save()
+
     # send invitation email to receiver
     invite_email(request, sender, receiver, project)
+
 
 # email invitation
 def invite_email(request, sender, receiver, project):

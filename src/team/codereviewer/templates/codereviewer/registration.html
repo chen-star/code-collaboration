@@ -26,6 +26,9 @@
                                 <p class="help text-sm text-muted">{{ field.help_text|safe }}</p>
                             {% endif %}
                         {% endfor %}
+                        {% for error in err %}
+                            <span class="badge badge-danger">{{ error }}</span>
+                        {% endfor %}
                         <br>
                         <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase">Create an
                             account
