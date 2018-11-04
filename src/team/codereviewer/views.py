@@ -91,7 +91,7 @@ def registration(request):
 def confirm_email(request, new_user):
     sbj = 'Code Viewer Registration Confirmation'
     current_site = get_current_site(request)
-    msg = render_to_string('codereviewer/fakeEmail.html', {
+    msg = render_to_string('codereviewer/registration_email.html', {
         'user': new_user,
         'domain': current_site.domain,
         'uid': urlsafe_base64_encode(force_bytes(new_user.pk)).decode(),
@@ -118,10 +118,9 @@ def activate(request, uidb64, token):
         user.save()
         user.developer.save()
         auth.login(request, user)
-        # TODO: maybe change redirect page
         return render(request, 'codereviewer/home.html')
     else:
-        return HttpResponse('Activation link is invalid!', content_type='text/plain')
+        return render(request, 'codereviewer/registration_invalid.html')
 
 
 # user login
@@ -154,3 +153,38 @@ def login(request):
 def logout(request):
     auth.logout(request)
     return HttpResponseRedirect("/")
+
+
+# invite other to comment on a project
+@transaction.atomic
+@login_required
+def invite(request):
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect('')
+
+    # TODO: change receiver and project parameter name
+    receiver_name = request.POST.get('receiver')
+    receiver = Developer.objects.get(user__username=receiver_name)
+    sender = request.user
+    project_name = request.POST.get('project')
+    project = Repo.objects.get(project_name=project_name)
+
+    invitationMessage = InvitationMessage(receiver=receiver,
+                                          sender=sender,
+                                          project=project)
+    # send invitation email to receiver
+    invite_email(request, sender, receiver, project)
+
+# email invitation
+def invite_email(request, sender, receiver, project):
+    sbj = 'Code Viewer Project Contribution Invitation'
+    current_site = get_current_site(request)
+    msg = render_to_string('codereviewer/invitation_email.html', {
+        'sender': sender,
+        'receiver': receiver,
+        'project': project,
+        'domain': current_site.domain,
+    })
+    send_email([receiver.email], sbj, msg)
+    # TODO: change receiver parameter name
+    return render(request, 'codereviewer/registration_done.html', {'receiver': receiver})
