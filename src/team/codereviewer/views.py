@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
+from django.template.response import TemplateResponse
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -17,7 +18,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from codereviewer.tokens import account_activation_token
+from codereviewer.tokens import account_activation_token, password_reset_token
 
 
 def index(request):
@@ -26,7 +27,7 @@ def index(request):
 
     # if not request.user.is_authenticated:
     return render(request, 'codereviewer/home.html', context)
-
+    # TODO: change user state
     msg = Developer.objects.get(user=user).receiver_msg.all.order_by('-time')
     print(msg)
     context['messages'] = msg
@@ -74,12 +75,11 @@ def registration(request):
 
     if not form.is_valid():
         print(form.errors)
-        context['err'] = form.non_field_errors()
         return render(request, 'codereviewer/registration.html', context)
 
     new_user = User.objects.create_user(username=form.cleaned_data['username'],
-                                        password=form.cleaned_data['password1'],
-                                        email=form.cleaned_data['email'])
+                                        password=form.cleaned_data['password1'],)
+    new_user.email = form.cleaned_data['email']
     new_user.first_name = form.cleaned_data['first_name']
     new_user.last_name = form.cleaned_data['last_name']
     new_user.is_active = False
@@ -200,3 +200,50 @@ def invite_email(request, sender, receiver, project):
     send_email([receiver.email], sbj, msg)
     # TODO: change receiver parameter name
     return render(request, 'codereviewer/registration_done.html', {'receiver': receiver})
+
+
+@ensure_csrf_cookie
+def resetpassword(request):
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('/')
+    if request.method == "GET":
+        form = ResetForm()
+        return render(request, 'codereviewer/password_reset_form.html', {'form': form})
+    else:
+        form = ResetForm(request.POST)
+        if form.is_valid():
+            email = request.POST.get('email', '')
+            user = Developer.objects.get(user__email=email).user
+            if Developer.objects.filter(user__email=email).exists():
+                message = render_to_string('codereviewer/password_reset_link.html', {
+                    'user': user,
+                    'domain': "127.0.0.1:8000",
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
+                    'token': password_reset_token.make_token(user),
+                })
+                send_email([email], "Reset password", message)
+                return render(request, 'codereviewer/password_reset_done.html')
+            else:
+                return render(request, 'codereviewer/password_reset_form.html', {'form': form, 'email_is_wrong': True})
+        else:
+            context = {'form': form, 'validate': form.non_field_errors()}
+            return TemplateResponse(request, 'codereviewer/password_reset_form.html', context)
+
+
+@ensure_csrf_cookie
+def confirmpassword(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode())
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        return TemplateResponse(request, 'codereviewer/password_reset_confirm.html', {'isValidLink': False})
+    if password_reset_token.check_token(user, token):
+        if request.method == 'POST':
+            form = ResetpwdForm(request.POST)
+            if form.is_valid():
+                form.save(user)
+                return render(request, 'codereviewer/password_reset_complete.html')
+        form = ResetpwdForm()
+        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form})
+    else:
+        return HttpResponse('Activation link is invalid!')
