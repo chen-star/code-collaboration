@@ -39,7 +39,7 @@ def index(request):
 @login_required
 def settings(request):
     context = {}
-    if request.method == 'GET':        
+    if request.method == 'GET':
         this_developer = Developer.objects.get(user=request.user)
         context['this_developer'] = this_developer
 
@@ -47,17 +47,17 @@ def settings(request):
 
 
 def edit_profile(request):
-    context = {}    
+    context = {}
     if request.method == 'GET':
-        developer = Developer.objects.get(user=request.user)  
-        context['this_developer'] = developer      
+        developer = Developer.objects.get(user=request.user)
+        context['this_developer'] = developer
         context['edit_flag'] = True
         context['form'] = UpdateProfileForm(initial={
-            'company':developer.company,
-            'department':developer.department,
-            'group':developer.group,
-            'title':developer.title})
-    
+            'company': developer.company,
+            'department': developer.department,
+            'group': developer.group,
+            'title': developer.title})
+
     if request.method == 'POST':
         developer = Developer.objects.get(user=request.user)
         form = UpdateProfileForm(request.POST, request.FILES, instance=developer)
@@ -67,7 +67,8 @@ def edit_profile(request):
         else:
             print("Eeeeeerror: not valid form")
 
-    return render(request, 'codereviewer/settings.html', context)
+    return render(request, 'codereviewer/edit_profile.html', context)
+
 
 @login_required
 def repositories(request):
@@ -81,8 +82,9 @@ def repositories(request):
         membering_repos = Repo.get_membering_repos(request.user)
         context['membering_repos'] = membering_repos
 
-    context['user']=request.user
+    context['user'] = request.user
     return render(request, 'codereviewer/repo.html', context)
+
 
 # create a new repository owned by the requesting user
 @login_required
@@ -103,32 +105,35 @@ def create_repo(request):
 
 
 @login_required
-def review(request,repo_id):
+def review(request, repo_id):
     context = {}
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
     lines = f.read().splitlines()
     f.close()
-    context['codes']=lines
-    context['repo']=repo
-    context['filename']=repo.files
+    context['codes'] = lines
+    context['repo'] = repo
+    context['filename'] = repo.files
     return render(request, 'codereviewer/review.html', context)
 
-def get_codes(request,repo_id):
+
+def get_codes(request, repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
     lines = f.read().splitlines()
-    context={'codes':lines}
+    context = {'codes': lines}
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
-def get_comments(request,repo_id):
+
+def get_comments(request, repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     comments = Comment.objects.filter(file=repo)
-    context={'comments':comments}
+    context = {'comments': comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
+
 
 # handle user registration
 @transaction.atomic
@@ -328,4 +333,5 @@ def confirmpassword_helper(request):
             user.set_password(request.POST.get('newpassword1'))
             user.save()
             return render(request, 'codereviewer/password_reset_complete.html')
-        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form, 'validate': form.non_field_errors()})
+        return render(request, 'codereviewer/password_reset_confirm.html',
+                      {'form': form, 'validate': form.non_field_errors()})
