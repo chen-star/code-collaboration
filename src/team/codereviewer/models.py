@@ -38,13 +38,13 @@ class Repo(models.Model):
 
 	@staticmethod
 	def get_membering_repos(user):
-		member = Developer.get_developer(user)
-		return Repo.objects.filter(members__in=member)
+		member = Developer.get_developer(user)[0]
+		return Repo.objects.filter(members__in=[member])
 
 	@staticmethod
 	def get_owning_repos(user):
 		owner = Developer.get_developer(user)
-		return Repo.objects.filter(owner__in=owner)
+		return Repo.objects.filter(owner=owner[0])
 
 class Comment(models.Model):
 	file = models.ForeignKey(Repo, related_name='file', on_delete=models.CASCADE)
@@ -67,6 +67,7 @@ class InvitationMessage(models.Model):
 	project = models.OneToOneField(Repo, on_delete=models.CASCADE)
 	time = models.DateTimeField(auto_now_add=True)
 	is_read = models.BooleanField(default=False)
+
 	@staticmethod
 	def get_membering_repos(user):
 		member = Developer.get_developer(user)

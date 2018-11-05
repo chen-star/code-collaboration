@@ -52,6 +52,15 @@ class DeveloperRegForm(forms.Form):
             raise forms.ValidationError('This email address has already been taken')
         return email
 
+
+# developer profile updating form
+class UpdateProfileForm(forms.ModelForm):         
+    class Meta:
+        model = Developer
+        fields = ['company', 'department', 'group', 'title', 'avatar']
+        widgets = {'avatar': forms.FileInput()}
+
+
 class ResetForm(forms.Form):
     email = forms.EmailField(required=True, label="Email address", error_messages={'required': "enter email address"},
                              widget=forms.EmailInput(attrs={'rows': 1, 'cols': 20, }), )
@@ -67,14 +76,14 @@ class ResetForm(forms.Form):
 class ResetpwdForm(forms.Form):
     email = forms.EmailField(required=True, label="Email address", error_messages={'required': "enter email address"},
                              widget=forms.EmailInput(attrs={'rows': 1, 'cols': 20, }), )
-    newpassword1 = forms.CharField(
+    newpassword = forms.CharField(
         required=True,
         label="New password",
         error_messages={'required': "Enter your new password"},
         widget=forms.PasswordInput(
             attrs={'rows': 1, 'placeholder': "Length of password should be at least 5 chars"}), )
 
-    newpassword2 = forms.CharField(
+    confirmation = forms.CharField(
         required=True,
         label="Confirm password",
         error_messages={'required': 'Confirm your password'},
