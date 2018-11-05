@@ -35,11 +35,41 @@ def index(request):
     return render(request, 'codereviewer/home.html', context)
 
 
+# display the 'settings' view
+@login_required
 def settings(request):
     context = {}
+    if request.method == 'GET':        
+        this_developer = Developer.objects.get(user=request.user)
+        context['this_developer'] = this_developer
+
     return render(request, 'codereviewer/settings.html', context)
 
 
+def edit_profile(request):
+    context = {}    
+    if request.method == 'GET':
+        developer = Developer.objects.get(user=request.user)  
+        context['this_developer'] = developer      
+        context['edit_flag'] = True
+        context['form'] = UpdateProfileForm(initial={
+            'company':developer.company,
+            'department':developer.department,
+            'group':developer.group,
+            'title':developer.title})
+    
+    if request.method == 'POST':
+        developer = Developer.objects.get(user=request.user)
+        form = UpdateProfileForm(request.POST, request.FILES, instance=developer)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('settings'))
+        else:
+            print("Eeeeeerror: not valid form")
+
+    return render(request, 'codereviewer/settings.html', context)
+
+@login_required
 def repositories(request):
     context = {}
     if request.method == 'GET':

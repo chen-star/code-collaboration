@@ -125,8 +125,9 @@ STATIC_URL = '/static/'
 SITE_ID = 1
 
 # media
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
-MEDIA_URL = "media/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = BASE_DIR + '/media/'
+MEDIA_URL = "/media/"
 
 # print email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
