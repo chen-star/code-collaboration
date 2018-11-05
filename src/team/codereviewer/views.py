@@ -217,6 +217,8 @@ def login(request):
         password = request.POST.get('password', '')
 
         user = auth.authenticate(username=username, password=password)
+        if not user:
+            return render(request, 'codereviewer/login.html')
         user.is_active = True
 
         if user is not None and user.is_active:
