@@ -1,0 +1,38 @@
+{% extends "codereviewer/base_home.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}
+    <title>Review My Code - User profile</title>
+{% endblock %}
+
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>Edit your profile</h3>
+                        <form action="{% url 'edit_profile' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <h6>{{ field.label_tag }}</h6>
+                                {{ field|add_class:'form-control' }}
+                                {{ field.errors }}
+                                {% if field.help_text %}
+                                    <p class="help text-sm text-muted">{{ field.help_text|safe }}</p>
+                                {% endif %}
+                            {% endfor %}
+                            <br>
+                            <input class="btn btn-primary" type="submit" name="save" value="Save">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% for error in validate %}
+        <span class="badge badge-danger">{{ error }}</span>
+    {% endfor %}
+{% endblock %}

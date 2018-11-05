@@ -6,67 +6,128 @@
     <title>Review My Code - Profile Settings</title>
 {% endblock %}
 
-{% block navbar %}
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container-fluid">
-            <div>
-                <a href="/">Home</a>
-                <a class="active" href="{% url 'settings' %}">Settings</a>
-                <a href="{% url 'repo' %}">Repositories</a>
+{% block content %}
+    <div class="container user-profile">
+        <div class="row">
+            <div class="col-md-2">
+                <div id="profile-image">
+                    {% if this_developer.avatar %}
+                        <img src="{{ this_developer.avatar.url }}"
+                             alt="Avatar of {{ user.username }}" height="120px" width="120px"></img>
+                    {% else %}
+                        <img id="img" src="../../static/codereviewer/media/default.png"
+                             class="avatar img-circle img-thumbnail" alt="avatar">
+                    {% endif %}
+                </div>
             </div>
-            <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
-                <form class="form-inline my-2 my-md-0 pl-5">
-                    <input class="form-control" type="text" name="search" placeholder="Search file name"
-                           aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
+            <div class="col-md-8">
+                <div class="profile-head">
+                    <h5>{{ this_developer.user.username }}</h5>
+                    <h6>{{ this_developer.title }}</h6>
+                    <p class="proile-active">Last active at <span>06/06 at 10PM</span></p>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                               aria-controls="home" aria-selected="true">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                               aria-controls="profile" aria-selected="false">Statistics</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-2">
+                {% if not edit_flag %}
+                    <a class="badge badge-dark" href="{% url 'edit_profile' %}">Edit profile</a>
+                {% endif %}
             </div>
         </div>
-    </nav>
+        <div class="row">
+            <div class="col-md-2">
 
-{% endblock %}
-
-
-{% block content %}
-    <div class="row">
-        <div class="col-sm-10"><h1>{{ this_developer.user.username }}</h1></div>
-    </div>
-    <div class="row">
-        <div class="col-sm-3">
-            <!--left col-->
-            <div class="avatar">
-                {% if this_developer.avatar %}                
-                <img src="{{ this_developer.avatar.url }}"
-                     alt="Avatar of {{ user.username }}" height="120px" width="120px"></img>
-                {% else %}
-                <img src="{% static 'codereviewer/img/default_avatar.png' %}"
-                     alt="Avatar of {{ user.username }}" height="120px" width="120px"></img>
-                {% endif %}  
-                {% if not edit_flag %}                                              
-                <strong class="avatar"><a href="{% url 'edit_profile' %}">Edit</a></strong>
-                {% endif %} 
-            </div>            
-            
-            {% if edit_flag %}
-            <div class="text-center">               
-                <form action="{% url 'edit_profile' %}" method="post" enctype="multipart/form-data">
-                    {{ form }}
-                    {% csrf_token %}
-                    <input class="btn btn-primary" type="submit" value="Update">                    
-                </form>                                        
             </div>
+            <div class="col-md-8">
+                <div class="tab-content profile-tab" id="aboutContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Name</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>{{ this_developer.user.first_name }} {{ this_developer.user.last_name }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Group</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>{{ this_developer.group }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Department</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>{{ this_developer.department }}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Company</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>{{ this_developer.company }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- STAT graph -->
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="box">
+                                    <div class="box__header">
+                                        <h3 class="box__header-title">stats</h3>
+                                    </div>
+                                    <div class="box__body">
+                                        <div class="stats stats--main">
+                                            <div class="stats__amount">100</div>
+                                            <div class="stats__caption">subscribers</div>
+                                            <div class="stats__change">
+                                                <div class="stats__value stats__value--positive">+6%</div>
+                                                <div class="stats__period">this week</div>
+                                            </div>
+                                        </div>
 
-            {% else %}                        
-            <div class="col-sm-9 tab-content bg-white rounded box-shadow tab-pane" id="settings">                
-                <table>
-                    <tr>First name: {{ this_developer.user.first_name }}</tr><br>
-                    <tr>Last name: {{ this_developer.user.last_name }}</tr><br>                    
-                    <tr>Company name: {{ this_developer.company }}</tr><br>
-                    <tr>Department name: {{ this_developer.department }}</tr><br>
-                    <tr>Group: {{ this_developer.group }}</tr><br>
-                    <tr>Title: {{ this_developer.title }}</tr><br>                 
-                </table>            
+                                        <div class="stats">
+                                            <div class="stats__amount">100</div>
+                                            <div class="stats__caption">visitors</div>
+                                            <div class="stats__change">
+                                                <div class="stats__value stats__value--negative">-12%</div>
+                                                <div class="stats__period">this week</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="stats">
+                                            <div class="stats__amount">500</div>
+                                            <div class="stats__caption">comments</div>
+                                            <div class="stats__change">
+                                                <div class="stats__value">+78</div>
+                                                <div class="stats__period">this week</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            {% endif %}                
+        </div>
     </div>
 {% endblock %}
