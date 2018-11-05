@@ -1,0 +1,4 @@
+{
+  "line_num":{{ comment.line_num }}
+  "html":"{{ comment.html|safe }}"
+}

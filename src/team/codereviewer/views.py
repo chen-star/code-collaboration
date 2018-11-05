@@ -45,15 +45,13 @@ def repositories(request):
     if request.method == 'GET':
         form = CreateRepoForm()
         context['form'] = form
-
         owning_repos = Repo.get_owning_repos(request.user)
         context['owning_repos'] = owning_repos
-        # print(context['owning_repos'])
 
         membering_repos = Repo.get_membering_repos(request.user)
         context['membering_repos'] = membering_repos
-        # print(context['membering_repos'])
 
+    context['user']=request.user
     return render(request, 'codereviewer/repo.html', context)
 
 # create a new repository owned by the requesting user
@@ -80,13 +78,27 @@ def review(request,repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
-    code = f.read().splitlines()
+    lines = f.read().splitlines()
     f.close()
-    context['codes']=code
+    context['codes']=lines
     context['repo']=repo
     context['filename']=repo.files
     return render(request, 'codereviewer/review.html', context)
 
+def get_codes(request,repo_id):
+    # TODO check existance
+    repo = Repo.objects.get(id=repo_id)
+    f = open(repo.files.url, 'r')
+    lines = f.read().splitlines()
+    context={'codes':lines}
+    return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
+
+def get_comments(request,repo_id):
+    # TODO check existance
+    repo = Repo.objects.get(id=repo_id)
+    comments = Comment.objects.filter(file=repo)
+    context={'comments':comments}
+    return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
 # handle user registration
 @transaction.atomic

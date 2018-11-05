@@ -1,0 +1,9 @@
+{  "comments":
+  [{% for comment in comments %}
+    {%spaceless%}
+    {% include 'codereviewer/json/comment.json' %}
+    {%endspaceless%}
+    {% if not forloop.last %},
+    {% endif %}
+    {% endfor %}]
+}
