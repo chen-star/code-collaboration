@@ -19,7 +19,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from codereviewer.tokens import account_activation_token, password_reset_token
-
+import os
 
 def index(request):
     context = {}
@@ -68,8 +68,6 @@ def edit_profile(request):
             print("Eeeeeerror: not valid form")
 
     return render(request, 'codereviewer/edit_profile.html', context)
-
-
 @login_required
 def repositories(request):
     context = {}
@@ -82,9 +80,8 @@ def repositories(request):
         membering_repos = Repo.get_membering_repos(request.user)
         context['membering_repos'] = membering_repos
 
-    context['user'] = request.user
+    context['user']=request.user
     return render(request, 'codereviewer/repo.html', context)
-
 
 # create a new repository owned by the requesting user
 @login_required
@@ -99,41 +96,40 @@ def create_repo(request):
             modify_frequency = 0
             new_repo = Repo(owner=owner, files=files, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
-            return render(request, reverse('repo'), context)
+            return redirect(reverse('repo'))
     context['form'] = CreateRepoForm()
-    return render(request, reverse('repo'), context)
+    return redirect(reverse('repo'))
 
 
 @login_required
-def review(request, repo_id):
+def review(request,repo_id):
     context = {}
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
-    f = open(repo.files.url, 'r')
+    url =  os.path.join(os.path.dirname(os.path.dirname(__file__)), repo.files.url[1:])
+    f = open(url, 'r')
     lines = f.read().splitlines()
     f.close()
-    context['codes'] = lines
-    context['repo'] = repo
-    context['filename'] = repo.files
+    context['codes']=lines
+    context['repo']=repo
+    context['filename']=repo.files
     return render(request, 'codereviewer/review.html', context)
 
-
-def get_codes(request, repo_id):
+def get_codes(request,repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
     lines = f.read().splitlines()
-    context = {'codes': lines}
+    context={'codes':lines}
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
-
-def get_comments(request, repo_id):
+def get_comments(request,repo_id):
     # TODO check existance
-    repo = Repo.objects.get(id=repo_id)
+    id=int(repo_id)
+    repo = Repo.objects.get(id=id)
     comments = Comment.objects.filter(file=repo)
-    context = {'comments': comments}
+    context={'comments':comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
-
 
 # handle user registration
 @transaction.atomic
@@ -333,5 +329,4 @@ def confirmpassword_helper(request):
             user.set_password(request.POST.get('newpassword1'))
             user.save()
             return render(request, 'codereviewer/password_reset_complete.html')
-        return render(request, 'codereviewer/password_reset_confirm.html',
-                      {'form': form, 'validate': form.non_field_errors()})
+        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form, 'validate': form.non_field_errors()})

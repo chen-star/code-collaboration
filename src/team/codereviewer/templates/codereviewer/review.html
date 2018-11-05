@@ -30,8 +30,7 @@
 {% endblock %}
 
 {% block content %}
-<!-- <div class="review-block"> -->
-<!-- <div style="line-height:1.5;width:70%;float: left;"> -->
+
 <div class="code-block" style="line-height:0;width:70%;float:left;">
   <pre>
     {% for line in codes %}
@@ -40,19 +39,12 @@
       </code>
     {% endfor %}
   </pre>
-
+<input id='line_num' value='{{ line_num }}' type='hidden'>
 </div>
 <div id="comment-block" style="width:29%;float:right;font-size:14px;">
   {% for line in codes %}
-    <p style="font-family: sans-serif;margin-bottom: 0rem;line-height:1;"><a id="addCmtButton"+>+</a></p>
+    <p style="font-family: sans-serif;margin-bottom: 0rem;line-height:1;"><a id="addCmtButton" onClick="reply_click(this.id)">+</a></p>
   {% endfor %}
-<!-- <p style="font-family: sans-serif;margin-bottom: 0rem;"><a href="#">+</a></p>
-<p style="font-family: sans-serif;margin-bottom: 0rem;"><a href="#">+</a> wenxuanx comments on Oct, 10: interesting</p>
-<p style="font-family: sans-serif;margin-bottom: 0rem;"><a href="#">+</a></p>
-<p style="font-family: sans-serif;margin-bottom: 0rem;"><a href="#">+</a> weitongz highlights this line</p>
-<p style="font-family: sans-serif;margin-bottom: 0rem;"><a href="#">+</a></p>
-<p style="font-family: sans-serif;margin-bottom: 0rem;"><a href="#">+</a></p>
-<p style="font-family: sans-serif;margin-bottom: 0rem;"><a href="#">+</a></p> -->
+
 </div>
-<!-- </div> -->
 {% endblock %}

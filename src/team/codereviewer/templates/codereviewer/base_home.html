@@ -12,7 +12,6 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'codereviewer/css/home.css' %}">
     <link rel="stylesheet" href="{% static 'codereviewer/css/mainstyle.css' %}">
-
     <!-- Font Awesome JS -->
     <script defer src="{% static 'fontawesome-free-5.3.1-web/js/solid.js' %}"></script>
     <script defer src="{% static 'fontawesome-free-5.3.1-web/js/fontawesome.js' %}"></script>
@@ -33,7 +32,7 @@
             });
         });
     </script>
-    {% block js %}{% endblock %}
+{% block js %}{% endblock %}
 </head>
 
 <body>
@@ -47,50 +46,52 @@
         <ul class="list-unstyled components">
             <p>Project folders</p>
             {% if not user.is_anonymous %}
-                <li class="active">
-                    <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Project
-                        1</a>
-                    <ul class="collapse list-unstyled" id="homeSubmenu">
-                        <li>
-                            <a href="#">File 1</a>
-                        </li>
-                        <li>
-                            <a href="#">File 2</a>
-                        </li>
-                        <li>
-                            <a href="#">File 3</a>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Project 2</a>
-                </li>
-                <li>
-                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Project
-                        3</a>
-                    <ul class="collapse list-unstyled" id="pageSubmenu">
-                        <li>
-                            <a href="#">File 1</a>
-                        </li>
-                        <li>
-                            <a href="#">File 2</a>
-                        </li>
-                        <li>
-                            <a href="#">File 3</a>
-                        </li>
-                    </ul>
-                </li>
+            <li class="active">
+                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Project
+                    1</a>
+                <ul class="collapse list-unstyled" id="homeSubmenu">
+                    <li>
+                        <a href="#">File 1</a>
+                    </li>
+                    <li>
+                        <a href="#">File 2</a>
+                    </li>
+                    <li>
+                        <a href="#">File 3</a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a href="#">Project 2</a>
+            </li>
+            <li>
+                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Project
+                    3</a>
+                <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <li>
+                        <a href="#">File 1</a>
+                    </li>
+                    <li>
+                        <a href="#">File 2</a>
+                    </li>
+                    <li>
+                        <a href="#">File 3</a>
+                    </li>
+                </ul>
+            </li>
             {% endif %}
         </ul>
 
         <ul class="list-unstyled contacts">
             {% if not user.is_anonymous %}
+                {#            接入 LOGOUT #}
                 <li><a href={% url 'logout' %}>Log Out</a></li>
                 {% block leave %}{% endblock %}
             {% endif %}
             {% if user.is_anonymous %}
+                {#           接入 LOGIN  #}
                 <li><a href="{% url 'login' %}">Log in</a></li>
-                <li><a href="{% url 'registration' %}">Register</a></li>
+                <li><a href="{% url 'registration' %}">Register</a > </li>
             {% endif %}
 
         </ul>
@@ -98,25 +99,8 @@
 
     <!-- Page Content  -->
     <div id="content">
-        {% if not user.is_anonymous %}
-            <nav class="navbar navbar-expand-lg sticky-top">
-                <div class="container-fluid">
-                    <div>
-                        <a href="/">Home</a>
-                        <a class="active" href="{% url 'settings' %}">Settings</a>
-                        <a href="{% url 'repo' %}">Repositories</a>
-                    </div>
-                    <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
-                        <form class="form-inline my-2 my-md-0 pl-5">
-                            <input class="form-control" type="text" name="search" placeholder="Search file name"
-                                   aria-label="Search">
-                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                        </form>
-                    </div>
-                </div>
-            </nav>
-            {% block content %}{% endblock %}
-        {% endif %}
+        {% block navbar %}{% endblock %}
+        {% block content %}{% endblock %}
     </div>
 
 

@@ -1,34 +1,37 @@
+
 function populateCmtList() {
   project_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1)
-    $.get("/codereviewer/get-comment/"+project_id)
+    $.get("/codereviewer/get-comments/"+project_id)
       .done(function(data) {
           var list = $("#comment-block");
-          list.html('')
-          for (var i = 0; i < data.comments.length; i++) {
+          list.html('');
+          var total_lines = parseInt(document.getElementById('line_num').value);
+          var cmt_list =[]
+          for (var i= 0; i<data.comments.length;i++){
+            cmt_list.push(data.comments[i].line_num);
+          }
+          for (var i = 0; i < total_lines; i++) {
+            console.log('add + for '+i);
+            var new_html = '<div class="addCmtPlus"><p style="font-family: sans-serif;margin-bottom: 0rem;line-height:1;"><a id="addCmtButton_"'+i+'>+</a></p>"';
+
+            if(cmt_list.includes(i)){
               var cmt = data.comments[i];
-              var new_cmt = $(cmt.html);
-              list.append(new_post);
-              var postCmtList = $("#cmt-list-"+post.id);
-              postCmtList.html('')
-              for(var j=0;j<post.comments.length;j++){
-                var cmt = post.comments[j];
-                postCmtList.append($(cmt.html));
-              }
+              new_html=new_html+$(cmt.html);
+            }
+            list.append(new_html);
           }
       });
 }
-<pre>
-  {% for line in codes %}
-    <code class="java">
-      {{ line }}
-    </code>
-  {% endfor %}
-</pre>
-
+function reply_click(clicked_id){
+  var index = 0;
+     $("#clicked_id").after('<input type="text" id="cmt_content_'+index+'" value=""><button id="sendCmt_'+index+'" type="submit" class="btn btn-success" style="font-size:15px;line-height:1.2;padding: 0.15rem .5rem;">Send</button>');
+}
+// $(document).on("click", ".addCmtPlus", function(event){
+//   $("#addCmtButton").click(function() {
+//     $("#addCmtButton").after('<input type="text" id="cmt_content_'+index+'" value=""><button id="sendCmt_'+index+'" type="submit" class="btn btn-success" style="font-size:15px;line-height:1.2;padding: 0.15rem .5rem;">Send</button>');
+//   });
 $(document).ready(function() {
-  $("#addCmtButton").click(function() {
-    $("#addCmtButton").after('<input type="text" id="textInput" value="">');
-  });
+  populateCmtList();
 });
 //
 // $(document).on("click", ".cmt-btn", function(event){

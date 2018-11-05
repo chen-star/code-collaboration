@@ -9,7 +9,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^settings/?$', views.settings, name='settings'),
-    path('settings/', views.settings, name='settings'),
     url(r'^repositories/?$', views.repositories, name='repo'),
     url(r'create_repo', views.create_repo, name='create_repo'),
     url(r'edit_profile', views.edit_profile, name='edit_profile'),
