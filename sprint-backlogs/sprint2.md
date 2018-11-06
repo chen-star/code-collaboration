@@ -18,3 +18,8 @@ Message box should contain invitation messages sent from the project owner to th
 
 3. Multiple-file uploading
 
+Upload a file folder to a newly created project repository. The implementation requires `views.py`, `forms.py`, `models.py`, `repo.html`.
+
+4. Project tree
+
+Convert the file folder structure to a project structure tree in the webpage. The implementation requires `views.py`, `forms.py`, `models.py`, `repo.html`, and JavaScript scripts.
