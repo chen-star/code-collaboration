@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
 
+# Retrieve and display messages in the message box
 def index(request):
     context = {}
     user = request.user
@@ -259,7 +260,11 @@ def invite(request):
     invitationMessage.save()
 
     # send invitation email to receiver
-    invite_email(request, sender, receiver, project)
+    invite_email(request, sender.user, receiver.user, project)
+
+
+    return HttpResponseRedirect(reverse('repo'))
+    # redirect(reverse('repo'))
 
 
 # email invitation
