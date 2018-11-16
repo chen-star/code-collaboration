@@ -27,8 +27,12 @@
 {% block content %}
         <div id="notification-box">
           <h4>Message Box</h4><br>
-          <p><a href="{% url 'repo' %}" style="font-weight:bold;">[New Message] Jiaxinc1 invites you to review new code!</a></p>
-          <p><a href="#">Wenxuanx has reviwed the code you commented on.</a></p>
-          <p><a href="#">Jinyil1 invites you to review new code!</a></p>
+          {% for message in messages %}            
+            {% if message.is_read %}
+            <p><a href="{% url 'repo' %}">{{ message.sender.user.username }} invites you to review new code!</a></p>
+            {% else %}
+            <p><a href="{% url 'repo' %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }} invites you to review new code!</a></p>
+            {% endif %}            
+          {% endfor %}                        
         </div>
 {% endblock %}
