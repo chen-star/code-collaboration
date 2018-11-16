@@ -50,8 +50,8 @@ class Repo(models.Model):
 
 # User Invitation Message
 class InvitationMessage(models.Model):
-	sender = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='sender_msg')
-	receiver = models.ForeignKey('auth.User', on_delete=models.CASCADE, related_name='receiver_msg')
+	sender = models.ForeignKey(Developer, on_delete=models.CASCADE, related_name='sender_msg')
+	receiver = models.ForeignKey(Developer, on_delete=models.CASCADE, related_name='receiver_msg')
 	project = models.OneToOneField(Repo, on_delete=models.CASCADE)
 	time = models.DateTimeField(auto_now_add=True)
 	is_read = models.BooleanField(default=False)
