@@ -245,11 +245,10 @@ def logout(request):
 def invite(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('')
-
-    # TODO: change receiver and project parameter name
+    
     receiver_name = request.POST.get('receiver')
     receiver = Developer.objects.get(user__username=receiver_name)
-    sender = request.user
+    sender = Developer.objects.get(user=request.user)
     project_name = request.POST.get('project')
     project = Repo.objects.get(project_name=project_name)
 
