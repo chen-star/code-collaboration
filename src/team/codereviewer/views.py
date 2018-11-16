@@ -23,16 +23,14 @@ import os
 
 # Retrieve and display messages in the message box
 def index(request):
-    context = {}
-    user = request.user
-
-    # if not request.user.is_authenticated:
-    return render(request, 'codereviewer/home.html', context)
-    # TODO: change user state
-    msg = Developer.objects.get(user=user).receiver_msg.all.order_by('-time')
-    print(msg)
-    context['messages'] = msg
-
+    context = {}    
+    receiver = Developer.objects.get(user=request.user)
+    if not request.user.is_authenticated:    
+        return render(request, 'codereviewer/home.html', context)
+     
+    messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')    
+    print(messages)
+    context['messages'] = messages
     return render(request, 'codereviewer/home.html', context)
 
 
