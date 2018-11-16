@@ -63,15 +63,16 @@ class Comment(models.Model):
 
 	@staticmethod
 	def get_replies(comment):
-		return Reply.objects.filter(comment=comment)
-	@staticmethod
-	def get_reply_num(comment):
-		return len(Reply.get_replies(comment))
+		replies = comment.reply
+		return Reply.objects.filter(id__in=replies)
+	# @staticmethod
+	# def get_reply_num(comment):
+	# 	return len(Comment.get_replies(comment))
 
 
 class Reply(models.Model):
-	comment = models.ForeignKey(Comment, related_name='comment', on_delete=models.CASCADE)
-	seq = models.IntegerField()
+	# comment = models.ForeignKey(Comment, related_name='comment', on_delete=models.CASCADE)
+	# seq = models.IntegerField()
 	commenter = models.ForeignKey(Developer, related_name='commenter', on_delete=models.CASCADE)
 	content = models.CharField(max_length=128)
 	comment_time = models.DateTimeField(auto_now_add=True)
