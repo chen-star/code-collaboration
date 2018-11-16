@@ -45,7 +45,7 @@
     <div class="col-sm-10"><h2>Owning Repos</h2></div>
 
     <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
-        <form action="#manage" method="get">
+        
           {% if owning_repos %}
           {% for repo in owning_repos %}
           <div class="my-3 p-3 bg-white rounded box-shadow">
@@ -75,8 +75,14 @@
               <div class="media text-muted pt-3">
                   <img src="#" alt="" class="mr-2 rounded">
                   <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                      <div class="d-flex justify-content-between align-items-center w-100">
-                          <input  class="form-control" type="text" value="Enter the email address to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a>
+                      <div class="d-flex justify-content-between align-items-center w-100">    
+                      <form action="{% url 'invite' %}" method="post">
+                        <input type="hidden" name="project" value="{{repo.project_name}}">
+                        <input  class="form-control" type="text" name="receiver" placeholder="Enter username to add a member" style="width: 400px">
+                        <input class="btn btn-primary" type="submit" value="Add">
+                        {% csrf_token %}
+                    </form>                   
+                          <!-- <input  class="form-control" type="text" name="receiver" id="receiver" placeholder="Enter username to add a member" style="width: 400px"> <a id="add_delete" href="#">Add</a> -->
                       </div>
                   </div>
               </div>
@@ -87,7 +93,7 @@
             <h5>No owning repos by now!</h5>
             </div>
             {% endif %}
-        </form>
+        
   </div>
   <div class="col-sm-10"><h2>Reviewing Repos</h2></div>
   <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
