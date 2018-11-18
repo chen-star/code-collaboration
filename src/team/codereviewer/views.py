@@ -21,17 +21,16 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
 
+# Retrieve and display messages in the message box
 def index(request):
-    context = {}
-    user = request.user
-
-    # if not request.user.is_authenticated:
-    return render(request, 'codereviewer/home.html', context)
-    # TODO: change user state
-    msg = Developer.objects.get(user=user).receiver_msg.all.order_by('-time')
-    print(msg)
-    context['messages'] = msg
-
+    context = {}    
+    receiver = Developer.objects.get(user=request.user)
+    if not request.user.is_authenticated:    
+        return render(request, 'codereviewer/home.html', context)
+     
+    messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')    
+    print(messages)
+    context['messages'] = messages
     return render(request, 'codereviewer/home.html', context)
 
 
@@ -245,11 +244,10 @@ def logout(request):
 def invite(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('')
-
-    # TODO: change receiver and project parameter name
+    
     receiver_name = request.POST.get('receiver')
     receiver = Developer.objects.get(user__username=receiver_name)
-    sender = request.user
+    sender = Developer.objects.get(user=request.user)
     project_name = request.POST.get('project')
     project = Repo.objects.get(project_name=project_name)
 
@@ -260,7 +258,11 @@ def invite(request):
     invitationMessage.save()
 
     # send invitation email to receiver
-    invite_email(request, sender, receiver, project)
+    invite_email(request, sender.user, receiver.user, project)
+
+
+    return HttpResponseRedirect(reverse('repo'))
+    # redirect(reverse('repo'))
 
 
 # email invitation
