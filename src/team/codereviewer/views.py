@@ -23,13 +23,6 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
 
-<<<<<<< HEAD
-
-# Retrieve and display messages in the message box
-||||||| merged common ancestors
-=======
-
->>>>>>> registerWithGithub
 def index(request):
     context = {}
     user = request.user
@@ -126,7 +119,6 @@ def review(request, repo_id):
     context['filename'] = repo.files
     return render(request, 'codereviewer/review.html', context)
 
-<<<<<<< HEAD
 
 @login_required
 def mark_read_then_review(request, repo_id):
@@ -141,13 +133,7 @@ def mark_read_then_review(request, repo_id):
     return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
 
 
-def get_codes(request,repo_id):
-||||||| merged common ancestors
-def get_codes(request,repo_id):
-=======
-
 def get_codes(request, repo_id):
->>>>>>> registerWithGithub
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
