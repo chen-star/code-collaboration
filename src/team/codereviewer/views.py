@@ -445,3 +445,11 @@ def confirmpassword_helper(request):
             return render(request, 'codereviewer/password_reset_complete.html')
         return render(request, 'codereviewer/password_reset_confirm.html',
                       {'form': form, 'validate': form.non_field_errors()})
+
+@login_required
+@ensure_csrf_cookie
+def search_bar(request):
+    filename = request.GET.get('search', '')
+    userobject = request.user
+    user = Repo.objects.filter(owner=userobject)
+
