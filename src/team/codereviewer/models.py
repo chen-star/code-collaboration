@@ -63,7 +63,7 @@ class Repo(models.Model):
 
 class File(models.Model):
     file_name = models.FileField(upload_to='sourcecode', blank=True)
-    repo = models.ForeignKey(Repo, on_delete=models.CASCADE)
+    repo = models.ForeignKey(Repo, on_delete=models.CASCADE, related_name="repository")
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

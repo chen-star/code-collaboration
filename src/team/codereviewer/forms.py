@@ -6,11 +6,13 @@ from codereviewer.models import *
 
 # create repository form
 class CreateRepoForm(forms.ModelForm):
-    file_field = forms.FileField(label='files', widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    repo_name = forms.CharField(max_length=30,
+                                label='Repository Name',
+                                widget=forms.TextInput())
 
     class Meta:
-        model = Repo
-        fields = ['project_name']
+        model = File
+        fields = ['file_name']
         widgets = {'files': forms.FileInput()}
 
 
@@ -56,7 +58,7 @@ class DeveloperRegForm(forms.Form):
 
 
 # developer profile updating form
-class UpdateProfileForm(forms.ModelForm):         
+class UpdateProfileForm(forms.ModelForm):
     class Meta:
         model = Developer
         fields = ['company', 'department', 'group', 'title', 'avatar']
