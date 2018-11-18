@@ -21,13 +21,15 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
 
+
 # Retrieve and display messages in the message box
 def index(request):
-    context = {}    
-    receiver = Developer.objects.get(user=request.user)
+    context = {}
+    user = request.user
     if not request.user.is_authenticated:    
         return render(request, 'codereviewer/home.html', context)
-     
+
+    receiver = Developer.objects.get(user=user)
     messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')    
     print(messages)
     context['messages'] = messages
@@ -73,10 +75,10 @@ def repositories(request):
     if request.method == 'GET':
         form = CreateRepoForm()
         context['form'] = form
-        owning_repos = Repo.get_owning_repos(request.user)
+        owning_repos = Repo.get_owning_repos(request.user).order_by('-modified_time')
         context['owning_repos'] = owning_repos
 
-        membering_repos = Repo.get_membering_repos(request.user)
+        membering_repos = Repo.get_membering_repos(request.user).order_by('-modified_time')
         context['membering_repos'] = membering_repos
 
     context['user']=request.user
@@ -113,6 +115,20 @@ def review(request,repo_id):
     context['repo']=repo
     context['filename']=repo.files
     return render(request, 'codereviewer/review.html', context)
+
+
+@login_required
+def mark_read_then_review(request, repo_id):
+    context = {}
+
+    receiver = Developer.objects.get(user=request.user)
+    project = Repo.objects.get(id=repo_id)
+
+    message = InvitationMessage.objects.filter(receiver=receiver).filter(project=project)[0]
+    message.is_read = True
+    message.save()
+    return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
+
 
 def get_codes(request,repo_id):
     # TODO check existance
