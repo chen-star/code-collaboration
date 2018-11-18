@@ -41,7 +41,6 @@ def index(request):
 
     receiver = Developer.objects.get(user=user)
     messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')
-    print(messages)
     context['messages'] = messages
     return render(request, 'codereviewer/home.html', context)
 
@@ -57,6 +56,7 @@ def settings(request):
     return render(request, 'codereviewer/settings.html', context)
 
 
+@login_required
 def edit_profile(request):
     context = {}
     if request.method == 'GET':
@@ -151,7 +151,8 @@ def mark_read_then_review(request, repo_id):
     return redirect(reverse('review', kwargs = {'repo_id': repo_id}))
 
 
-def get_codes(request, repo_id):
+@login_required
+def get_codes(request,repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
@@ -160,7 +161,8 @@ def get_codes(request, repo_id):
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
-def get_comments(request, repo_id):
+@login_required
+def get_comments(request,repo_id):
     # TODO check existance
     id = int(repo_id)
     repo = Repo.objects.get(id=id)
@@ -533,36 +535,38 @@ def create_repo_model(repository):
     return repo
 
 
-# Unzip the uploaded zip file in place, and generate flattened file name (some/path/name/filename)
-
+# Unzip the uploaded zip file in place, and generate flattened file name
+# Format like: some__path__name__filename
 def unzip(file_name, store_dir):
     with open(file_name, 'rb') as file:
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
 
-    osxjunk = os.path.join(store_dir,'__MACOSX')
-    shutil.rmtree(osxjunk)
+    # remove junk folder
+    junkfolder = os.path.join(store_dir,'__MACOSX')
+    shutil.rmtree(junkfolder)
 
+    # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
-        for file_ in files:
-            fname = os.path.join(root, file_)
+        for file_ in files:     
+            fname = os.path.join(root, file_)            
             ffname = fname
-
             dumped_fname = fname.replace('/', '__')
-            os.rename(ffname, '/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode'+ '/' + dumped_fname)
 
-        try:
-            shutil.rmtree(store_dir)
-            os.remove(file_name)
-        except:
-            pass
+            # move file from temp folder to sourcecode folder
+            os.rename(ffname, settings.MEDIA_DIR + 'sourcecode/' + dumped_fname)
+
+    # remove temp folder and original zip file
+    try:
+        shutil.rmtree(store_dir)
+        os.remove(file_name)
+    except:
+        pass
 
 
-
-
-def save_zip_to_database(file_name):
-    unzip(file_name, 'pic')
-
+# Handle an uploaded zip file and save it in file system
+def save_zip(file_name):
+    unzip(file_name, file_name.split('.')[0])
 
 
 # save_zip_to_database('/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode/pic.zip')
