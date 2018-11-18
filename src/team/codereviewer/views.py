@@ -23,6 +23,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
 
+
 def index(request):
     context = {}
     user = request.user
@@ -95,11 +96,13 @@ def create_repo(request):
         form = CreateRepoForm(request.POST, request.FILES)
         if form.is_valid():
             owner = Developer.objects.get(user=request.user)
-            files = form.cleaned_data['files']
-            project_name = form.cleaned_data['project_name']
+            files = form.cleaned_data['file_name']
+            project_name = form.cleaned_data['repo_name']
             modify_frequency = 0
-            new_repo = Repo(owner=owner, files=files, project_name=project_name, modify_frequency=modify_frequency)
+            new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
+            file_obj = File(file_name=files, repo=new_repo)
+            file_obj.save()
             return redirect(reverse('repo'))
     context['form'] = CreateRepoForm()
     return redirect(reverse('repo'))
@@ -110,6 +113,8 @@ def review(request, repo_id):
     context = {}
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
+    #
+    file = File.objects.get(repo=repo)
     url = os.path.join(os.path.dirname(os.path.dirname(__file__)), repo.files.url[1:])
     f = open(url, 'r')
     lines = f.read().splitlines()
