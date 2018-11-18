@@ -6,9 +6,11 @@ from codereviewer.models import *
 
 # create repository form
 class CreateRepoForm(forms.ModelForm):
+    file_field = forms.FileField(label='files', widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
     class Meta:
         model = Repo
-        fields = ['project_name', 'files']
+        fields = ['project_name']
         widgets = {'files': forms.FileInput()}
 
 
