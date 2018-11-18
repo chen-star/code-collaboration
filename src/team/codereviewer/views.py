@@ -1,3 +1,4 @@
+import urllib
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
@@ -20,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
+
 
 def index(request):
     context = {}
@@ -68,6 +70,8 @@ def edit_profile(request):
             print("Eeeeeerror: not valid form")
 
     return render(request, 'codereviewer/edit_profile.html', context)
+
+
 @login_required
 def repositories(request):
     context = {}
@@ -80,8 +84,9 @@ def repositories(request):
         membering_repos = Repo.get_membering_repos(request.user)
         context['membering_repos'] = membering_repos
 
-    context['user']=request.user
+    context['user'] = request.user
     return render(request, 'codereviewer/repo.html', context)
+
 
 # create a new repository owned by the requesting user
 @login_required
@@ -102,34 +107,37 @@ def create_repo(request):
 
 
 @login_required
-def review(request,repo_id):
+def review(request, repo_id):
     context = {}
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
-    url =  os.path.join(os.path.dirname(os.path.dirname(__file__)), repo.files.url[1:])
+    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), repo.files.url[1:])
     f = open(url, 'r')
     lines = f.read().splitlines()
     f.close()
-    context['codes']=lines
-    context['repo']=repo
-    context['filename']=repo.files
+    context['codes'] = lines
+    context['repo'] = repo
+    context['filename'] = repo.files
     return render(request, 'codereviewer/review.html', context)
 
-def get_codes(request,repo_id):
+
+def get_codes(request, repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
     lines = f.read().splitlines()
-    context={'codes':lines}
+    context = {'codes': lines}
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
-def get_comments(request,repo_id):
+
+def get_comments(request, repo_id):
     # TODO check existance
-    id=int(repo_id)
+    id = int(repo_id)
     repo = Repo.objects.get(id=id)
     comments = Comment.objects.filter(file=repo)
-    context={'comments':comments}
+    context = {'comments': comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
+
 
 # handle user registration
 @transaction.atomic
@@ -229,6 +237,101 @@ def login(request):
 
     else:
         return render(request, 'codereviewer/login.html')
+
+
+# github login
+@ensure_csrf_cookie
+@transaction.atomic
+def github_login(request):
+    # define github account parameters
+    GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
+    GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5dt'
+    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/repositories'
+    GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+
+    data = {
+        'client_id': GITHUB_CLIENTID,
+        'client_secret': GITHUB_CLIENTSECRET,
+        'redirect_uri': GITHUB_CALLBACK,
+        'state': _get_refer_url(request),
+    }
+    github_auth_url = '%s?%s' % (GITHUB_AUTHORIZE_URL, urllib.parse.urlencode(data))
+    print('git_hub_auth_url', github_auth_url)
+    return HttpResponseRedirect(github_auth_url)
+
+def _get_refer_url(request):
+    refer_url = request.META.get('HTTP_REFER',
+                                 '/')
+    host = request.META['HTTP_HOST']
+    if refer_url.startswith('http') and host not in refer_url:
+        refer_url = '/'
+    return refer_url
+
+#
+# # github auth
+# def github_auth(request):
+#     template_html = 'account/login.html'
+#
+#     # 如果申请登陆页面成功后，就会返回code和state(被坑了好久)
+#     if 'code' not in request.GET:
+#         return render(request,template_html)
+#
+#     code = request.GET.get('code')
+#
+#     # 第二步
+#     # 将得到的code，通过下面的url请求得到access_token
+#     url = 'https://github.com/login/oauth/access_token'
+#     data = {
+#         'grant_type': 'authorization_code',
+#         'client_id': GITHUB_CLIENTID,
+#         'client_secret': GITHUB_CLIENTSECRET,
+#         'code': code,
+#         'redirect_uri': GITHUB_CALLBACK,
+#     }
+#
+#     data = urllib.parse.urlencode(data)
+#
+#     # 请求参数需要bytes类型
+#     binary_data = data.encode('utf-8')
+#     print('data:', data)
+#
+#     # 设置请求返回的数据类型
+#     headers={'Accept': 'application/json'}
+#     req = urllib.request.Request(url, binary_data,headers)
+#     print('req:', req)
+#     response = urllib.request.urlopen(req)
+#
+#     # json是str类型的，将bytes转成str
+#     result = result.decode('ascii')
+#     result = json.loads(result)
+#     access_token = result['access_token']
+#     # print('access_token:', access_token)
+#
+#     url = 'https://api.github.com/user?access_token=%s'
+#      % (access_token)
+#     response = urllib.request.urlopen(url)
+#     html = response.read()
+#     html = html.decode('ascii')
+#     data = json.loads(html)
+#     username = data['name']
+#     # print('username:', username)
+#     password = '111111'
+#
+#     # 如果不存在username，则创建
+#     try:
+#         user1 = User.objects.get(username=username)
+#     except:
+#         user2 = User.objects.create_user(username=username,
+#         password=password)
+#         user2.save()
+#         profile = Profile.objects.create(user=user2)
+#         profile.save()
+#
+#     # 登陆认证
+#     user = authenticate(username=username,
+#     password=password)
+#     login(request, user)
+#     return HttpResponseRedirect(reverse('index'))
 
 
 # user logout
@@ -331,4 +434,5 @@ def confirmpassword_helper(request):
             user.set_password(request.POST.get('newpassword1'))
             user.save()
             return render(request, 'codereviewer/password_reset_complete.html')
-        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form, 'validate': form.non_field_errors()})
+        return render(request, 'codereviewer/password_reset_confirm.html',
+                      {'form': form, 'validate': form.non_field_errors()})

@@ -12,8 +12,8 @@ urlpatterns = [
     url(r'^repositories/?$', views.repositories, name='repo'),
     url(r'create_repo', views.create_repo, name='create_repo'),
     url(r'edit_profile', views.edit_profile, name='edit_profile'),
-    url(r'^review/?$', views.review, name='review'),#to be deleted
-    url(r'^review/(?P<repo_id>.+)$', views.review, name='review'),#to be deleted
+    url(r'^review/?$', views.review, name='review'),  # to be deleted
+    url(r'^review/(?P<repo_id>.+)$', views.review, name='review'),  # to be deleted
     # url(r'^review/(?P<project_id>.+)/(?P<file_name>.+)$', views.review, name='review'),
     url(r'^get-comments/(?P<repo_id>.+)$', views.get_comments),
     url(r'^registration/?$', views.registration, name='registration'),
@@ -25,5 +25,7 @@ urlpatterns = [
     re_path('resetpwd', views.resetpassword, name='resetpassword'),
     re_path(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
             views.confirmpassword, name='password_confirm'),
-    path('reset/', views.confirmpassword_helper, name='resetp')
+    path('reset/', views.confirmpassword_helper, name='resetp'),
+    url(r'github_login/$', views.github_login, name='github_login'),
+    url(r'github/$', views.github_auth, name='github_oauth'),
 ]
