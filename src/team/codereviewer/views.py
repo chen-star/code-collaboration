@@ -19,7 +19,13 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
 from codereviewer.tokens import account_activation_token, password_reset_token
+
+from django.conf import settings as django_settings
+
 import os
+import zipfile
+import shutil
+import string
 from github import Github
 import base64
 from urllib.request import *
@@ -525,3 +531,38 @@ def create_repo_model(repository):
     repo = Repo(owner=owner, project_name=repository.name)
     repo.save()
     return repo
+
+
+# Unzip the uploaded zip file in place, and generate flattened file name (some/path/name/filename)
+
+def unzip(file_name, store_dir):
+    with open(file_name, 'rb') as file:
+        zfile = zipfile.ZipFile(file)
+        zfile.extractall(store_dir)
+
+    osxjunk = os.path.join(store_dir,'__MACOSX')
+    shutil.rmtree(osxjunk)
+
+    for root, dirs, files in os.walk(store_dir):
+        for file_ in files:
+            fname = os.path.join(root, file_)
+            ffname = fname
+
+            dumped_fname = fname.replace('/', '__')
+            os.rename(ffname, '/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode'+ '/' + dumped_fname)
+
+        try:
+            shutil.rmtree(store_dir)
+            os.remove(file_name)
+        except:
+            pass
+
+
+
+
+def save_zip_to_database(file_name):
+    unzip(file_name, 'pic')
+
+
+
+# save_zip_to_database('/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode/pic.zip')
