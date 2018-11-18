@@ -91,6 +91,7 @@
             {% if user.is_anonymous %}
                 {#           接入 LOGIN  #}
                 <li><a href="{% url 'login' %}">Log in</a></li>
+                <li><a href="{% url 'github_login' %}">Login With Github Account</a></li>
                 <li><a href="{% url 'registration' %}">Register</a > </li>
             {% endif %}
 

@@ -131,3 +131,5 @@ MEDIA_URL = "/media/"
 
 # print email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+

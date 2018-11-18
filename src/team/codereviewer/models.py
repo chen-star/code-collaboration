@@ -47,6 +47,22 @@ class Repo(models.Model):
 		return Repo.objects.filter(owner__in=owner)
 
 
+<<<<<<< HEAD
+||||||| merged common ancestors
+	def __str__(self):
+		return self.commenter.user.username +' comments on '+(str(self.comment_time))+': '+self.content
+
+	@property
+	def html(self):
+		return __str__
+=======
+	def __str__(self):
+		return self.commenter.user.username +' comments on '+(str(self.comment_time))+': '+self.content
+
+	@property
+	def html(self):
+		return __str__(self)
+>>>>>>> registerWithGithub
 
 # User Invitation Message
 class InvitationMessage(models.Model):

@@ -1,8 +1,10 @@
+import urllib
 from django.contrib import auth
 from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
+import json
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
@@ -21,8 +23,13 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
 
+<<<<<<< HEAD
 
 # Retrieve and display messages in the message box
+||||||| merged common ancestors
+=======
+
+>>>>>>> registerWithGithub
 def index(request):
     context = {}
     user = request.user
@@ -69,6 +76,8 @@ def edit_profile(request):
             print("Eeeeeerror: not valid form")
 
     return render(request, 'codereviewer/edit_profile.html', context)
+
+
 @login_required
 def repositories(request):
     context = {}
@@ -81,8 +90,9 @@ def repositories(request):
         membering_repos = Repo.get_membering_repos(request.user).order_by('-modified_time')
         context['membering_repos'] = membering_repos
 
-    context['user']=request.user
+    context['user'] = request.user
     return render(request, 'codereviewer/repo.html', context)
+
 
 # create a new repository owned by the requesting user
 @login_required
@@ -103,19 +113,20 @@ def create_repo(request):
 
 
 @login_required
-def review(request,repo_id):
+def review(request, repo_id):
     context = {}
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
-    url =  os.path.join(os.path.dirname(os.path.dirname(__file__)), repo.files.url[1:])
+    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), repo.files.url[1:])
     f = open(url, 'r')
     lines = f.read().splitlines()
     f.close()
-    context['codes']=lines
-    context['repo']=repo
-    context['filename']=repo.files
+    context['codes'] = lines
+    context['repo'] = repo
+    context['filename'] = repo.files
     return render(request, 'codereviewer/review.html', context)
 
+<<<<<<< HEAD
 
 @login_required
 def mark_read_then_review(request, repo_id):
@@ -131,20 +142,28 @@ def mark_read_then_review(request, repo_id):
 
 
 def get_codes(request,repo_id):
+||||||| merged common ancestors
+def get_codes(request,repo_id):
+=======
+
+def get_codes(request, repo_id):
+>>>>>>> registerWithGithub
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     f = open(repo.files.url, 'r')
     lines = f.read().splitlines()
-    context={'codes':lines}
+    context = {'codes': lines}
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
-def get_comments(request,repo_id):
+
+def get_comments(request, repo_id):
     # TODO check existance
-    id=int(repo_id)
+    id = int(repo_id)
     repo = Repo.objects.get(id=id)
     comments = Comment.objects.filter(file=repo)
-    context={'comments':comments}
+    context = {'comments': comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
+
 
 # handle user registration
 @transaction.atomic
@@ -244,6 +263,95 @@ def login(request):
 
     else:
         return render(request, 'codereviewer/login.html')
+
+
+# github login
+@ensure_csrf_cookie
+@transaction.atomic
+def github_login(request):
+    # define github account parameters
+    GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
+    GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
+    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
+    GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
+
+    data = {
+        'client_id': GITHUB_CLIENTID,
+        'client_secret': GITHUB_CLIENTSECRET,
+        'redirect_uri': GITHUB_CALLBACK,
+        'state': _get_refer_url(request),
+    }
+    github_auth_url = '%s?%s' % (GITHUB_AUTHORIZE_URL, urllib.parse.urlencode(data))
+    print('git_hub_auth_url', github_auth_url)
+    return HttpResponseRedirect(github_auth_url)
+
+
+def _get_refer_url(request):
+    refer_url = request.META.get('HTTP_REFER',
+                                 '/')
+    host = request.META['HTTP_HOST']
+    if refer_url.startswith('http') and host not in refer_url:
+        refer_url = '/'
+    return refer_url
+
+
+# github auth
+def github_auth(request):
+    # define github account parameters
+    GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
+    GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
+    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
+
+    if 'code' not in request.GET:
+        return redirect(reverse('index'))
+
+    code = request.GET.get('code')
+
+    url = 'https://github.com/login/oauth/access_token'
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': GITHUB_CLIENTID,
+        'client_secret': GITHUB_CLIENTSECRET,
+        'code': code,
+        'redirect_uri': GITHUB_CALLBACK,
+    }
+
+    data = urllib.parse.urlencode(data)
+    binary_data = data.encode('utf-8')
+    print('data:', data)
+    headers = {'Accept': 'application/json'}
+    req = urllib.request.Request(url, binary_data, headers)
+    print('req:', req)
+    response = urllib.request.urlopen(req)
+    print(response)
+
+    result = response.read()
+    result = json.loads(result)
+    access_token = result['access_token']
+
+    url = 'https://api.github.com/user?access_token=%s' % (access_token)
+    response = urllib.request.urlopen(url)
+    html = response.read()
+    html = html.decode('ascii')
+    data = json.loads(html)
+    username = data['name']
+    print('github username:', username)
+    password = 'admin'
+
+    try:
+        user1 = User.objects.get(username=username)
+    except:
+        user2 = User.objects.create_user(username=username,
+                                         password=password)
+        user2.save()
+        new_developer = Developer(user=user2)
+        new_developer.save()
+
+    user = authenticate(username=username,
+                        password=password)
+    user.is_active = True
+    auth.login(request, user)
+    return HttpResponseRedirect(reverse('repo'))
 
 
 # user logout
@@ -349,4 +457,5 @@ def confirmpassword_helper(request):
             user.set_password(request.POST.get('newpassword1'))
             user.save()
             return render(request, 'codereviewer/password_reset_complete.html')
-        return render(request, 'codereviewer/password_reset_confirm.html', {'form': form, 'validate': form.non_field_errors()})
+        return render(request, 'codereviewer/password_reset_confirm.html',
+                      {'form': form, 'validate': form.non_field_errors()})
