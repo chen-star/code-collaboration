@@ -255,7 +255,7 @@ def login(request):
 
         if user is not None and user.is_active:
             auth.login(request, user)
-            return render(request, 'codereviewer/home.html')
+            return HttpResponseRedirect(reverse('home'))
         else:
             return HttpResponseRedirect(reverse('login'))
 
