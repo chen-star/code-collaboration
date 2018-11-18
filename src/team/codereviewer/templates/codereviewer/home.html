@@ -29,9 +29,9 @@
           <h4>Message Box</h4><br>
           {% for message in messages %}            
             {% if message.is_read %}
-            <p><a href="{% url 'repo' %}">{{ message.sender.user.username }} invites you to review new code!</a></p>
+            <p><a href="{% url 'review' message.project.id %}">{{ message.sender.user.username }} invites you to review new code!</a></p>
             {% else %}
-            <p><a href="{% url 'repo' %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }} invites you to review new code!</a></p>
+            <p><a href="{% url 'mark_read_then_review' message.project.id %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }} invites you to review new code!</a></p>
             {% endif %}            
           {% endfor %}                        
         </div>

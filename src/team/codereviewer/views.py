@@ -141,7 +141,8 @@ def mark_read_then_review(request, repo_id):
     message = InvitationMessage.objects.filter(receiver=receiver).filter(project=project)[0]
     message.is_read = True
     message.save()
-    return render(request, reverse('review', kwargs={'repo_id': repo_id}), context)
+    # return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
+    return redirect(reverse('review', kwargs = {'repo_id': repo_id}))
 
 
 def get_codes(request, repo_id):
