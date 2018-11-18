@@ -75,3 +75,18 @@ class InvitationMessage(models.Model):
 
 	def __str__(self):
 		return 'sender: {0}, receiver: {1}'.format(self.sender, self.receiver)
+
+
+class Comment(models.Model):
+	file = models.ForeignKey(Repo, related_name='file', on_delete=models.CASCADE)
+	line_num = models.IntegerField()
+	commenter = models.ForeignKey(Developer, related_name='commenter', on_delete=models.CASCADE)
+	content = models.CharField(max_length=128)
+	comment_time = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.commenter.user.username +' comments on '+(str(self.comment_time))+': '+self.content
+
+	@property
+	def html(self):
+		return __str__(self)

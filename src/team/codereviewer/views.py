@@ -23,6 +23,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
 
+
 def index(request):
     context = {}
     user = request.user
