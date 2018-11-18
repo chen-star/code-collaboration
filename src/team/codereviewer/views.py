@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
+import json
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
@@ -245,8 +246,8 @@ def login(request):
 def github_login(request):
     # define github account parameters
     GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
-    GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5dt'
-    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/repositories'
+    GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
+    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
     GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 
     data = {
@@ -259,6 +260,7 @@ def github_login(request):
     print('git_hub_auth_url', github_auth_url)
     return HttpResponseRedirect(github_auth_url)
 
+
 def _get_refer_url(request):
     refer_url = request.META.get('HTTP_REFER',
                                  '/')
@@ -267,71 +269,64 @@ def _get_refer_url(request):
         refer_url = '/'
     return refer_url
 
-#
-# # github auth
-# def github_auth(request):
-#     template_html = 'account/login.html'
-#
-#     # 如果申请登陆页面成功后，就会返回code和state(被坑了好久)
-#     if 'code' not in request.GET:
-#         return render(request,template_html)
-#
-#     code = request.GET.get('code')
-#
-#     # 第二步
-#     # 将得到的code，通过下面的url请求得到access_token
-#     url = 'https://github.com/login/oauth/access_token'
-#     data = {
-#         'grant_type': 'authorization_code',
-#         'client_id': GITHUB_CLIENTID,
-#         'client_secret': GITHUB_CLIENTSECRET,
-#         'code': code,
-#         'redirect_uri': GITHUB_CALLBACK,
-#     }
-#
-#     data = urllib.parse.urlencode(data)
-#
-#     # 请求参数需要bytes类型
-#     binary_data = data.encode('utf-8')
-#     print('data:', data)
-#
-#     # 设置请求返回的数据类型
-#     headers={'Accept': 'application/json'}
-#     req = urllib.request.Request(url, binary_data,headers)
-#     print('req:', req)
-#     response = urllib.request.urlopen(req)
-#
-#     # json是str类型的，将bytes转成str
-#     result = result.decode('ascii')
-#     result = json.loads(result)
-#     access_token = result['access_token']
-#     # print('access_token:', access_token)
-#
-#     url = 'https://api.github.com/user?access_token=%s'
-#      % (access_token)
-#     response = urllib.request.urlopen(url)
-#     html = response.read()
-#     html = html.decode('ascii')
-#     data = json.loads(html)
-#     username = data['name']
-#     # print('username:', username)
-#     password = '111111'
-#
-#     # 如果不存在username，则创建
-#     try:
-#         user1 = User.objects.get(username=username)
-#     except:
-#         user2 = User.objects.create_user(username=username,
-#         password=password)
-#         user2.save()
-#         profile = Profile.objects.create(user=user2)
-#         profile.save()
-#
-#     # 登陆认证
-#     user = authenticate(username=username,
-#     password=password)
-#     login(request, user)
-#     return HttpResponseRedirect(reverse('index'))
+
+# github auth
+def github_auth(request):
+    # define github account parameters
+    GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
+    GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
+    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
+
+    if 'code' not in request.GET:
+        return redirect(reverse('index'))
+
+    code = request.GET.get('code')
+
+    url = 'https://github.com/login/oauth/access_token'
+    data = {
+        'grant_type': 'authorization_code',
+        'client_id': GITHUB_CLIENTID,
+        'client_secret': GITHUB_CLIENTSECRET,
+        'code': code,
+        'redirect_uri': GITHUB_CALLBACK,
+    }
+
+    data = urllib.parse.urlencode(data)
+    binary_data = data.encode('utf-8')
+    print('data:', data)
+    headers = {'Accept': 'application/json'}
+    req = urllib.request.Request(url, binary_data, headers)
+    print('req:', req)
+    response = urllib.request.urlopen(req)
+    print(response)
+
+    result = response.read()
+    result = json.loads(result)
+    access_token = result['access_token']
+
+    url = 'https://api.github.com/user?access_token=%s' % (access_token)
+    response = urllib.request.urlopen(url)
+    html = response.read()
+    html = html.decode('ascii')
+    data = json.loads(html)
+    username = data['name']
+    print('github username:', username)
+    password = 'admin'
+
+    try:
+        user1 = User.objects.get(username=username)
+    except:
+        user2 = User.objects.create_user(username=username,
+                                         password=password)
+        user2.save()
+        new_developer = Developer(user=user2)
+        new_developer.save()
+
+    user = authenticate(username=username,
+                        password=password)
+    user.is_active = True
+    auth.login(request, user)
+    return HttpResponseRedirect(reverse('repo'))
 
 
 # user logout

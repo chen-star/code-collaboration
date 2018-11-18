@@ -58,7 +58,7 @@ class Comment(models.Model):
 
 	@property
 	def html(self):
-		return __str__
+		return __str__(self)
 
 # User Invitation Message
 class InvitationMessage(models.Model):
