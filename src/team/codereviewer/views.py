@@ -451,7 +451,6 @@ def confirmpassword_helper(request):
             return render(request, 'codereviewer/password_reset_complete.html')
         return render(request, 'codereviewer/password_reset_confirm.html',
                       {'form': form, 'validate': form.non_field_errors()})
-<<<<<<< HEAD
 
 @login_required
 @ensure_csrf_cookie
@@ -459,10 +458,6 @@ def search_bar(request):
     filename = request.GET.get('search', '')
     userobject = request.user
     user = Repo.objects.filter(owner=userobject)
-
-||||||| merged common ancestors
-=======
-
 
 @csrf_exempt
 def get_repo_from_github(request):
@@ -529,4 +524,3 @@ def create_repo_model(repository):
     repo = Repo(owner=owner, project_name=repository.name)
     repo.save()
     return repo
->>>>>>> getRepoFromGithub
