@@ -468,9 +468,33 @@ def confirmpassword_helper(request):
 @login_required
 @ensure_csrf_cookie
 def search_bar(request):
-    filename = request.GET.get('search', '')
-    userobject = request.user
-    user = Repo.objects.filter(owner=userobject)
+    if request.is_ajax():
+        q = request.GET.get('term', '')
+        userobject = request.user
+        owner = Developer.objects.get(user=userobject)
+        user = Repo.objects.filter(owner=owner)
+        results = []
+        for repo in user:
+            # files = File.objects.filter(repo=repo)
+            file = codereviewer.models.File.objects.get(repo=repo)
+            url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+            filename = url[url.rfind('/') + 1:]
+            if re.search(q, filename, re.IGNORECASE):
+                result = str(repo.id) + ',' + url[url.rfind('/') + 1:]
+                results.append(result)
+        data = json.dumps(results)
+        return HttpResponse(data, 'application/json')
+    else:
+        print("wojinlaile!!!")
+        print(request)
+        fileName = request.POST.get('fileSearch', '')
+        fileName = fileName[fileName.find(',') + 1:]
+        print(fileName)
+        file = codereviewer.models.File.objects.filter(file_name='sourcecode/' + fileName)[:1].get()
+        print(file)
+        repo = file.repo
+        return review(request, repo.id)
+
 
 @csrf_exempt
 def get_repo_from_github(request):

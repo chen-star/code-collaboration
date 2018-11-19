@@ -5,17 +5,25 @@
 {% endblock %}
 
 {% block navbar %}
-    <nav class="navbar navbar-expand-lg sticky-top">
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css"
+          media="all"/>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"
+            type="text/javascript"></script>
+    <script src="{% static 'codereviewer/js/search.js' %}" type="text/javascript"></script>
+    <nav class="navbar navbar-expand-lg navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div>
-                <a class="active"  href="/">Home</a>
+                <a class="active" href="/">Home</a>
                 <a href="{% url 'settings' %}">Settings</a>
                 <a href="{% url 'repo' %}">Repositories</a>
             </div>
-            <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
-                <form class="form-inline my-2 my-md-0 pl-5">
-                    <input class="form-control" type="text" name="search" placeholder="Search file name"
-                           aria-label="Search">
+            <div class="ui-widge collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
+                <form class="form-inline my-2 my-md-0 pl-5" autocomplete="off" action="{% url 'search' %}"
+                      method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" name="fileSearch" id="fileSearch"
+                           placeholder="Search file name">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                 </form>
             </div>
@@ -25,14 +33,15 @@
 {% endblock %}
 
 {% block content %}
-        <div id="notification-box">
-          <h4>Message Box</h4><br>
-          {% for message in messages %}            
+    <div id="notification-box">
+        <h4>Message Box</h4><br>
+        {% for message in messages %}
             {% if message.is_read %}
-            <p><a href="{% url 'review' message.project.id %}">{{ message.sender.user.username }} invites you to review new code!</a></p>
+                <p><a href="{% url 'repo' %}">{{ message.sender.user.username }} invites you to review new code!</a></p>
             {% else %}
-            <p><a href="{% url 'mark_read_then_review' message.project.id %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }} invites you to review new code!</a></p>
-            {% endif %}            
-          {% endfor %}                        
-        </div>
+                <p><a href="{% url 'repo' %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }}
+                    invites you to review new code!</a></p>
+            {% endif %}
+        {% endfor %}
+    </div>
 {% endblock %}
