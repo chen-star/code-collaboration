@@ -25,7 +25,7 @@ import base64
 from urllib.request import *
 from urllib.error import *
 import django
-from django.core.files import File
+import codereviewer
 
 
 def index(request):
@@ -504,10 +504,9 @@ def create_github_file(download_url):
 
 def create_file_model(file, repo):
     myFile = django.core.files.File(file)
-    file_model = File.create(repo)
-    print(file_model)
-    file_model.file_name.save(myFile.name[myFile.name.rfind('/') + 1], myFile)
-    print(file_model)
+    file_model = codereviewer.models.File()
+    file_model.file_name = myFile
+    file_model.repo = repo
     file_model.save()
 
 

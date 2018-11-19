@@ -67,12 +67,7 @@ class File(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return 'file: {0}'.format(self.file.file)
-
-    @staticmethod
-    def create(repo):
-        print(repo)
-        return File(repo=repo)
+        return 'file: {0}'.format(self.file_name.name)
 
 
 # User Invitation Message
