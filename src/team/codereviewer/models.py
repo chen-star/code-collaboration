@@ -69,6 +69,11 @@ class File(models.Model):
     def __str__(self):
         return 'file: {0}'.format(self.file.file)
 
+    @staticmethod
+    def create(repo):
+        print(repo)
+        return File(repo=repo)
+
 
 # User Invitation Message
 class InvitationMessage(models.Model):

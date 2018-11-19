@@ -103,3 +103,30 @@ class ResetpwdForm(forms.Form):
         else:
             cleaned_data = super(ResetpwdForm, self).clean()
         return cleaned_data
+
+
+class GithubGetRepoForm(forms.Form):
+    username = forms.CharField(
+        required=True,
+        label="Github Username",
+        error_messages={'required': "Enter your github username"},
+        widget=forms.TextInput())
+
+    password = forms.CharField(
+        required=True,
+        label="Github password",
+        error_messages={'required': "Enter your github password"},
+        widget=forms.PasswordInput())
+
+    repository = forms.CharField(
+        required=True,
+        label="Github Repository",
+        error_messages={'required': "Enter your github repository your want to edit"},
+        widget=forms.TextInput())
+
+    def clean(self):
+        if not self.is_valid():
+            raise forms.ValidationError("Invalid form.")
+        else:
+            cleaned_data = super(GithubGetRepoForm, self).clean()
+        return cleaned_data

@@ -1,7 +1,6 @@
 import urllib
 from django.contrib import auth
 from django.contrib.auth import authenticate
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 import json
@@ -11,9 +10,8 @@ from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 
-from codereviewer.models import *
 from codereviewer.forms import *
 
 from django.shortcuts import render, redirect
@@ -22,16 +20,22 @@ from django.contrib.auth.decorators import login_required
 
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
+from github import Github
+import base64
+from urllib.request import *
+from urllib.error import *
+import django
+from django.core.files import File
 
 
 def index(request):
     context = {}
     user = request.user
-    if not request.user.is_authenticated:    
+    if not request.user.is_authenticated:
         return render(request, 'codereviewer/home.html', context)
 
     receiver = Developer.objects.get(user=user)
-    messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')    
+    messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')
     print(messages)
     context['messages'] = messages
     return render(request, 'codereviewer/home.html', context)
@@ -113,15 +117,15 @@ def review(request, repo_id):
     context = {}
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
-    #
+    # TODO current assume only one file in a repo
     file = File.objects.get(repo=repo)
-    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), repo.files.url[1:])
+    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
     f = open(url, 'r')
     lines = f.read().splitlines()
     f.close()
     context['codes'] = lines
     context['repo'] = repo
-    context['filename'] = repo.files
+    context['filename'] = file.file_name
     return render(request, 'codereviewer/review.html', context)
 
 
@@ -135,7 +139,7 @@ def mark_read_then_review(request, repo_id):
     message = InvitationMessage.objects.filter(receiver=receiver).filter(project=project)[0]
     message.is_read = True
     message.save()
-    return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
+    return render(request, reverse('review', kwargs={'repo_id': repo_id}), context)
 
 
 def get_codes(request, repo_id):
@@ -151,7 +155,8 @@ def get_comments(request, repo_id):
     # TODO check existance
     id = int(repo_id)
     repo = Repo.objects.get(id=id)
-    comments = Comment.objects.filter(file=repo)
+    file = File.objects.get(repo=repo)
+    comments = Comment.objects.filter(file=file)
     context = {'comments': comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
@@ -273,7 +278,6 @@ def github_login(request):
         'state': _get_refer_url(request),
     }
     github_auth_url = '%s?%s' % (GITHUB_AUTHORIZE_URL, urllib.parse.urlencode(data))
-    print('git_hub_auth_url', github_auth_url)
     return HttpResponseRedirect(github_auth_url)
 
 
@@ -309,12 +313,9 @@ def github_auth(request):
 
     data = urllib.parse.urlencode(data)
     binary_data = data.encode('utf-8')
-    print('data:', data)
     headers = {'Accept': 'application/json'}
     req = urllib.request.Request(url, binary_data, headers)
-    print('req:', req)
     response = urllib.request.urlopen(req)
-    print(response)
 
     result = response.read()
     result = json.loads(result)
@@ -326,7 +327,6 @@ def github_auth(request):
     html = html.decode('ascii')
     data = json.loads(html)
     username = data['name']
-    print('github username:', username)
     password = 'admin'
 
     try:
@@ -359,7 +359,7 @@ def logout(request):
 def invite(request):
     if not request.user.is_authenticated:
         return HttpResponseRedirect('')
-    
+
     receiver_name = request.POST.get('receiver')
     receiver = Developer.objects.get(user__username=receiver_name)
     sender = Developer.objects.get(user=request.user)
@@ -374,7 +374,6 @@ def invite(request):
 
     # send invitation email to receiver
     invite_email(request, sender.user, receiver.user, project)
-
 
     return HttpResponseRedirect(reverse('repo'))
     # redirect(reverse('repo'))
@@ -450,3 +449,71 @@ def confirmpassword_helper(request):
             return render(request, 'codereviewer/password_reset_complete.html')
         return render(request, 'codereviewer/password_reset_confirm.html',
                       {'form': form, 'validate': form.non_field_errors()})
+
+
+@csrf_exempt
+def get_repo_from_github(request):
+    if request.method == 'GET':
+        new_form = GithubGetRepoForm()
+        return render(request, 'codereviewer/githubAccount.html', {'form': new_form})
+
+    form = GithubGetRepoForm(request.POST)
+    if form.is_valid():
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        repo = request.POST.get('repository', '')
+
+        # log into github account
+        try:
+            github = Github(username, password)
+            github_user = github.get_user()
+            reposi = github_user.get_repo(repo)
+            contents = reposi.get_contents("")
+            download_url = contents[0].download_url
+            file = create_github_file(download_url)
+            # create models
+            repo_model = create_repo_model(reposi)
+            create_file_model(file, repo_model)
+
+            while len(contents) > 1:
+                file_content = contents.pop(0)
+                if file_content.type == "dir":
+                    contents.extend(reposi.get_contents(file_content.path))
+                else:
+                    print(base64_decode(file_content.content))
+                    print(file_content.download_url)
+
+        except:
+            return redirect(reverse('repo'))
+
+    return redirect(reverse('repo'))
+
+
+def base64_decode(str):
+    return base64.b64decode(str)
+
+
+def create_github_file(download_url):
+    java_file = urlopen(download_url)
+    file_url = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'media/sourcecode/' + download_url[download_url.rfind('/') + 1:])
+    with open(file_url, 'wb') as output:
+        output.write(java_file.read())
+    input = open(file_url)
+    return input
+
+
+def create_file_model(file, repo):
+    myFile = django.core.files.File(file)
+    file_model = File.create(repo)
+    print(file_model)
+    file_model.file_name.save(myFile.name[myFile.name.rfind('/') + 1], myFile)
+    print(file_model)
+    file_model.save()
+
+
+def create_repo_model(repository):
+    owner = User.objects.get(username=repository.owner.name)
+    owner = Developer.objects.get(user=owner)
+    repo = Repo(owner=owner, project_name=repository.name)
+    repo.save()
+    return repo
