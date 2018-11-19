@@ -23,14 +23,10 @@ from codereviewer.tokens import account_activation_token, password_reset_token
 from django.conf import settings as django_settings
 
 import os
-<<<<<<< HEAD
 import re
-||||||| merged common ancestors
-=======
 import zipfile
 import shutil
 import string
->>>>>>> dd14b1b6ecf59ea9bc13838a4a393fe1950e3b61
 from github import Github
 import base64
 from urllib.request import *
