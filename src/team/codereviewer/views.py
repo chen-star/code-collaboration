@@ -485,12 +485,14 @@ def search_bar(request):
         data = json.dumps(results)
         return HttpResponse(data, 'application/json')
     else:
-        print("wojinlaile!!!")
-        print(request)
         fileName = request.POST.get('fileSearch', '')
         fileName = fileName[fileName.find(',') + 1:]
         print(fileName)
-        file = codereviewer.models.File.objects.filter(file_name='sourcecode/' + fileName)[:1].get()
+        if not re.match('!^\/media.+$', fileName):
+            fileName = 'sourcecode/' + fileName
+        else:
+            fileName = '/Users/chenjiaxin/programmes/webgroup/Team17/src/team/media/sourcecode/' + fileName
+        file = codereviewer.models.File.objects.filter(file_name=fileName)[:1].get()
         print(file)
         repo = file.repo
         return review(request, repo.id)
