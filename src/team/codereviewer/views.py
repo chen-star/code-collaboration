@@ -20,6 +20,7 @@ from django.contrib.auth.decorators import login_required
 
 from codereviewer.tokens import account_activation_token, password_reset_token
 import os
+import re
 from github import Github
 import base64
 from urllib.request import *
@@ -118,8 +119,11 @@ def review(request, repo_id):
     repo = Repo.objects.get(id=repo_id)
     # TODO current assume only one file in a repo
     file = File.objects.get(repo=repo)
-    if not file.file_name.url.strip(' \t\n\r')[:6] == '/media':
+    url = ''
+    if re.match('^\/media.*$', file.file_name.url):
         url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+        if url.rfind('/User') != 0:
+            url = url[url.rfind('/User'):]
     else:
         url = file.file_name.url[6:]
     f = open(url, 'r')
