@@ -28,4 +28,5 @@ urlpatterns = [
     path('reset/', views.confirmpassword_helper, name='resetp'),
     url(r'github_login/$', views.github_login, name='github_login'),
     url(r'github/$', views.github_auth, name='github_oauth'),
+    url(r'githubRepo/$', views.get_repo_from_github, name='github_repo'),
 ]
