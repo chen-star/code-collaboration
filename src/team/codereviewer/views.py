@@ -23,7 +23,6 @@ import os
 from github import Github
 import base64
 from urllib.request import *
-from urllib.error import *
 import django
 import codereviewer
 
@@ -119,7 +118,10 @@ def review(request, repo_id):
     repo = Repo.objects.get(id=repo_id)
     # TODO current assume only one file in a repo
     file = File.objects.get(repo=repo)
-    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    if not file.file_name.url.strip(' \t\n\r')[:6] == '/media':
+        url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    else:
+        url = file.file_name.url[6:]
     f = open(url, 'r')
     lines = f.read().splitlines()
     f.close()
