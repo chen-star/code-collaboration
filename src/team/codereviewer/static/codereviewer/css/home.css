@@ -171,9 +171,9 @@ a.email {
     }
 }
 
-pre {
+/* pre {
   background-color: #071540;
-}
+} */
 
 code {
   /* width: 70%; */
@@ -201,4 +201,32 @@ code:before{
 }
 code:before{
     -webkit-user-select: none;
+}
+
+span.cmt-block-span{
+  /* display: block; */
+  display: none;
+    width: 95%;
+    height: 100%;
+    padding: 20px;
+    margin:15px;
+    border: 1px solid darkgrey;
+    background-color: white;
+    border-radius:5px;
+}
+
+#left {
+    width:40%;
+    height:auto;
+    float:left;
+}
+
+#right {
+    width:55%;
+    height:auto;
+    float:right;
+}
+#divider{
+  width:5%;
+  height:auto;
 }

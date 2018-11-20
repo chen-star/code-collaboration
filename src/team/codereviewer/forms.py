@@ -130,3 +130,15 @@ class GithubGetRepoForm(forms.Form):
         else:
             cleaned_data = super(GithubGetRepoForm, self).clean()
         return cleaned_data
+
+class AddReplyForm(forms.Form):
+    replycontent = forms.CharField(max_length = 42,label="")
+    def clean(self):
+        cleaned_data=super(AddReplyForm,self).clean()
+        return cleaned_data
+
+class AddCommentForm(forms.Form):
+    commentcontent = forms.CharField(max_length = 42,label="")
+    def clean(self):
+        cleaned_data=super(AddCommentForm,self).clean()
+        return cleaned_data

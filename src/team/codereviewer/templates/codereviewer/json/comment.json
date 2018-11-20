@@ -1,4 +1,13 @@
 {
-  "line_num":{{ comment.line_num }},
-  "html":"{{ comment.html|safe }}"
+  "line_num":"{{ comment.line_num }}",
+  "html":"{{ comment.html|safe }}",
+  "id":"{{ comment.id }}",
+  "replies":
+  [{% for reply in comment.reply.all %}
+    {%spaceless%}
+    {% include 'codereviewer/json/reply.json' %}
+    {%endspaceless%}
+    {% if not forloop.last %},
+    {% endif %}
+    {% endfor %}]
 }

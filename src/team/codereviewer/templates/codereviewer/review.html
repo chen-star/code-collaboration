@@ -6,9 +6,14 @@
 
 {% block js %}
 <link rel="stylesheet" href="{% static 'codereviewer/css/default.css' %}">
+
 <script src="{% static 'codereviewer/js/highlight.pack.js' %}"></script>
 <script src="{% static 'codereviewer/js/review.js' %}"></script>
-<script>hljs.initHighlightingOnLoad();</script>
+<script>$(document).ready(function() {
+  $('pre code').each(function(i, block) {
+    hljs.highlightBlock(block);
+  });
+});</script>
 {% endblock %}
 
 {% block leave %}
@@ -31,20 +36,21 @@
 
 {% block content %}
 
-<div class="code-block" style="line-height:0;width:70%;float:left;">
-  <pre>
+<div class="code-block" id="code-block" style="line-height:0.06;background: #F0F0F0;">
+  <!-- <pre>
     {% for line in codes %}
-      <code class="java">
+      <code class='{{ filetype }}'>
         {{ line }}
       </code>
     {% endfor %}
-  </pre>
-<input id='line_num' value='{{ line_num }}' type='hidden'>
+  </pre> -->
+
+
 </div>
-<div id="comment-block" style="width:29%;float:right;font-size:14px;">
+<!-- <div id="comment-block" style="width:29%;float:right;font-size:14px;">
   {% for line in codes %}
     <p style="font-family: sans-serif;margin-bottom: 0rem;line-height:1;"><a id="addCmtButton" onClick="reply_click(this.id)">+</a></p>
-  {% endfor %}
+  {% endfor %} -->
 
 </div>
 {% endblock %}

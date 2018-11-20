@@ -16,8 +16,8 @@ urlpatterns = [
     url(r'^review/(?P<repo_id>.+)$', views.review, name='review'),#to be deleted
     url(r'^mark_read_then_review/(?P<repo_id>.+)$', views.mark_read_then_review, name='mark_read_then_review'),
     # url(r'^review/(?P<project_id>.+)/(?P<file_name>.+)$', views.review, name='review'),
-    url(r'^get-comments/(?P<file_id>.+)/(?P<line_num>.+)$', views.get_comments),
-    url(r'^get-codes/(?P<file_id>.+)$', views.get_codes),
+    url(r'^get-comments/(?P<repo_id>.+)/(?P<line_num>.+)$', views.get_comments),
+    url(r'^get-codes/(?P<repo_id>.+)$', views.get_codes),
     url(r'^add-comment', views.add_comment),
     url(r'^add-reply', views.add_reply),
     url(r'^registration/?$', views.registration, name='registration'),

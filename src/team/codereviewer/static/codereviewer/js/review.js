@@ -1,59 +1,138 @@
+var csrftoken="";
+function populateCode(file_id){
+    var jqXHR = $.get("/codereviewer/get-codes/"+file_id)
+      .done(function(data){
+        var list = $('#code-block');
+        list.html('');
+        var html='<pre>';
+        for (var i = 0; i < data.codes.length; i++) {
+              var new_line = (data.codes[i]);
+              // console.log(new_line);
+              html+=('<code class="java hljs" id="code-'+i+'">'+new_line+'</code>');
+              html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><button id='"+i+"' type='submit' class='btn btn-success cmt-btn' style='padding: 4px 4px;font-size: 12px;'>Comment</button></td></tr>\
+                    </tbody></table><hr><div id='cmt-list-"+i+"'></div></span>";
 
-function populateCmtList() {
-  project_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1)
-    $.get("/codereviewer/get-comments/"+project_id)
-      .done(function(data) {
-          var list = $("#comment-block");
-          list.html('');
-          var total_lines = parseInt(document.getElementById('line_num').value);
-          var cmt_list =[]
-          for (var i= 0; i<data.comments.length;i++){
-            cmt_list.push(data.comments[i].line_num);
           }
-          for (var i = 0; i < total_lines; i++) {
-            console.log('add + for '+i);
-            var new_html = '<div class="addCmtPlus"><p style="font-family: sans-serif;margin-bottom: 0rem;line-height:1;"><a id="addCmtButton_"'+i+'>+</a></p>"';
-
-            if(cmt_list.includes(i)){
-              var cmt = data.comments[i];
-              new_html=new_html+$(cmt.html);
-            }
-            list.append(new_html);
-          }
+          html+=('</pre>');
+          list.append(html);
+      })
+      .fail(function(jqXHR, textStatus, errorThrown){
+        console.log(errorThrown);
       });
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+        console.log("here");
+      });
+
 }
-function reply_click(clicked_id){
-  var index = 0;
-     $("#clicked_id").after('<input type="text" id="cmt_content_'+index+'" value=""><button id="sendCmt_'+index+'" type="submit" class="btn btn-success" style="font-size:15px;line-height:1.2;padding: 0.15rem .5rem;">Send</button>');
-}
-// $(document).on("click", ".addCmtPlus", function(event){
-//   $("#addCmtButton").click(function() {
-//     $("#addCmtButton").after('<input type="text" id="cmt_content_'+index+'" value=""><button id="sendCmt_'+index+'" type="submit" class="btn btn-success" style="font-size:15px;line-height:1.2;padding: 0.15rem .5rem;">Send</button>');
-//   });
-$(document).ready(function() {
-  populateCmtList();
+//click to expand cmt-span block
+$(document).on("click", ".hljs", function(event){
+  var file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
+  var line_num=this.id.substr(5);
+    $header = $(this);
+    //getting the next element
+    $content = $header.next();
+    var list = $('#cmt-list-'+line_num);
+    list.html('');
+    //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+    $content.slideToggle(400, function () {
+        //execute this after slideToggle is done
+    });
+    $.get("/codereviewer/get-comments/"+file_id+"/"+line_num)
+      .done(function(data){
+        for (var i=0;i<data.comments.length;i++){
+          var line_num = data.comments[i].line_num;
+          var s = (data.comments[i].html);
+          s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
+          s+="<button id='reply-"+data.comments[i].id+"' type='submit' class='btn btn-success reply-btn' style='padding: 4px 4px;font-size: 12px;'>Send</button></td></tr></tbody></table></div><hr>";
+          for(var j=0;j<data.comments[i].replies.length;j++){
+            s+=data.comments[i].replies[j].html;
+          }
+          list.append(s);
+          // add reply
+        }
+      });
+
 });
-//
-// $(document).on("click", ".cmt-btn", function(event){
-//   event.preventDefault();
-//   selector = "#id_commentcontent_"+this.id;
-//   if($(selector).val()===null ||$(selector).val()===""){
-//     alert("Please enter comment!");
-//   }else{
-//     $.post("/grumblr/add-comment", {
-//       'commentcontent':$(selector).val(),
-//       "commented-post":this.id,
-//     })
-//       .done(function(data) {
-//           console.log("sent cmt");
-//           var cmt_list = $("#cmt-list-"+this.id);
-//           populateList();
-//           $('#messages').empty();
-//           for(var i = 0; i < data.msg.length; i++) {
-//             $('#messages').append('<li>' + data.msg[i] + '</li>');
-//           }
-//           $(selector).val('');
-//       });
-//   }
-//
-// });
+
+
+$(document).ready(function() {
+  var file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
+ //  $.getScript("/codereviewer/js/highlight.pack.js", function() {
+ //   alert("Script loaded but not necessarily executed.");
+ //
+ // });
+
+  console.log(file_id);
+  populateCode(file_id);
+
+  // CSRF set-up copied from Django docs
+function getCookie(name) {
+  var cookieValue = null;
+  if (document.cookie && document.cookie != '') {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = jQuery.trim(cookies[i]);
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) == (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+          }
+      }
+  }
+  return cookieValue;
+}
+csrftoken = getCookie('csrftoken');
+// alert(csrftoken);
+$.ajaxSetup({
+  beforeSend: function(xhr, settings) {
+      xhr.setRequestHeader("X-CSRFToken", csrftoken);
+  }
+});
+
+});
+// click send comment button
+$(document).on("click", ".cmt-btn", function(event){
+  // alert(csrftoken);
+  event.preventDefault();
+  file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
+  selector = "#id_commentcontent_"+this.id;
+  if($(selector).val()===null ||$(selector).val()===""){
+    alert("Please enter comment!");
+  }else{
+    $.post("/codereviewer/add-comment", {
+      'commentcontent':$(selector).val(),
+      'file_id':file_id,
+      "line_num":this.id
+    })
+      .done(function(data) {
+          console.log("sent cmt");
+          var cmt_list = $("#cmt-list-"+this.id);
+          // populateList();
+          $(selector).val('');
+      });
+  }
+
+});
+// click send reply button
+$(document).on("click", ".reply-btn", function(event){
+  // alert(csrftoken);
+  event.preventDefault();
+  file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
+  selector = "#id_replycontent_"+this.id;
+  if($(selector).val()===null ||$(selector).val()===""){
+    alert("Please enter comment!");
+  }else{
+    $.post("/codereviewer/add-reply", {
+      'replycontent':$(selector).val(),
+      'comment_id':this.id
+    })
+      .done(function(data) {
+          console.log("sent reply");
+          var cmt_list = $("#cmt-list-"+this.id);
+          // update comment reply list;
+          $(selector).val('');
+      });
+  }
+
+});

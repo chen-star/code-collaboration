@@ -140,6 +140,44 @@ def review(request, repo_id):
     context['filename'] = file.file_name
     return render(request, 'codereviewer/review.html', context)
 
+def add_comment(request):
+    # messages =[]
+    context={}
+    # context = {'msg':messages}
+    if request.method=='POST':
+        print("post comment")
+        form = AddCommentForm(request.POST)
+        if not form.is_valid():
+            context['comment']=[]
+            return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
+        file = Repo.objects.get(id=request.POST.get('file_id'))
+        new_comment = Comment(content=form.clean().get('commentcontent'),
+                                commenter=Developer.get_developer(request.user)[0],
+                                line_num=request.POST.get('line_num'))
+
+        new_comment.save()
+        file.comments.add(new_comment)
+        context['comment']=new_comment
+    print("add comment")
+    # messages.append("Successfully sent a comment!")
+    return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
+
+def add_reply(request):
+    context={}
+    if request.method=='POST':
+        form = AddReplyForm(request.POST)
+        if not form.is_valid():
+            context['reply']=[]
+            return render(request, 'codereviewer/json/reply.json', context, content_type='application/json')
+        new_reply = Reply(content=form.clean().get('replycontent'),
+                            replier=Developer.get_developer(request.user)[0])
+
+        new_reply.save()
+        cmt = Comment.objects.get(id=request.POST.get('comment_id')[6:])
+        cmt.reply.add(new_reply)
+        context['reply']=new_reply
+    # messages.append("Successfully sent a comment!")
+    return render(request, 'codereviewer/json/reply.json', context, content_type='application/json')
 
 @login_required
 def mark_read_then_review(request, repo_id):
@@ -156,25 +194,31 @@ def mark_read_then_review(request, repo_id):
 
 
 @login_required
-def get_codes(request,repo_id):
+def get_codes(request,file_id):
     # TODO check existance
-    repo = Repo.objects.get(id=repo_id)
-    f = open(repo.files.url, 'r')
+    repo = Repo.objects.get(id=file_id)
+    # TODO current assume only one file in a repo
+    file = File.objects.get(repo=repo)
+    url =  os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    f = open(url, 'r')
+    # file = File.objects.get(id=file_id)
+    # f = open(file.file_name.url, 'r')
     lines = f.read().splitlines()
     context = {'codes': lines}
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
-@login_required
-def get_comments(request,repo_id):
+def get_comments(request,file_id,line_num):
     # TODO check existance
+    # id=int(repo_id)
+    comments = Comment.get_comments(file_id,line_num)
+    context={'comments':comments}
     id = int(repo_id)
     repo = Repo.objects.get(id=id)
     file = File.objects.get(repo=repo)
     comments = Comment.objects.filter(file=file)
     context = {'comments': comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
-
 
 # handle user registration
 @transaction.atomic
@@ -578,8 +622,8 @@ def unzip(file_name, store_dir):
 
     # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
-        for file_ in files:     
-            fname = os.path.join(root, file_)            
+        for file_ in files:
+            fname = os.path.join(root, file_)
             ffname = fname
             dumped_fname = fname.replace('/', '__')
 
