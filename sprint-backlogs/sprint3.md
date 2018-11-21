@@ -28,3 +28,12 @@ Add comment flags to the lines with comments. Use indentations to imply the hier
 4. Deployment to AWS (weitongz)
 
 Deploy the project to an AWS instance. 
+
+
+5. Improve Github Authentication and uploading
+
+Currently we can only upload one file from github repository, so in the sprint 3, we will implement upload whole project by using python embedded Github API. Also, binding github accounts with models of users will be re-implemented.
+
+6. Migrate file system from local to S3
+
+We will use S3 to store our file system. Considering with the growth of the size of repositories, local file system cannot satisfy our needs. S3 is a distributed storage system, so we will migrate local files onto S3.
