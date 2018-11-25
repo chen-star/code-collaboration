@@ -31,6 +31,8 @@ from github import Github
 import base64
 from urllib.request import *
 import django
+import datetime
+from django.utils import timezone
 import codereviewer
 
 
@@ -51,8 +53,26 @@ def index(request):
 def settings(request):
     context = {}
     if request.method == 'GET':
-        this_developer = Developer.objects.get(user=request.user)
+        user = request.user
+        username = user.developer
+        this_developer = Developer.objects.get(user=user)
+        cur = timezone.now()
+
+        userAct = User.objects.get(developer=username)
+        last_login = datetime.datetime.combine(userAct.last_login.date(), datetime.time(userAct.last_login.hour, userAct.last_login.minute))
+        # print(last_login)
+
+        numOfRepo = Repo.objects.filter(owner=username).count()
+        repoTrend = Repo.objects.filter(owner=username, create_time__gte=cur - datetime.timedelta(days=7)).count()
+        numOfCom = Comment.objects.filter(commenter=this_developer).count()
+        comTrend = Comment.objects.filter(commenter=this_developer,
+                                          comment_time__gte=cur - datetime.timedelta(days=7)).count()
         context['this_developer'] = this_developer
+        context['active'] = last_login
+        context['repos'] = numOfRepo
+        context['repoTrend'] = repoTrend
+        context['comments'] = numOfCom
+        context['comTrend'] = comTrend
 
     return render(request, 'codereviewer/settings.html', context)
 
@@ -140,44 +160,47 @@ def review(request, repo_id):
     context['filename'] = file.file_name
     return render(request, 'codereviewer/review.html', context)
 
+
 def add_comment(request):
     # messages =[]
-    context={}
+    context = {}
     # context = {'msg':messages}
-    if request.method=='POST':
+    if request.method == 'POST':
         print("post comment")
         form = AddCommentForm(request.POST)
         if not form.is_valid():
-            context['comment']=[]
+            context['comment'] = []
             return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
         file = Repo.objects.get(id=request.POST.get('file_id'))
         new_comment = Comment(content=form.clean().get('commentcontent'),
-                                commenter=Developer.get_developer(request.user)[0],
-                                line_num=request.POST.get('line_num'))
+                              commenter=Developer.get_developer(request.user)[0],
+                              line_num=request.POST.get('line_num'))
 
         new_comment.save()
         file.comments.add(new_comment)
-        context['comment']=new_comment
+        context['comment'] = new_comment
     print("add comment")
     # messages.append("Successfully sent a comment!")
     return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
 
+
 def add_reply(request):
-    context={}
-    if request.method=='POST':
+    context = {}
+    if request.method == 'POST':
         form = AddReplyForm(request.POST)
         if not form.is_valid():
-            context['reply']=[]
+            context['reply'] = []
             return render(request, 'codereviewer/json/reply.json', context, content_type='application/json')
         new_reply = Reply(content=form.clean().get('replycontent'),
-                            replier=Developer.get_developer(request.user)[0])
+                          replier=Developer.get_developer(request.user)[0])
 
         new_reply.save()
         cmt = Comment.objects.get(id=request.POST.get('comment_id')[6:])
         cmt.reply.add(new_reply)
-        context['reply']=new_reply
+        context['reply'] = new_reply
     # messages.append("Successfully sent a comment!")
     return render(request, 'codereviewer/json/reply.json', context, content_type='application/json')
+
 
 @login_required
 def mark_read_then_review(request, repo_id):
@@ -190,16 +213,16 @@ def mark_read_then_review(request, repo_id):
     message.is_read = True
     message.save()
     # return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
-    return redirect(reverse('review', kwargs = {'repo_id': repo_id}))
+    return redirect(reverse('review', kwargs={'repo_id': repo_id}))
 
 
 @login_required
-def get_codes(request,file_id):
+def get_codes(request, file_id):
     # TODO check existance
     repo = Repo.objects.get(id=file_id)
     # TODO current assume only one file in a repo
     file = File.objects.get(repo=repo)
-    url =  os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
     f = open(url, 'r')
     # file = File.objects.get(id=file_id)
     # f = open(file.file_name.url, 'r')
@@ -208,17 +231,18 @@ def get_codes(request,file_id):
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
-def get_comments(request,file_id,line_num):
+def get_comments(request, file_id, line_num):
     # TODO check existance
     # id=int(repo_id)
-    comments = Comment.get_comments(file_id,line_num)
-    context={'comments':comments}
+    comments = Comment.get_comments(file_id, line_num)
+    context = {'comments': comments}
     id = int(repo_id)
     repo = Repo.objects.get(id=id)
     file = File.objects.get(repo=repo)
     comments = Comment.objects.filter(file=file)
     context = {'comments': comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
+
 
 # handle user registration
 @transaction.atomic
@@ -509,6 +533,7 @@ def confirmpassword_helper(request):
         return render(request, 'codereviewer/password_reset_confirm.html',
                       {'form': form, 'validate': form.non_field_errors()})
 
+
 @login_required
 @ensure_csrf_cookie
 def search_bar(request):
@@ -531,13 +556,11 @@ def search_bar(request):
     else:
         fileName = request.POST.get('fileSearch', '')
         fileName = fileName[fileName.find(',') + 1:]
-        print(fileName)
         if not re.match('!^\/media.+$', fileName):
             fileName = 'sourcecode/' + fileName
         else:
             fileName = '/Users/chenjiaxin/programmes/webgroup/Team17/src/team/media/sourcecode/' + fileName
         file = codereviewer.models.File.objects.filter(file_name=fileName)[:1].get()
-        print(file)
         repo = file.repo
         return review(request, repo.id)
 
@@ -586,7 +609,8 @@ def base64_decode(str):
 
 def create_github_file(download_url):
     java_file = urlopen(download_url)
-    file_url = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'media/sourcecode/' + download_url[download_url.rfind('/') + 1:])
+    file_url = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+                            'media/sourcecode/' + download_url[download_url.rfind('/') + 1:])
     with open(file_url, 'wb') as output:
         output.write(java_file.read())
     input = open(file_url)
@@ -617,7 +641,7 @@ def unzip(file_name, store_dir):
         zfile.extractall(store_dir)
 
     # remove junk folder
-    junkfolder = os.path.join(store_dir,'__MACOSX')
+    junkfolder = os.path.join(store_dir, '__MACOSX')
     shutil.rmtree(junkfolder)
 
     # recursively traverse, flatten files, and move them to sourcecode folder
@@ -644,3 +668,7 @@ def save_zip(file_name):
 
 
 # save_zip_to_database('/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode/pic.zip')
+
+
+def stat_console(request):
+    return 0
