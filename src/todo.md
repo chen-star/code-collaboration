@@ -1,6 +1,6 @@
 ## Todo list - bugs
-1. expand and un-expand all comments
-2. add comments and replies without refresh
+1. ~~expand and un-expand all comments~~
+2. ~~add comments and replies without refresh~~
 3. pull comments every 5 sec
 4. leave a mark for commented code
 4. highlight
@@ -8,6 +8,7 @@
 7. login - wrong direct page
 8. new message for new comments and replies
 9. indent for replies to comments
+10. check if user has permission for reviewing a file
 
 ## Todo
 1. deploy
