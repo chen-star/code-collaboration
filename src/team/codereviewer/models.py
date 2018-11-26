@@ -121,13 +121,6 @@ class Repo(models.Model):
     def html(self):
         return __str__
 
-    # def __str__(self):
-    # 	return self.commenter.user.username +' comments on '+(str(self.comment_time))+': '+self.content
-
-    @property
-    def html(self):
-        return __str__(self)
-
 
 class File(models.Model):
     file_name = models.FileField(upload_to='sourcecode', blank=True)

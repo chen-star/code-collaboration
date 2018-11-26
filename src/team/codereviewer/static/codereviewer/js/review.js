@@ -1,13 +1,14 @@
 var csrftoken="";
+var linesWithComment=[];
 function populateCode(file_id){
     var jqXHR = $.get("/codereviewer/get-codes/"+file_id)
       .done(function(data){
+        linesWithComment = (data.commented_lines);
         var list = $('#code-block');
         list.html('');
         var html='<pre>';
         for (var i = 0; i < data.codes.length; i++) {
               var new_line = (data.codes[i]);
-              console.log(new_line);
               // console.log(new_line);
               html+=('<code class="java hljs" id="code-'+i+'">'+new_line+'</code>');
               html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><button id='"+i+"' type='submit' class='btn btn-success cmt-btn' style='padding: 4px 4px;font-size: 12px;'>Comment</button></td></tr>\
@@ -33,29 +34,52 @@ $(document).on("click", ".hljs", function(event){
     $header = $(this);
     //getting the next element
     $content = $header.next();
-    var list = $('#cmt-list-'+line_num);
-    list.html('');
+
     //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
-    $content.slideToggle(400, function () {
-        //execute this after slideToggle is done
-    });
-    $.get("/codereviewer/get-comments/"+file_id+"/"+line_num)
-      .done(function(data){
-        for (var i=0;i<data.comments.length;i++){
-          var line_num = data.comments[i].line_num;
-          var s = (data.comments[i].html);
-          s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
-          s+="<button id='reply-"+data.comments[i].id+"' type='submit' class='btn btn-success reply-btn' style='padding: 4px 4px;font-size: 12px;'>Send</button></td></tr></tbody></table></div><hr>";
-          for(var j=0;j<data.comments[i].replies.length;j++){
-            s+=data.comments[i].replies[j].html;
-          }
-          list.append(s);
-          // add reply
-        }
-      });
+    $content.slideToggle(400);
+    clickOnLine(file_id,line_num);
 
 });
 
+function clickOnLine(file_id,line_num){
+  var list = $('#cmt-list-'+line_num);
+  list.html('');
+  $.get("/codereviewer/get-comments/"+file_id+"/"+line_num)
+    .done(function(data){
+      for (var i=0;i<data.comments.length;i++){
+        var line_num = data.comments[i].line_num;
+        var s = (data.comments[i].html);
+        s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
+        s+="<button id='reply-"+data.comments[i].id+"' type='submit' class='btn btn-success reply-btn' style='padding: 4px 4px;font-size: 12px;'>Send</button></td></tr></tbody></table></div><hr>";
+        for(var j=0;j<data.comments[i].replies.length;j++){
+          s+=data.comments[i].replies[j].html;
+        }
+        list.append(s);
+        // add reply
+      }
+    });
+}
+//click to expand all cmt-span block
+$(document).on("click", ".badge-dark", function(event){
+  event.preventDefault();
+  text = this.text;
+  if(text=="Show All Comments"){
+    this.text="Close All";
+    var file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
+    for(var i=0;i<linesWithComment.length;i++){
+      var line_num=linesWithComment[i];
+      $("#cmt-span-"+line_num).slideDown(400);
+      clickOnLine(file_id,line_num);
+    }
+  }else{
+    this.text="Show All Comments";
+    for(var i=0;i<linesWithComment.length;i++){
+      var line_num=linesWithComment[i];
+      $("#cmt-span-"+line_num).slideUp(400);}
+  }
+
+
+});
 
 $(document).ready(function() {
   var file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);

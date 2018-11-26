@@ -26,16 +26,15 @@
         <p>Owner: {{ repo.owner }} ({{ repo.owner.user.email }}) File: {{ filename }}</p>
     </div>
     <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
-      <!-- TODO other current users on this page  -->
-        <!-- <form class="form-inline my-2 my-md-0 pl-5">
-            <p>wenxuanx is also reviewing this file...</p>
-        </form> -->
+
     </div>
 </nav>
 {% endblock %}
 
 {% block content %}
-
+<div class="col-md-2">
+  <a class="badge badge-dark" id="expand-all" style="color:white;">Show All Comments</a>
+</div>
 <div class="code-block" id="code-block" style="line-height:0.06;background: #F0F0F0;">
   <!-- <pre>
     {% for line in codes %}
@@ -47,10 +46,5 @@
 
 
 </div>
-<!-- <div id="comment-block" style="width:29%;float:right;font-size:14px;">
-  {% for line in codes %}
-    <p style="font-family: sans-serif;margin-bottom: 0rem;line-height:1;"><a id="addCmtButton" onClick="reply_click(this.id)">+</a></p>
-  {% endfor %} -->
 
-</div>
 {% endblock %}

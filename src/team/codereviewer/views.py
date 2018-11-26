@@ -228,6 +228,11 @@ def get_codes(request, file_id):
     # f = open(file.file_name.url, 'r')
     lines = f.read().splitlines()
     context = {'codes': lines}
+    context['commented_lines']=set()
+    all_comments = file.comments.all()
+    if all_comments:
+        for cmt in all_comments:
+            context['commented_lines'].add(cmt.line_num)
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
@@ -235,11 +240,6 @@ def get_comments(request, file_id, line_num):
     # TODO check existance
     # id=int(repo_id)
     comments = Comment.get_comments(file_id, line_num)
-    context = {'comments': comments}
-    id = int(file_id)
-    repo = Repo.objects.get(id=id)
-    file = File.objects.get(repo=repo)
-    comments = Comment.objects.filter(file=file)
     context = {'comments': comments}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
