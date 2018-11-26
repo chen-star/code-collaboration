@@ -1,5 +1,8 @@
 var csrftoken="";
-var linesWithComment=[];
+var last_update_time;
+var linesWithComment=new Set();
+var openLines=new Set();
+var file_id;
 function populateCode(file_id){
     var jqXHR = $.get("/codereviewer/get-codes/"+file_id)
       .done(function(data){
@@ -19,7 +22,9 @@ function populateCode(file_id){
           list.append(html);
       })
       .fail(function(jqXHR, textStatus, errorThrown){
-        console.log(errorThrown);
+        var list = $('#code-block');
+        list.append("<h4>There is something wrong when opening the files.</h4>");
+        list.append("<h5>"+errorThrown+"</h5>");
       });
       $('pre code').each(function(i, block) {
         hljs.highlightBlock(block);
@@ -37,6 +42,12 @@ $(document).on("click", ".hljs", function(event){
 
     //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
     $content.slideToggle(400);
+    if(openLines.has(line_num)){
+      openLines.delete(line_num);
+    }else{
+      openLines.add(line_num);
+    }
+    console.log(openLines);
     clickOnLine(file_id,line_num);
 
 });
@@ -70,33 +81,85 @@ $(document).on("click", ".badge-dark", function(event){
   event.preventDefault();
   text = this.text;
   if(text=="Show All Comments"){
+    // open
     this.text="Close All";
     var file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
     for(var i=0;i<linesWithComment.length;i++){
       var line_num=linesWithComment[i];
+      openLines.add(line_num);
       $("#cmt-span-"+line_num).slideDown(400);
       clickOnLine(file_id,line_num);
     }
+    console.log(openLines);
   }else{
+    // close
     this.text="Show All Comments";
     for(var i=0;i<linesWithComment.length;i++){
       var line_num=linesWithComment[i];
-      $("#cmt-span-"+line_num).slideUp(400);}
+      $("#cmt-span-"+line_num).slideUp(400);
+      openLines.delete(line_num);
+    }
+    // TODO close other lines
+      for(var i=0;i<openLines.length;i++){
+        var line_num=openLines[i];
+        $("#cmt-span-"+line_num).slideUp(400);
+      }
+      // openLines=new Set();
+
   }
 
 
 });
 
+// update time
+function updateTime(){
+  date = new Date();
+  last_update_time = date.getTime();
+}
+// update opened lines
+function getUpdates(){
+  console.log(openLines.length);
+  for(var i=0;i<openLines.length;i++){
+    var line_num=openLines[i];
+    console.log(line_num+", "+last_update_time);
+    $.get("/codereviewer/get-changes/"+file_id+"/"+line_num+"/"+last_update_time)
+      .done(function(data) {
+        var list = $('#cmt-list-'+line_num);
+        user = (data.current_user);
+        for (var i=0;i<data.comments.length;i++){
+          var line_num = data.comments[i].line_num;
+          var s = (data.comments[i].html);
+          s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
+          if(user==data.comments[i].commenter){
+            s+="<a id='"+line_num+"-delete-"+data.comments[i].id+"' type='submit' class='delete-cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Delete</a>";
+            s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+          }else{
+            s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+          }
+          for(var j=0;j<data.comments[i].replies.length;j++){
+            s+=data.comments[i].replies[j].html;
+          }
+          list.append(s);
+          // add reply
+        }
+      });
+  }
+
+     updateTime();
+}
+
 $(document).ready(function() {
-  var file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
+ file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
  //  $.getScript("/codereviewer/js/highlight.pack.js", function() {
  //   alert("Script loaded but not necessarily executed.");
  //
  // });
-
+ var linesWithComment=new Set();
+ var openLines=new Set();
   console.log(file_id);
   populateCode(file_id);
-
+  updateTime();
+  window.setInterval(getUpdates, 5000);
   // CSRF set-up copied from Django docs
 function getCookie(name) {
   var cookieValue = null;

@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 from django.conf import settings as django_settings
+import datetime as dt
 
 import os
 import re
@@ -188,6 +189,14 @@ def delete_comment(request):
     cmt_to_delete=Comment.objects.get(id=request.POST.get('comment_id')).delete()
     # cmt_to_delete.deleted = true
     return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
+
+def get_changed_comments(request,file_id,line_num,time):
+    timestamp = dt.datetime.fromtimestamp(int(time)//1000.0) #convert
+    file = File.objects.get(id=file_id)
+    cmt = file.comments.all().filter(line_num=line_num)
+    context={'comments':Comment.objects.filter(id__in=cmt,comment_time__gt=timestamp).order_by('-comment_time').distinct()}
+    context['current_user']=request.user
+    return render(request,  'codereviewer/json/comments.json', context, content_type='application/json')
 
 def add_reply(request):
     context = {}

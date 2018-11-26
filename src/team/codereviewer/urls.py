@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^get-codes/(?P<file_id>.+)$', views.get_codes),
     url(r'^add-comment', views.add_comment),
     url(r'^delete-comment', views.delete_comment),
+    url(r'^get-changes/(?P<file_id>.+)/(?P<line_num>.+)/(?P<time>.+)$', views.get_changed_comments),
     url(r'^add-reply', views.add_reply),
     url(r'^registration/?$', views.registration, name='registration'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
