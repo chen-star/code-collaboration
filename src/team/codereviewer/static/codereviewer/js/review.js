@@ -50,7 +50,7 @@ function clickOnLine(file_id,line_num){
         var line_num = data.comments[i].line_num;
         var s = (data.comments[i].html);
         s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
-        s+="<button id='reply-"+data.comments[i].id+"' type='submit' class='btn btn-success reply-btn' style='padding: 4px 4px;font-size: 12px;'>Send</button></td></tr></tbody></table></div><hr>";
+        s+="<button id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='btn btn-success reply-btn' style='padding: 4px 4px;font-size: 12px;'>Send</button></td></tr></tbody></table></div><hr>";
         for(var j=0;j<data.comments[i].replies.length;j++){
           s+=data.comments[i].replies[j].html;
         }
@@ -122,19 +122,22 @@ $(document).on("click", ".cmt-btn", function(event){
   event.preventDefault();
   file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
   selector = "#id_commentcontent_"+this.id;
+  line_num=this.id;
   if($(selector).val()===null ||$(selector).val()===""){
     alert("Please enter comment!");
   }else{
     $.post("/codereviewer/add-comment", {
       'commentcontent':$(selector).val(),
       'file_id':file_id,
-      "line_num":this.id
+      "line_num":line_num
     })
       .done(function(data) {
           console.log("sent cmt");
           var cmt_list = $("#cmt-list-"+this.id);
           // populateList();
           $(selector).val('');
+          linesWithComment.add(line_num);
+          clickOnLine(file_id,line_num);
       });
   }
 
@@ -144,19 +147,22 @@ $(document).on("click", ".reply-btn", function(event){
   // alert(csrftoken);
   event.preventDefault();
   file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
-  selector = "#id_replycontent_"+this.id;
+
+  line_num=this.id.substring(0,this.id.indexOf('-'));
+  comment_id=this.id.substring(this.id.indexOf('-')+1);
+  selector = "#id_replycontent_"+comment_id;
   if($(selector).val()===null ||$(selector).val()===""){
     alert("Please enter comment!");
   }else{
     $.post("/codereviewer/add-reply", {
       'replycontent':$(selector).val(),
-      'comment_id':this.id
+      'comment_id':comment_id
     })
       .done(function(data) {
           console.log("sent reply");
-          var cmt_list = $("#cmt-list-"+this.id);
           // update comment reply list;
           $(selector).val('');
+          clickOnLine(file_id,line_num);
       });
   }
 
