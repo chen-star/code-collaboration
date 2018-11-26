@@ -7,6 +7,7 @@ function populateCode(file_id){
         var html='<pre>';
         for (var i = 0; i < data.codes.length; i++) {
               var new_line = (data.codes[i]);
+              console.log(new_line);
               // console.log(new_line);
               html+=('<code class="java hljs" id="code-'+i+'">'+new_line+'</code>');
               html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><button id='"+i+"' type='submit' class='btn btn-success cmt-btn' style='padding: 4px 4px;font-size: 12px;'>Comment</button></td></tr>\

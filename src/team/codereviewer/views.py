@@ -171,7 +171,7 @@ def add_comment(request):
         if not form.is_valid():
             context['comment'] = []
             return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
-        file = Repo.objects.get(id=request.POST.get('file_id'))
+        file = File.objects.get(id=request.POST.get('file_id'))
         new_comment = Comment(content=form.clean().get('commentcontent'),
                               commenter=Developer.get_developer(request.user)[0],
                               line_num=request.POST.get('line_num'))
@@ -236,7 +236,7 @@ def get_comments(request, file_id, line_num):
     # id=int(repo_id)
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments}
-    id = int(repo_id)
+    id = int(file_id)
     repo = Repo.objects.get(id=id)
     file = File.objects.get(repo=repo)
     comments = Comment.objects.filter(file=file)
