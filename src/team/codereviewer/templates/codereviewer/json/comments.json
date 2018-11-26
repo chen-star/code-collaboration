@@ -5,5 +5,6 @@
     {%endspaceless%}
     {% if not forloop.last %},
     {% endif %}
-    {% endfor %}]
+    {% endfor %}],
+  "current_user":"{{current_user}}"
 }

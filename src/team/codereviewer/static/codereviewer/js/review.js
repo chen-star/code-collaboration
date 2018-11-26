@@ -11,7 +11,7 @@ function populateCode(file_id){
               var new_line = (data.codes[i]);
               // console.log(new_line);
               html+=('<code class="java hljs" id="code-'+i+'">'+new_line+'</code>');
-              html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><button id='"+i+"' type='submit' class='btn btn-success cmt-btn' style='padding: 4px 4px;font-size: 12px;'>Comment</button></td></tr>\
+              html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><a id='"+i+"' type='submit' class='cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Comment</a></td></tr>\
                     </tbody></table><hr><div id='cmt-list-"+i+"'></div></span>";
 
           }
@@ -46,11 +46,17 @@ function clickOnLine(file_id,line_num){
   list.html('');
   $.get("/codereviewer/get-comments/"+file_id+"/"+line_num)
     .done(function(data){
+      user = (data.current_user);
       for (var i=0;i<data.comments.length;i++){
         var line_num = data.comments[i].line_num;
         var s = (data.comments[i].html);
         s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
-        s+="<button id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='btn btn-success reply-btn' style='padding: 4px 4px;font-size: 12px;'>Send</button></td></tr></tbody></table></div><hr>";
+        if(user==data.comments[i].commenter){
+          s+="<a id='"+line_num+"-delete-"+data.comments[i].id+"' type='submit' class='delete-cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Delete</a>";
+          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+        }else{
+          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+        }
         for(var j=0;j<data.comments[i].replies.length;j++){
           s+=data.comments[i].replies[j].html;
         }
@@ -166,4 +172,20 @@ $(document).on("click", ".reply-btn", function(event){
       });
   }
 
+});
+
+// click delete comment reply button
+$(document).on("click", ".delete-cmt-btn", function(event){
+  // alert(csrftoken);
+  event.preventDefault();
+  file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
+  line_num=this.id.substring(0,this.id.indexOf('-'));
+  comment_id=this.id.substring(this.id.lastIndexOf('-')+1);
+  $.post("/codereviewer/delete-comment", {
+    'comment_id':comment_id
+  })
+    .done(function(data) {
+        console.log("delete reply");
+        clickOnLine(file_id,line_num);
+    });
 });

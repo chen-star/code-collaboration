@@ -183,6 +183,11 @@ def add_comment(request):
     # messages.append("Successfully sent a comment!")
     return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
 
+def delete_comment(request):
+    # todo: check 404
+    cmt_to_delete=Comment.objects.get(id=request.POST.get('comment_id')).delete()
+    # cmt_to_delete.deleted = true
+    return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
 
 def add_reply(request):
     context = {}
@@ -241,6 +246,7 @@ def get_comments(request, file_id, line_num):
     # id=int(repo_id)
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments}
+    context['current_user']=request.user
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
 
