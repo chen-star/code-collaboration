@@ -305,7 +305,7 @@ def get_codes(request, file_id):
     digits = len(str(len(lines))) # make up for display indent
     print(digits)
     for d in range(1,digits):
-        for i in range(int('1'+'0'*(d))):
+        for i in range(int('1'+'0'*(d))-1):
             print(i)
             lines[i] = ' '+lines[i]
     for i in range(len(lines)):
@@ -321,7 +321,6 @@ def get_codes(request, file_id):
 
 def get_comments(request, file_id, line_num):
     # TODO check existance
-    # id=int(repo_id)
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments}
     context['current_user'] = request.user

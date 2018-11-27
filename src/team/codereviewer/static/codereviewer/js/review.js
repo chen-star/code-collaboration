@@ -3,6 +3,12 @@ var last_update_time;
 var linesWithComment=new Set();
 var openLines=new Set();
 var file_id;
+function show(id) {
+  document.getElementById(id).style.visibility = "visible";
+}
+function hide(id) {
+  document.getElementById(id).style.visibility = "hidden";
+}
 function populateCode(file_id){
     var jqXHR = $.get("/codereviewer/get-codes/"+file_id)
       .done(function(data){
@@ -12,7 +18,7 @@ function populateCode(file_id){
         var html='<pre>';
         for (var i = 0; i < data.codes.length; i++) {
               var new_line = (data.codes[i]);
-              html+=('<code class="hljs" id="code-'+i+'">'+new_line+'</code>');
+              html+=('<code class="hljs" id="code-'+i+'"><a onMouseOver="show(\'guide-'+i+'\')" onMouseOut="hide(\'guide-'+i+'\')">'+new_line+'<span id="guide-'+i+'" style="visibility:hidden;font-style: italic;"> # click to comment</span></code></a>');
               html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><a id='"+i+"' type='submit' class='cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Comment</a></td></tr>\
                     </tbody></table><div id='cmt-list-"+i+"'></div></span>";
 
@@ -211,7 +217,7 @@ $(document).on("click", ".cmt-btn", function(event){
           var cmt_list = $("#cmt-list-"+this.id);
           // populateList();
           $(selector).val('');
-          linesWithComment.add(line_num);
+          linesWithComment.append(line_num);
           clickOnLine(file_id,line_num);
       });
   }
