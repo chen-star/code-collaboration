@@ -144,7 +144,7 @@ def review(request, repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     # TODO current assume only one file in a repo
-    file = File.objects.get(repo=repo)
+    file = File.objects.filter(repo=repo)[0]
     furl = ''
     if file.from_github:
         # url = file.file_name.name
@@ -238,7 +238,7 @@ def get_codes(request, file_id):
     # TODO check existance
     repo = Repo.objects.get(id=file_id)
     # TODO current assume only one file in a repo
-    file = File.objects.get(repo=repo)
+    file = File.objects.filter(repo=repo)[0]
     furl = ''
     if file.from_github:
         # url = file.file_name.name
