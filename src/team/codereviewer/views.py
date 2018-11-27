@@ -136,7 +136,10 @@ def create_repo(request):
             # handle a zip file or a single file.
             uploaded_file = files
             if not uploaded_file.name.endswith('.zip'):
-                file_obj = File(file_name=uploaded_file, repo=new_repo)
+                file_obj = File()
+                file_obj.file_name = uploaded_file
+                file_obj.file_name.name = str(owner.user.id) + '__' + str(new_repo.id) + '__' + uploaded_file.name
+                file_obj.repo = new_repo
                 file_obj.save()
             else:
                 # create a tmp directory for unzipping.
