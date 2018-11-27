@@ -10,9 +10,9 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container-fluid">
             <div>
-                <a href="/">Home</a>
-                <a class="active" href="{% url 'settings' %}">Settings</a>
-                <a href="{% url 'repo' %}">Repositories</a>
+                <a href=" ">Home</a >
+                <a class="active" href="{% url 'settings' %}">Settings</a >
+                <a href="{% url 'repo' %}">Repositories</a >
             </div>
             <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
                 <form class="form-inline my-2 my-md-0 pl-5">
@@ -33,10 +33,10 @@
             <div class="col-md-2">
                 <div id="profile-image">
                     {% if this_developer.avatar %}
-                        <img src="{{ this_developer.avatar.url }}"
+                        < img src="{{ this_developer.avatar.url }}"
                              alt="Avatar of {{ user.username }}" height="120px" width="120px"></img>
                     {% else %}
-                        <img id="img" src="../../static/codereviewer/media/default.png"
+                        < img id="img" src="{% static 'codereviewer/img/default_avatar.png' %}"
                              class="avatar img-circle img-thumbnail" alt="avatar">
                     {% endif %}
                 </div>
@@ -45,22 +45,22 @@
                 <div class="profile-head">
                     <h5>{{ this_developer.user.username }}</h5>
                     <h6>{{ this_developer.title }}</h6>
-                    <p class="proile-active">Last active at <span>{{ active }}</span></p>
+                    <p class="proile-active">Last active at <span>{{ active }}</span></p >
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item">
                             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab"
-                               aria-controls="home" aria-selected="true">About</a>
+                               aria-controls="home" aria-selected="true">About</a >
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
-                               aria-controls="profile" aria-selected="false">Statistics</a>
+                               aria-controls="profile" aria-selected="false">Statistics</a >
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="col-md-2">
                 {% if not edit_flag %}
-                    <a class="badge badge-dark" href="{% url 'edit_profile' %}">Edit profile</a>
+                    <a class="badge badge-dark" href="{% url 'edit_profile' %}">Edit profile</a >
                 {% endif %}
             </div>
         </div>
@@ -75,7 +75,7 @@
                                 <label>Name</label>
                             </div>
                             <div class="col-md-6">
-                                <p>{{ this_developer.user.first_name }} {{ this_developer.user.last_name }}</p>
+                                <p>{{ this_developer.user.first_name }} {{ this_developer.user.last_name }}</p >
                             </div>
                         </div>
                         <div class="row">
@@ -83,7 +83,7 @@
                                 <label>Group</label>
                             </div>
                             <div class="col-md-6">
-                                <p>{{ this_developer.group }}</p>
+                                <p>{{ this_developer.group }}</p >
                             </div>
                         </div>
                         <div class="row">
@@ -91,7 +91,7 @@
                                 <label>Department</label>
                             </div>
                             <div class="col-md-6">
-                                <p>{{ this_developer.department }}</p>
+                                <p>{{ this_developer.department }}</p >
                             </div>
                         </div>
                         <div class="row">
@@ -99,7 +99,7 @@
                                 <label>Company</label>
                             </div>
                             <div class="col-md-6">
-                                <p>{{ this_developer.company }}</p>
+                                <p>{{ this_developer.company }}</p >
                             </div>
                         </div>
                     </div>

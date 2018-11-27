@@ -14,9 +14,9 @@
     <nav class="navbar navbar-expand-lg navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div>
-                <a class="active" href="/">Home</a>
-                <a href="{% url 'settings' %}">Settings</a>
-                <a href="{% url 'repo' %}">Repositories</a>
+                <a class="active" href=" ">Home</a >
+                <a href="{% url 'settings' %}">Settings</a >
+                <a href="{% url 'repo' %}">Repositories</a >
             </div>
             <div class="ui-widge collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
                 <form class="form-inline my-2 my-md-0 pl-5" autocomplete="off" action="{% url 'search' %}"
@@ -37,10 +37,10 @@
         <h4>Message Box</h4><br>
         {% for message in messages %}
             {% if message.is_read %}
-                <p><a href="{% url 'repo' %}">{{ message.sender.user.username }} invites you to review new code!</a></p>
+                <p><a href="{% url 'repo' %}">{{ message.sender.user.username }} invites you to review new code!</a ></p >
             {% else %}
                 <p><a href="{% url 'repo' %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }}
-                    invites you to review new code!</a></p>
+                    invites you to review new code!</a ></p >
             {% endif %}
         {% endfor %}
     </div>
