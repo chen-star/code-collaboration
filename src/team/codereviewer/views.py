@@ -731,25 +731,25 @@ def unzip(file_name, store_dir, userid, repo):
 
     # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
-        for file_ in files:  
+        for file_ in files:
             if file_ == '.DS_Store':
                 continue
 
             # get the flattened file name like some__path__filename
-            fname = os.path.join(root, file_)                        
+            fname = os.path.join(root, file_)
             zipfile_len = len(file_name[-len(file_name.split('/')[-1]):].split('.')[0])
 
-            tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]            
+            tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]
             flat_file_name = tmp_flat_fname.replace('/', '__')
-            
+
             # move to media folder and save it as a Django object
             with open(fname, "r") as fh:
                 myFile = django.core.files.File(fh)
                 file_model = File()
-                file_model.file_name = myFile                
+                file_model.file_name = myFile
                 file_model.file_name.name = flat_file_name
                 file_model.repo = repo
-                file_model.save()                
+                file_model.save()
 
     # remove temp folder and original zip file
     try:
@@ -760,7 +760,7 @@ def unzip(file_name, store_dir, userid, repo):
 
 
 # Handle an uploaded zip file and save it in file system
-def save_zip(file_name, userid, repo):    
+def save_zip(file_name, userid, repo):
     store_dir = file_name.split('.')[0]
     unzip(file_name, store_dir, userid, repo)
 
