@@ -250,6 +250,22 @@ def get_codes(request, file_id):
     # file = File.objects.get(id=file_id)
     # f = open(file.file_name.url, 'r')
     lines = f.read().splitlines()
+    for i in range(len(lines)):
+        # line = line.encode('unicode-escape').replace(b'"', b'\\"')
+        if lines[i].find('"')>-1:
+            new_line =""
+            pass_flag=False
+            for x in lines[i]:
+                if pass_flag:
+                    pass_flag=False
+                    new_line=new_line+x
+                    continue
+                if x=='\\':
+                    pass_flag=True
+                if x=='"':
+                    new_line = new_line+'\\'
+                new_line=new_line+x
+            lines[i]=new_line
     context = {'codes': lines}
     context['commented_lines'] = set()
     all_comments = file.comments.all()
