@@ -9,6 +9,7 @@
 8. new message for new comments and replies
 9. indent for replies to comments
 10. check if user has permission for reviewing a file
+11. add new member to repo
 
 ## Todo
 1. deploy
