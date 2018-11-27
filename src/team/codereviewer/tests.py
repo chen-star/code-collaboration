@@ -31,7 +31,7 @@ class DeveloperTestCase(TestCase):
         self.assertEqual(u3.email, 'user3@gmail.com')
 
 
-# test Reply mode
+# test Reply model
 class ReplyTestCase(TestCase):
     def setUp(self):
         u1 = User.objects.create_user(username='u1', first_name='user1', last_name='l1', password='pw1')
@@ -53,3 +53,18 @@ class ReplyTestCase(TestCase):
         d2 = Developer.objects.get(user=u2)
         r2 = Reply.objects.get(replier=d2)
         self.assertTrue(r2.deleted)
+
+
+# test Comment model
+# class CommentTestCase(TestCase):
+#     def setUp(self):
+#         u1 = User.objects.create_user(username='u1', first_name='user1', last_name='l1', password='pw1')
+#         d1 = Developer.objects.create(user=u1)
+#
+#         Comment(line_num=10, commenter=d1, content='comment 1')
+#
+#     def test_comment_creation(self):
+#         u1 = User.objects.get(username='u1')
+#         d1 = Developer.objects.get(user=u1)
+#         c1 = Comment.objects.get(commenter=d1)
+#         self.assertEqual(c1.content, 'comment 1')
