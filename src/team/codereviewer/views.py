@@ -132,7 +132,7 @@ def create_repo(request):
             modify_frequency = 0
             new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
-            
+
             # handle a zip file or a single file.
             uploaded_file = files
             if not uploaded_file.name.endswith('.zip'):
@@ -156,7 +156,7 @@ def create_repo(request):
                 save_zip(full_filename, owner.user.id, new_repo)
             # file upload ends.
             return redirect(reverse('repo'))
-    
+
     context['form'] = CreateRepoForm()
     return redirect(reverse('repo'))
 
@@ -164,7 +164,7 @@ def create_repo(request):
 @login_required
 def review(request, repo_id):
     context = {}
-    
+
     # If repo not exists, return Http404.
     try:
         repo = Repo.objects.get(id=repo_id)
@@ -724,7 +724,7 @@ def unzip(file_name, store_dir, userid, repo):
         zfile.extractall(store_dir)
 
     # remove junk folder
-    junkfolder = os.path.join(store_dir,'__MACOSX')
+    junkfolder = os.path.join(store_dir, '__MACOSX')
     shutil.rmtree(junkfolder)
 
     prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
