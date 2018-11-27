@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 from django.conf import settings as django_settings
+from django.core.files.base import ContentFile
 import datetime as dt
 
 import os
