@@ -733,8 +733,18 @@ def unzip(file_name, store_dir, userid, repo):
             # get the flattened file name like some__path__filename
             zipfile_len = len(file_name[-len(file_name.split('/')[-1]):].split('.')[0])
 
-            # move file from temp folder to sourcecode folder
-            os.rename(ffname, settings.MEDIA_DIR + 'sourcecode/' + dumped_fname)
+            tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]            
+            flat_file_name = tmp_flat_fname.replace('/', '__')
+            
+            # move to media folder
+            new_path_n_name = os.path.join(prefix, flat_file_name)
+            os.rename(fname, new_path_n_name)
+            
+            with open(new_path_n_name, "r") as fh:
+                file_content = ContentFile(fh.read())            
+                file_obj = File(repo=repo)
+                file_obj.file_name.save(flat_file_name, file_content)
+                file_obj.save()
 
     # remove temp folder and original zip file
     try:
