@@ -252,17 +252,21 @@ def add_reply(request):
 
 
 @login_required
-def mark_read_then_review(request, repo_id):
+def mark_read_then_review(request, msg_id):
     context = {}
 
-    receiver = Developer.objects.get(user=request.user)
-    project = Repo.objects.get(id=repo_id)
-
-    message = InvitationMessage.objects.filter(receiver=receiver).filter(project=project)[0]
+    # Mark this message as read.
+    message = InvitationMessage.objects.get(id=msg_id)
     message.is_read = True
     message.save()
-    return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
-    #return redirect(reverse('review', kwargs={'repo_id': repo_id}))
+    
+    # To read this message means to accept the invitation of joining the repo.
+    receiver = message.receiver
+    repo = message.project
+    repo.members.add(receiver)
+    repo.save()
+
+    return redirect(reverse('review', kwargs={'repo_id': message.project.id}))
 
 
 @login_required
@@ -529,8 +533,7 @@ def invite(request):
     # send invitation email to receiver
     invite_email(request, sender.user, receiver.user, project)
 
-    return HttpResponseRedirect(reverse('repo'))
-    # redirect(reverse('repo'))
+    return HttpResponseRedirect(reverse('repo'))    
 
 
 # email invitation
