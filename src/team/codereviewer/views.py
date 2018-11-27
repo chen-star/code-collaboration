@@ -698,15 +698,14 @@ def unzip(file_name, store_dir, userid, repo):
             tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]            
             flat_file_name = tmp_flat_fname.replace('/', '__')
             
-            # move to media folder
-            new_path_n_name = os.path.join(prefix, flat_file_name)
-            os.rename(fname, new_path_n_name)
-            
-            with open(new_path_n_name, "r") as fh:
-                file_content = ContentFile(fh.read())            
-                file_obj = File(repo=repo)
-                file_obj.file_name.save(flat_file_name, file_content)
-                file_obj.save()
+            # move to media folder and save it as a Django object
+            with open(fname, "r") as fh:
+                myFile = django.core.files.File(fh)
+                file_model = File()
+                file_model.file_name = myFile                
+                file_model.file_name.name = flat_file_name
+                file_model.repo = repo
+                file_model.save()                
 
     # remove temp folder and original zip file
     try:
