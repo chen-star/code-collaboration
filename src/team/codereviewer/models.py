@@ -3,6 +3,7 @@ from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from datetime import datetime, timezone
 
+
 # User login and registration model
 class Developer(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE, primary_key=True)
@@ -19,19 +20,19 @@ class Developer(models.Model):
     def get_developer(user):
         return Developer.objects.filter(user=user)
 
+
 class Reply(models.Model):
-	replier = models.ForeignKey(Developer, on_delete=models.CASCADE)
-	content = models.CharField(max_length=128)
-	reply_time = models.DateTimeField(auto_now_add=True)
-	deleted=models.BooleanField(default=False)
+    replier = models.ForeignKey(Developer, on_delete=models.CASCADE)
+    content = models.CharField(max_length=128)
+    reply_time = models.DateTimeField(auto_now_add=True)
+    deleted = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.id
 
-	def __str__(self):
-		return self.id
-
-	@property
-	def html(self):
-		res = "<div class='left user-avatar' style='float:left;'> \
+    @property
+    def html(self):
+        res = "<div class='left user-avatar' style='float:left;'> \
         <a href='profile/%s'> \
         <img src='%s' alt='Avatar of %s' style='float:left;width:50px;' />\
         </a>\
@@ -40,24 +41,26 @@ class Reply(models.Model):
         <div class='right' >\
         <p><a href='profile/%s'>  %s</a> replies on %s:</p>\
         <div class='divider'></div>\
-        <h6>  %s</h6><hr>" % (self.replier, self.replier.avatar.url, self.replier, self.replier,self.replier,self.reply_time.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime('%Y-%m-%d %H:%M:%S'),self.content)
-		return res
+        <h6>  %s</h6><hr>" % (self.replier, self.replier.avatar.url, self.replier, self.replier, self.replier,
+                              self.reply_time.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime(
+                                  '%Y-%m-%d %H:%M:%S'), self.content)
+        return res
 
 
 class Comment(models.Model):
-	line_num = models.IntegerField()
-	commenter = models.ForeignKey(Developer, related_name='commenter', on_delete=models.CASCADE)
-	content = models.CharField(max_length=128)
-	comment_time = models.DateTimeField(auto_now_add=True)
-	reply = models.ManyToManyField(Reply,related_name='reply',blank=True)
-	deleted = models.BooleanField(default=False)
+    line_num = models.IntegerField()
+    commenter = models.ForeignKey(Developer, related_name='commenter', on_delete=models.CASCADE)
+    content = models.CharField(max_length=128)
+    comment_time = models.DateTimeField(auto_now_add=True)
+    reply = models.ManyToManyField(Reply, related_name='reply', blank=True)
+    deleted = models.BooleanField(default=False)
 
-	def __str__(self):
-		return str(self.id)
+    def __str__(self):
+        return str(self.id)
 
-	@property
-	def html(self):
-		res = "<div class='left user-avatar' style='float:left;'> \
+    @property
+    def html(self):
+        res = "<div class='left user-avatar' style='float:left;'> \
         <a href='profile/%s'> \
         <img src='%s' alt='Avatar of %s' style='float:left;width:75px;' />\
         </a>\
@@ -66,27 +69,31 @@ class Comment(models.Model):
         <div class='right' >\
         <p><a href='profile/%s'>  %s</a> on %s:</p>\
         <div class='divider'></div>\
-        <h6>  %s</h6>" % (self.commenter, self.commenter.avatar.url, self.commenter, self.commenter,self.commenter,self.comment_time.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime('%Y-%m-%d %H:%M:%S'),self.content)
-		return res
-		# res=res+"<table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_%s'></td>\
-        # <input type='hidden' name='post_id' value='%s' </tr>\
-        # </tbody></table><div id='cmt-msg-%s' class='col-sm-offset-11'><button id='%s' type='submit' class='btn btn-success cmt-btn'>Send</button></div>\
-        # <div id='cmt-list-%s'></div><hr>"% (self.id,self.id,self.id,self.id,self.id)
+        <h6>  %s</h6>" % (self.commenter, self.commenter.avatar.url, self.commenter, self.commenter, self.commenter,
+                          self.comment_time.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime(
+                              '%Y-%m-%d %H:%M:%S'), self.content)
+        return res
 
-		# return self.commenter.user.username +' comments on '+(str(self.comment_time))+': '+self.content
+    # res=res+"<table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_%s'></td>\
+    # <input type='hidden' name='post_id' value='%s' </tr>\
+    # </tbody></table><div id='cmt-msg-%s' class='col-sm-offset-11'><button id='%s' type='submit' class='btn btn-success cmt-btn'>Send</button></div>\
+    # <div id='cmt-list-%s'></div><hr>"% (self.id,self.id,self.id,self.id,self.id)
 
-	@staticmethod
-	def get_comments(file_id,line_num):
-		file_cmt=File.objects.get(id=file_id).comments.all()
-		return Comment.objects.filter(id__in=file_cmt,line_num=line_num)
+    # return self.commenter.user.username +' comments on '+(str(self.comment_time))+': '+self.content
 
-	@staticmethod
-	def get_replies(comment):
-		replies = comment.reply
-		return Reply.objects.filter(id__in=replies)
-	# @staticmethod
-	# def get_reply_num(comment):
-	# 	return len(Comment.get_replies(comment))
+    @staticmethod
+    def get_comments(file_id, line_num):
+        file_cmt = File.objects.get(id=file_id).comments.all()
+        return Comment.objects.filter(id__in=file_cmt, line_num=line_num)
+
+    @staticmethod
+    def get_replies(comment):
+        replies = comment.reply
+        return Reply.objects.filter(id__in=replies)
+# @staticmethod
+# def get_reply_num(comment):
+# 	return len(Comment.get_replies(comment))
+
 
 # Data model of project repository.
 class Repo(models.Model):
@@ -127,9 +134,10 @@ class File(models.Model):
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE, related_name="repository")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     comments = models.ManyToManyField(Comment, blank=True)
+    from_github = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
-        return 'file: {0}'.format(self.file_name.name)
+        return 'file: {0}, {1}'.format(self.file_name.name, self.file_name.url)
 
 
 # User Invitation Message

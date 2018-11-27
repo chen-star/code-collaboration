@@ -132,7 +132,7 @@ def create_repo(request):
             modify_frequency = 0
             new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
-            
+
             # handle a zip file or a single file.
             uploaded_file = files
             if not uploaded_file.name.endswith('.zip'):
@@ -156,7 +156,6 @@ def create_repo(request):
                 save_zip(full_filename, owner.user.id, new_repo)
             # file upload ends.
             return redirect(reverse('repo'))
-    
     context['form'] = CreateRepoForm()
     return redirect(reverse('repo'))
 
@@ -164,7 +163,7 @@ def create_repo(request):
 @login_required
 def review(request, repo_id):
     context = {}
-    
+
     # If repo not exists, return Http404.
     try:
         repo = Repo.objects.get(id=repo_id)
@@ -173,15 +172,15 @@ def review(request, repo_id):
         return render(request, reverse('404'), context)
 
     # TODO current assume only one file in a repo
-    file = File.objects.filter(repo=repo)[3]
-    url = ''
-    if re.match('^\/media.*$', file.file_name.url):
-        url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-        if url.rfind('/User') != 0:
-            url = url[url.rfind('/User'):]
+    file = File.objects.filter(repo=repo)[0]
+    furl = ''
+    if file.from_github:
+        # url = file.file_name.name
+        furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
-        url = file.file_name.url[6:]
-    f = open(url, 'r')
+        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    print(furl)
+    f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
     context['codes'] = lines
@@ -212,19 +211,23 @@ def add_comment(request):
     # messages.append("Successfully sent a comment!")
     return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
 
+
 def delete_comment(request):
     # todo: check 404
-    cmt_to_delete=Comment.objects.get(id=request.POST.get('comment_id')).delete()
+    cmt_to_delete = Comment.objects.get(id=request.POST.get('comment_id')).delete()
     # cmt_to_delete.deleted = true
     return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
 
-def get_changed_comments(request,file_id,line_num,time):
-    timestamp = dt.datetime.fromtimestamp(int(time)//1000.0) #convert
+
+def get_changed_comments(request, file_id, line_num, time):
+    timestamp = dt.datetime.fromtimestamp(int(time) // 1000.0)  # convert
     file = File.objects.get(id=file_id)
     cmt = file.comments.all().filter(line_num=line_num)
-    context={'comments':Comment.objects.filter(id__in=cmt,comment_time__gt=timestamp).order_by('-comment_time').distinct()}
-    context['current_user']=request.user
-    return render(request,  'codereviewer/json/comments.json', context, content_type='application/json')
+    context = {
+        'comments': Comment.objects.filter(id__in=cmt, comment_time__gt=timestamp).order_by('-comment_time').distinct()}
+    context['current_user'] = request.user
+    return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
+
 
 def add_reply(request):
     context = {}
@@ -254,8 +257,8 @@ def mark_read_then_review(request, repo_id):
     message = InvitationMessage.objects.filter(receiver=receiver).filter(project=project)[0]
     message.is_read = True
     message.save()
-    # return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
-    return redirect(reverse('review', kwargs={'repo_id': repo_id}))
+    return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
+    #return redirect(reverse('review', kwargs={'repo_id': repo_id}))
 
 
 @login_required
@@ -263,14 +266,20 @@ def get_codes(request, file_id):
     # TODO check existance
     repo = Repo.objects.get(id=file_id)
     # TODO current assume only one file in a repo
-    file = File.objects.filter(repo=repo)[0]
-    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-    f = open(url, 'r')
+    file = File.objects.get(repo=repo)
+    furl = ''
+    if file.from_github:
+        # url = file.file_name.name
+        furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
+    else:
+        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    print(furl)
+    f = open(furl, 'r')
     # file = File.objects.get(id=file_id)
     # f = open(file.file_name.url, 'r')
     lines = f.read().splitlines()
     context = {'codes': lines}
-    context['commented_lines']=set()
+    context['commented_lines'] = set()
     all_comments = file.comments.all()
     if all_comments:
         for cmt in all_comments:
@@ -283,7 +292,7 @@ def get_comments(request, file_id, line_num):
     # id=int(repo_id)
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments}
-    context['current_user']=request.user
+    context['current_user'] = request.user
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
 
@@ -495,7 +504,6 @@ def invite(request):
     invitationMessage = InvitationMessage(receiver=receiver,
                                           sender=sender,
                                           project=project)
-    print(invitationMessage)
     invitationMessage.save()
 
     # send invitation email to receiver
@@ -516,6 +524,7 @@ def invite_email(request, sender, receiver, project):
         'domain': current_site.domain,
     })
     send_email([receiver.email], sbj, msg)
+    print(msg)
     # TODO: change receiver parameter name
     return render(request, 'codereviewer/registration_done.html', {'receiver': receiver})
 
@@ -626,21 +635,33 @@ def get_repo_from_github(request):
             github_user = github.get_user()
             reposi = github_user.get_repo(repo)
             contents = reposi.get_contents("")
-            download_url = contents[0].download_url
+
+            # no file in github repo
+            if len(contents) == 0:
+                return redirect(reverse('repo'))
+
+            # only one file in github repo
+            first_con = contents.pop(0)
+            download_url = first_con.download_url
+            fname = first_con.name
             file = create_github_file(download_url)
             # create models
             repo_model = create_repo_model(reposi)
-            create_file_model(file, repo_model)
+            create_file_model(file, repo_model, fname)
 
-            while len(contents) > 1:
+            while len(contents) >= 1:
                 file_content = contents.pop(0)
                 if file_content.type == "dir":
                     contents.extend(reposi.get_contents(file_content.path))
                 else:
-                    print(base64_decode(file_content.content))
-                    print(file_content.download_url)
+                    download_url = file_content.download_url
+                    fname = file_content.name
+                    file = create_github_file(download_url)
+                    # create models
+                    create_file_model(file, repo_model, fname)
 
-        except:
+        except Exception as e:
+            print(e)
             return redirect(reverse('repo'))
 
     return redirect(reverse('repo'))
@@ -651,19 +672,21 @@ def base64_decode(str):
 
 
 def create_github_file(download_url):
-    java_file = urlopen(download_url)
+    code_file = urlopen(download_url)
     file_url = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                             'media/sourcecode/' + download_url[download_url.rfind('/') + 1:])
     with open(file_url, 'wb') as output:
-        output.write(java_file.read())
+        output.write(code_file.read())
     input = open(file_url)
     return input
 
 
-def create_file_model(file, repo):
+def create_file_model(file, repo, fname):
     myFile = django.core.files.File(file)
     file_model = codereviewer.models.File()
     file_model.file_name = myFile
+    file_model.file_name.name = fname
+    file_model.from_github = True
     file_model.repo = repo
     file_model.save()
 
@@ -691,25 +714,25 @@ def unzip(file_name, store_dir, userid, repo):
 
     # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
-        for file_ in files:  
+        for file_ in files:
             if file_ == '.DS_Store':
                 continue
 
             # get the flattened file name like some__path__filename
-            fname = os.path.join(root, file_)                        
+            fname = os.path.join(root, file_)
             zipfile_len = len(file_name[-len(file_name.split('/')[-1]):].split('.')[0])
 
-            tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]            
+            tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]
             flat_file_name = tmp_flat_fname.replace('/', '__')
-            
+
             # move to media folder and save it as a Django object
             with open(fname, "r") as fh:
                 myFile = django.core.files.File(fh)
                 file_model = File()
-                file_model.file_name = myFile                
+                file_model.file_name = myFile
                 file_model.file_name.name = flat_file_name
                 file_model.repo = repo
-                file_model.save()                
+                file_model.save()
 
     # remove temp folder and original zip file
     try:
@@ -720,7 +743,7 @@ def unzip(file_name, store_dir, userid, repo):
 
 
 # Handle an uploaded zip file and save it in file system
-def save_zip(file_name, userid, repo):    
+def save_zip(file_name, userid, repo):
     store_dir = file_name.split('.')[0]
     unzip(file_name, store_dir, userid, repo)
 
