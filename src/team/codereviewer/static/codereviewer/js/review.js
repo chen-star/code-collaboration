@@ -12,10 +12,9 @@ function populateCode(file_id){
         var html='<pre>';
         for (var i = 0; i < data.codes.length; i++) {
               var new_line = (data.codes[i]);
-              // console.log(new_line);
-              html+=('<code class="java hljs" id="code-'+i+'">'+new_line+'</code>');
+              html+=('<code class="hljs" id="code-'+i+'">'+new_line+'</code>');
               html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><a id='"+i+"' type='submit' class='cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Comment</a></td></tr>\
-                    </tbody></table><hr><div id='cmt-list-"+i+"'></div></span>";
+                    </tbody></table><div id='cmt-list-"+i+"'></div></span>";
 
           }
           html+=('</pre>');
@@ -60,19 +59,18 @@ function clickOnLine(file_id,line_num){
       user = (data.current_user);
       for (var i=0;i<data.comments.length;i++){
         var line_num = data.comments[i].line_num;
-        var s = (data.comments[i].html);
+        var s = "<hr>"+(data.comments[i].html);
         s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
         if(user==data.comments[i].commenter){
           s+="<a id='"+line_num+"-delete-"+data.comments[i].id+"' type='submit' class='delete-cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Delete</a>";
-          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div>";
         }else{
-          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div>";
         }
         for(var j=0;j<data.comments[i].replies.length;j++){
           s+=data.comments[i].replies[j].html;
         }
         list.append(s);
-        // add reply
       }
     });
 }
@@ -149,15 +147,29 @@ function getUpdates(){
 }
 
 $(document).ready(function() {
+
  file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
- //  $.getScript("/codereviewer/js/highlight.pack.js", function() {
- //   alert("Script loaded but not necessarily executed.");
- //
- // });
+
  var linesWithComment=new Set();
  var openLines=new Set();
   console.log(file_id);
   populateCode(file_id);
+  $.getScript('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js')
+    .done(function(data, textStatus, jqxhr){
+      $('pre code').each(function(i, block) {
+  hljs.highlightBlock(block);
+});
+  })
+  .fail(function( jqxhr, settings, exception ) {
+    console.log(exception);
+});
+
+  // addEventListener('load', function() {
+  //   var code = document.querySelector('#code');
+  //   var worker = new Worker('worker.js');
+  //   worker.onmessage = function(event) { code.innerHTML = event.data; }
+  //   worker.postMessage(code.textContent);
+  // })
   updateTime();
   window.setInterval(getUpdates, 5000);
   // CSRF set-up copied from Django docs
