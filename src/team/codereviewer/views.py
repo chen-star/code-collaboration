@@ -700,11 +700,9 @@ def unzip(file_name, store_dir):
 
 
 # Handle an uploaded zip file and save it in file system
-def save_zip(file_name):
-    unzip(file_name, file_name.split('.')[0])
-
-
-# save_zip_to_database('/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode/pic.zip')
+def save_zip(file_name, userid, repo):    
+    store_dir = file_name.split('.')[0]
+    unzip(file_name, store_dir, userid, repo)
 
 
 def stat_console(request):
