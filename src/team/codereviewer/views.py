@@ -154,7 +154,7 @@ def review(request, repo_id):
     else:
         url = file.file_name.url[6:]
     f = open(url, 'r')
-    lines = f.read().splitlines()
+    lines = f.read().splitlines().encode('utf-8').strip()
     f.close()
     context['codes'] = lines
     context['repo'] = repo
