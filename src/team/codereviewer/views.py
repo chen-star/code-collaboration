@@ -60,7 +60,8 @@ def settings(request):
         cur = timezone.now()
 
         userAct = User.objects.get(developer=username)
-        last_login = datetime.datetime.combine(userAct.last_login.date(), datetime.time(userAct.last_login.hour, userAct.last_login.minute))
+        last_login = datetime.datetime.combine(userAct.last_login.date(),
+                                               datetime.time(userAct.last_login.hour, userAct.last_login.minute))
         # print(last_login)
 
         numOfRepo = Repo.objects.filter(owner=username).count()
@@ -146,14 +147,14 @@ def review(request, repo_id):
     repo = Repo.objects.get(id=repo_id)
     # TODO current assume only one file in a repo
     file = File.objects.get(repo=repo)
-    url = ''
-    if re.match('^\/media.*$', file.file_name.url):
-        url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-        if url.rfind('/User') != 0:
-            url = url[url.rfind('/User'):]
+    furl = ''
+    if file.from_github:
+        # url = file.file_name.name
+        furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
-        url = file.file_name.url[6:]
-    f = open(url, 'r')
+        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    print(furl)
+    f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
     context['codes'] = lines
@@ -184,19 +185,23 @@ def add_comment(request):
     # messages.append("Successfully sent a comment!")
     return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
 
+
 def delete_comment(request):
     # todo: check 404
-    cmt_to_delete=Comment.objects.get(id=request.POST.get('comment_id')).delete()
+    cmt_to_delete = Comment.objects.get(id=request.POST.get('comment_id')).delete()
     # cmt_to_delete.deleted = true
     return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
 
-def get_changed_comments(request,file_id,line_num,time):
-    timestamp = dt.datetime.fromtimestamp(int(time)//1000.0) #convert
+
+def get_changed_comments(request, file_id, line_num, time):
+    timestamp = dt.datetime.fromtimestamp(int(time) // 1000.0)  # convert
     file = File.objects.get(id=file_id)
     cmt = file.comments.all().filter(line_num=line_num)
-    context={'comments':Comment.objects.filter(id__in=cmt,comment_time__gt=timestamp).order_by('-comment_time').distinct()}
-    context['current_user']=request.user
-    return render(request,  'codereviewer/json/comments.json', context, content_type='application/json')
+    context = {
+        'comments': Comment.objects.filter(id__in=cmt, comment_time__gt=timestamp).order_by('-comment_time').distinct()}
+    context['current_user'] = request.user
+    return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
+
 
 def add_reply(request):
     context = {}
@@ -226,8 +231,8 @@ def mark_read_then_review(request, repo_id):
     message = InvitationMessage.objects.filter(receiver=receiver).filter(project=project)[0]
     message.is_read = True
     message.save()
-    # return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
-    return redirect(reverse('review', kwargs={'repo_id': repo_id}))
+    return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
+    #return redirect(reverse('review', kwargs={'repo_id': repo_id}))
 
 
 @login_required
@@ -236,13 +241,19 @@ def get_codes(request, file_id):
     repo = Repo.objects.get(id=file_id)
     # TODO current assume only one file in a repo
     file = File.objects.get(repo=repo)
-    url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-    f = open(url, 'r')
+    furl = ''
+    if file.from_github:
+        # url = file.file_name.name
+        furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
+    else:
+        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    print(furl)
+    f = open(furl, 'r')
     # file = File.objects.get(id=file_id)
     # f = open(file.file_name.url, 'r')
     lines = f.read().splitlines()
     context = {'codes': lines}
-    context['commented_lines']=set()
+    context['commented_lines'] = set()
     all_comments = file.comments.all()
     if all_comments:
         for cmt in all_comments:
@@ -255,7 +266,7 @@ def get_comments(request, file_id, line_num):
     # id=int(repo_id)
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments}
-    context['current_user']=request.user
+    context['current_user'] = request.user
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
 
@@ -467,7 +478,6 @@ def invite(request):
     invitationMessage = InvitationMessage(receiver=receiver,
                                           sender=sender,
                                           project=project)
-    print(invitationMessage)
     invitationMessage.save()
 
     # send invitation email to receiver
@@ -488,6 +498,7 @@ def invite_email(request, sender, receiver, project):
         'domain': current_site.domain,
     })
     send_email([receiver.email], sbj, msg)
+    print(msg)
     # TODO: change receiver parameter name
     return render(request, 'codereviewer/registration_done.html', {'receiver': receiver})
 
@@ -598,21 +609,33 @@ def get_repo_from_github(request):
             github_user = github.get_user()
             reposi = github_user.get_repo(repo)
             contents = reposi.get_contents("")
-            download_url = contents[0].download_url
+
+            # no file in github repo
+            if len(contents) == 0:
+                return redirect(reverse('repo'))
+
+            # only one file in github repo
+            first_con = contents.pop(0)
+            download_url = first_con.download_url
+            fname = first_con.name
             file = create_github_file(download_url)
             # create models
             repo_model = create_repo_model(reposi)
-            create_file_model(file, repo_model)
+            create_file_model(file, repo_model, fname)
 
-            while len(contents) > 1:
+            while len(contents) >= 1:
                 file_content = contents.pop(0)
                 if file_content.type == "dir":
                     contents.extend(reposi.get_contents(file_content.path))
                 else:
-                    print(base64_decode(file_content.content))
-                    print(file_content.download_url)
+                    download_url = file_content.download_url
+                    fname = file_content.name
+                    file = create_github_file(download_url)
+                    # create models
+                    create_file_model(file, repo_model, fname)
 
-        except:
+        except Exception as e:
+            print(e)
             return redirect(reverse('repo'))
 
     return redirect(reverse('repo'))
@@ -623,19 +646,21 @@ def base64_decode(str):
 
 
 def create_github_file(download_url):
-    java_file = urlopen(download_url)
+    code_file = urlopen(download_url)
     file_url = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                             'media/sourcecode/' + download_url[download_url.rfind('/') + 1:])
     with open(file_url, 'wb') as output:
-        output.write(java_file.read())
+        output.write(code_file.read())
     input = open(file_url)
     return input
 
 
-def create_file_model(file, repo):
+def create_file_model(file, repo, fname):
     myFile = django.core.files.File(file)
     file_model = codereviewer.models.File()
     file_model.file_name = myFile
+    file_model.file_name.name = fname
+    file_model.from_github = True
     file_model.repo = repo
     file_model.save()
 

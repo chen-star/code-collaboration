@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-  <title>Review My Code - Repositories</title>
+    <title>Review My Code - Repositories</title>
 {% endblock %}
 
 {% block navbar %}
@@ -34,112 +34,116 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-<div class="col-sm-10"><h1>Hello, {{ user.username }}</h1></div>
+    <div class="row">
+        <div class="col-sm-10"><h1>Hello, {{ user.username }}</h1></div>
 
-<div class="col-sm-12 tab-content tab-pane active" name="new-repo">
-  <div class="my-3 p-3 bg-white rounded box-shadow">
-      <h6>Create a new repository from local files...</h6>
-            <form action="{% url 'create_repo' %}" method="post" enctype="multipart/form-data">
-                {{ form }}
-                <input class="btn btn-primary" type="submit" value="Create">
-                {% csrf_token %}
+        <div class="col-sm-12 tab-content tab-pane active" name="new-repo">
+            <div class="my-3 p-3 bg-white rounded box-shadow">
+                <h6>Create a new repository from local files...</h6>
+                <form action="{% url 'create_repo' %}" method="post" enctype="multipart/form-data">
+                    {{ form }}
+                    <input class="btn btn-primary" type="submit" value="Create">
+                    {% csrf_token %}
+                </form>
+                <hr>
+                <a href="{% url 'github_repo' %}" class="text-primary"> Or, upload from a Github Link</a>
+            </div>
+        </div>
+        <hr>
+        <div class="col-sm-10"><h2>Owning Repos</h2></div>
+
+        <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
+
+            {% if owning_repos %}
+                {% for repo in owning_repos %}
+                    <div class="my-3 p-3 bg-white rounded box-shadow">
+                        <h6 class="border-bottom border-gray pb-2 mb-0"><a
+                                href={% url 'review' repo.id %}>{{ repo.project_name }}</a></h6>
+                        <div class="media text-muted pt-3">
+                            <img src="#" alt="" class="mr-2 rounded">
+                            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                <div class="d-flex justify-content-between align-items-center w-100">
+                                    <strong class="text-gray-dark">{{ repo.owner.user.username }} (Owner)</strong>
+                                </div>
+                                <span class="d-block"><a href="#">{{ repo.owner.user.email }}</a> </span>
+                            </div>
+                        </div>
+                        {% for reviewer in repo.members.all %}
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">{{ reviewer.user.username }} (Reviewer)</strong>
+
+                                        <!-- <a id="add_delete" href="#">Remove</a> -->
+                                    </div>
+                                    <span class="d-block"><a href="#">{{ reviewer.user.email }}</a> </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="media text-muted pt-3">
+                            <img src="#" alt="" class="mr-2 rounded">
+                            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                <div class="d-flex justify-content-between align-items-center w-100">
+                                    <form action="{% url 'invite' %}" method="post">
+                                        <input type="hidden" name="project" value="{{ repo.project_name }}">
+                                        <input class="form-control" type="text" name="receiver"
+                                               placeholder="Enter username to add a member" style="width: 400px">
+                                        <input class="btn btn-primary" type="submit" value="Add">
+                                        {% csrf_token %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="my-3 p-3 bg-white rounded box-shadow">
+                    <h5>No owning repos by now!</h5>
+                </div>
+            {% endif %}
+
+        </div>
+        <div class="col-sm-10"><h2>Reviewing Repos</h2></div>
+        <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
+            <form action="#manage" method="get">
+                {% if membering_repos %}
+                    {% for repo in membering_repos %}
+                        <div class="my-3 p-3 bg-white rounded box-shadow">
+                            <h6 class="border-bottom border-gray pb-2 mb-0"><a
+                                    href={% url 'review' repo.id %}>{{ repo.project_name }}</a></h6>
+                            <div class="media text-muted pt-3">
+                                <img src="#" alt="" class="mr-2 rounded">
+                                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                    <div class="d-flex justify-content-between align-items-center w-100">
+                                        <strong class="text-gray-dark">{{ repo.owner.user.username }} (Owner)</strong>
+
+                                        <!-- <a id="add_delete" href="#">Remove</a> -->
+                                    </div>
+                                    <span class="d-block"><a href="#">{{ repo.owner.user.email }}</a> </span>
+                                </div>
+                            </div>
+                            {% for reviewer in repo.members.all %}
+                                <div class="media text-muted pt-3">
+                                    <img src="#" alt="" class="mr-2 rounded">
+                                    <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
+                                        <div class="d-flex justify-content-between align-items-center w-100">
+                                            <strong class="text-gray-dark">{{ reviewer.user.username }}
+                                                (Reviewer)</strong>
+                                        </div>
+                                        <span class="d-block"><a href="#">{{ reviewer.user.email }}</a> </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="my-3 p-3 bg-white rounded box-shadow">
+                        <h5>No reviewing repos by now!</h5>
+                    </div>
+                {% endif %}
             </form>
-            <hr>
-            <a href="{% url 'github_repo' %}" class="text-primary"> Or, upload from a Github Link</a>
         </div>
     </div>
-    <hr>
-    <div class="col-sm-10"><h2>Owning Repos</h2></div>
-
-    <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
-        
-          {% if owning_repos %}
-          {% for repo in owning_repos %}
-          <div class="my-3 p-3 bg-white rounded box-shadow">
-              <h6 class="border-bottom border-gray pb-2 mb-0"><a href={% url 'review' repo.id %}>{{ repo.project_name }}</a></h6>
-              <div class="media text-muted pt-3">
-                  <img src="#" alt="" class="mr-2 rounded">
-                  <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                      <div class="d-flex justify-content-between align-items-center w-100">
-                          <strong class="text-gray-dark">{{ repo.owner.user.username }} (Owner)</strong>
-                      </div>
-                      <span class="d-block"><a href="#">{{ repo.owner.user.email }}</a> </span>
-                  </div>
-              </div>
-              {% for reviewer in repo.members.all %}
-              <div class="media text-muted pt-3">
-                  <img src="#" alt="" class="mr-2 rounded">
-                  <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                      <div class="d-flex justify-content-between align-items-center w-100">
-                          <strong class="text-gray-dark">{{ reviewer.user.username }} (Reviewer)</strong>
-
-                          <!-- <a id="add_delete" href="#">Remove</a> -->
-                      </div>
-                      <span class="d-block"><a href="#">{{ reviewer.user.email }}</a> </span>
-                  </div>
-              </div>
-              {% endfor %}
-              <div class="media text-muted pt-3">
-                  <img src="#" alt="" class="mr-2 rounded">
-                  <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                      <div class="d-flex justify-content-between align-items-center w-100">    
-                        <form action="{% url 'invite' %}" method="post">
-                          <input type="hidden" name="project" value="{{repo.project_name}}">
-                          <input  class="form-control" type="text" name="receiver" placeholder="Enter username to add a member" style="width: 400px">
-                          <input class="btn btn-primary" type="submit" value="Add">
-                          {% csrf_token %}
-                        </form>                                             
-                      </div>
-                  </div>
-              </div>
-            </div>
-            {% endfor %}
-            {% else %}
-            <div class="my-3 p-3 bg-white rounded box-shadow">
-            <h5>No owning repos by now!</h5>
-            </div>
-            {% endif %}
-        
-  </div>
-  <div class="col-sm-10"><h2>Reviewing Repos</h2></div>
-  <div class="col-sm-12 tab-content tab-pane active" name="current-repo" id="manage">
-      <form action="#manage" method="get">
-        {% if membering_repos %}
-        {% for repo in membering_repos %}
-        <div class="my-3 p-3 bg-white rounded box-shadow">
-            <h6 class="border-bottom border-gray pb-2 mb-0"><a href={% url 'review' repo.id %}>{{ repo.project_name }}</a></h6>
-            <div class="media text-muted pt-3">
-                <img src="#" alt="" class="mr-2 rounded">
-                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <strong class="text-gray-dark">{{ repo.owner.user.username }} (Owner)</strong>
-
-                        <!-- <a id="add_delete" href="#">Remove</a> -->
-                    </div>
-                    <span class="d-block"><a href="#">{{ repo.owner.user.email }}</a> </span>
-                </div>
-            </div>
-            {% for reviewer in repo.members.all %}
-            <div class="media text-muted pt-3">
-                <img src="#" alt="" class="mr-2 rounded">
-                <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
-                    <div class="d-flex justify-content-between align-items-center w-100">
-                        <strong class="text-gray-dark">{{ reviewer.user.username }} (Reviewer)</strong>
-                    </div>
-                    <span class="d-block"><a href="#">{{ reviewer.user.email }}</a> </span>
-                </div>
-            </div>
-            {% endfor %}            
-          </div>
-          {% endfor %}
-          {% else %}
-          <div class="my-3 p-3 bg-white rounded box-shadow">
-          <h5>No reviewing repos by now!</h5>
-          </div>
-          {% endif %}
-      </form>
-</div>
-</div>
 
 {% endblock %}
