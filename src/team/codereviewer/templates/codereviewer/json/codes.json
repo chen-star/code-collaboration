@@ -1,5 +1,5 @@
 {"codes":
-  [{% for line in codes %}{%spaceless%}"{{ line }}"{%endspaceless%}{% if not forloop.last %}, {% endif %}{% endfor %}],
+  [{% for line in codes %}{%spaceless%}"{{ line|safe }}"{%endspaceless%}{% if not forloop.last %}, {% endif %}{% endfor %}],
   "commented_lines":
   [{% for line_num in commented_lines %}{%spaceless%}"{{ line_num }}"{%endspaceless%}{% if not forloop.last %}, {% endif %}{% endfor %}]
 }
