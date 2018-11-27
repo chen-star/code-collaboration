@@ -711,21 +711,27 @@ def create_repo_model(repository):
 
 # Unzip the uploaded zip file in place, and generate flattened file name
 # Format like: some__path__name__filename
-def unzip(file_name, store_dir):
+def unzip(file_name, store_dir, userid, repo):
     with open(file_name, 'rb') as file:
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
 
     # remove junk folder
-    junkfolder = os.path.join(store_dir, '__MACOSX')
+    junkfolder = os.path.join(store_dir,'__MACOSX')
     shutil.rmtree(junkfolder)
+
+    prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
 
     # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
-        for file_ in files:
-            fname = os.path.join(root, file_)
-            ffname = fname
-            dumped_fname = fname.replace('/', '__')
+        for file_ in files:  
+            if file_ == '.DS_Store':
+                continue
+
+            fname = os.path.join(root, file_)            
+            
+            # get the flattened file name like some__path__filename
+            zipfile_len = len(file_name[-len(file_name.split('/')[-1]):].split('.')[0])
 
             # move file from temp folder to sourcecode folder
             os.rename(ffname, settings.MEDIA_DIR + 'sourcecode/' + dumped_fname)
