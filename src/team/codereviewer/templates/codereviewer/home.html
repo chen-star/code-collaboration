@@ -34,14 +34,21 @@
 
 {% block content %}
     <div id="notification-box">
-        <h4>Message Box</h4><br>
-        {% for message in messages %}
-            {% if message.is_read %}
-                <p><a href="{% url 'repo' %}">{{ message.sender.user.username }} invites you to review new code!</a ></p >
-            {% else %}
-                <p><a href="{% url 'repo' %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }}
-                    invites you to review new code!</a ></p >
-            {% endif %}
-        {% endfor %}
+        <h4>Message Box</h4><br>        
+        <div>
+            {% for message in messages %}   
+            <div class="media pt-3 border-bottom border-gray" style="background-color: white;max-width: 80%;margin: 10px;">
+                <p class="media-body pb-2 mb-0 lh-150 pl-5">
+                    <span>
+                        {% if message.is_read %}
+                        <a href="{% url 'review' message.project.id %}">{{ message.sender.user.username }} invites you to review new code!</a>
+                        {% else %}
+                        <a href="{% url 'mark_read_then_review' message.id %}" style="font-weight:bold;">[New Message] {{ message.sender.user.username }} invites you to review new code!</a>
+                        {% endif %}
+                    </span>
+                </p>                            
+            </div>
+            {% endfor %}
+        </div>                      
     </div>
 {% endblock %}
