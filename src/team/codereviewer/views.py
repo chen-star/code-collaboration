@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 from django.conf import settings as django_settings
+from django.core.files.base import ContentFile
 import datetime as dt
 
 import os
@@ -131,9 +132,31 @@ def create_repo(request):
             modify_frequency = 0
             new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
-            file_obj = File(file_name=files, repo=new_repo)
-            file_obj.save()
+
+            # handle a zip file or a single file.
+            uploaded_file = files
+            if not uploaded_file.name.endswith('.zip'):
+                file_obj = File(file_name=uploaded_file, repo=new_repo)
+                file_obj.save()
+            else:
+                # create a tmp directory for unzipping.
+                try:
+                    os.mkdir(os.path.join(django_settings.BASE_DIR, 'tmp'))
+                except:
+                    pass
+
+                # write the file to the tmp directory.
+                full_filename = os.path.join(django_settings.BASE_DIR, 'tmp', uploaded_file.name)
+                fout = open(full_filename, 'wb+')
+                for chunk in uploaded_file.chunks():
+                    fout.write(chunk)
+                fout.close()
+
+                # unzip the file and save them.
+                save_zip(full_filename, owner.user.id, new_repo)
+            # file upload ends.
             return redirect(reverse('repo'))
+
     context['form'] = CreateRepoForm()
     return redirect(reverse('repo'))
 
@@ -141,8 +164,14 @@ def create_repo(request):
 @login_required
 def review(request, repo_id):
     context = {}
-    # TODO check existance
-    repo = Repo.objects.get(id=repo_id)
+
+    # If repo not exists, return Http404.
+    try:
+        repo = Repo.objects.get(id=repo_id)
+    except Repo.DoesNotExist:
+        # TODO: We need a customized 404 page.
+        return render(request, reverse('404'), context)
+
     # TODO current assume only one file in a repo
     file = File.objects.filter(repo=repo)[0]
     furl = ''
@@ -689,7 +718,7 @@ def create_repo_model(repository):
 
 # Unzip the uploaded zip file in place, and generate flattened file name
 # Format like: some__path__name__filename
-def unzip(file_name, store_dir):
+def unzip(file_name, store_dir, userid, repo):
     with open(file_name, 'rb') as file:
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
@@ -698,15 +727,29 @@ def unzip(file_name, store_dir):
     junkfolder = os.path.join(store_dir, '__MACOSX')
     shutil.rmtree(junkfolder)
 
+    prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
+
     # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
         for file_ in files:
-            fname = os.path.join(root, file_)
-            ffname = fname
-            dumped_fname = fname.replace('/', '__')
+            if file_ == '.DS_Store':
+                continue
 
-            # move file from temp folder to sourcecode folder
-            os.rename(ffname, settings.MEDIA_DIR + 'sourcecode/' + dumped_fname)
+            # get the flattened file name like some__path__filename
+            fname = os.path.join(root, file_)
+            zipfile_len = len(file_name[-len(file_name.split('/')[-1]):].split('.')[0])
+
+            tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]
+            flat_file_name = tmp_flat_fname.replace('/', '__')
+
+            # move to media folder and save it as a Django object
+            with open(fname, "r") as fh:
+                myFile = django.core.files.File(fh)
+                file_model = File()
+                file_model.file_name = myFile
+                file_model.file_name.name = flat_file_name
+                file_model.repo = repo
+                file_model.save()
 
     # remove temp folder and original zip file
     try:
@@ -717,11 +760,9 @@ def unzip(file_name, store_dir):
 
 
 # Handle an uploaded zip file and save it in file system
-def save_zip(file_name):
-    unzip(file_name, file_name.split('.')[0])
-
-
-# save_zip_to_database('/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode/pic.zip')
+def save_zip(file_name, userid, repo):
+    store_dir = file_name.split('.')[0]
+    unzip(file_name, store_dir, userid, repo)
 
 
 def stat_console(request):
