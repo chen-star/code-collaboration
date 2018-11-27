@@ -36,7 +36,7 @@
                         <img src="{{ this_developer.avatar.url }}"
                              alt="Avatar of {{ user.username }}" height="120px" width="120px"></img>
                     {% else %}
-                        <img id="img" src="../../static/codereviewer/media/default.png"
+                        <img id="img" src="{% static 'codereviewer/img/default_avatar.png' %}"
                              class="avatar img-circle img-thumbnail" alt="avatar">
                     {% endif %}
                 </div>

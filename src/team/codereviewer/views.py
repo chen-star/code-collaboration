@@ -61,7 +61,6 @@ def settings(request):
 
         userAct = User.objects.get(developer=username)
         last_login = datetime.datetime.combine(userAct.last_login.date(), datetime.time(userAct.last_login.hour, userAct.last_login.minute))
-        # print(last_login)
 
         numOfRepo = Repo.objects.filter(owner=username).count()
         repoTrend = Repo.objects.filter(owner=username, create_time__gte=cur - datetime.timedelta(days=7)).count()
@@ -98,7 +97,7 @@ def edit_profile(request):
             form.save()
             return redirect(reverse('settings'))
         else:
-            print("Eeeeeerror: not valid form")
+            print("Error: not valid form")
 
     return render(request, 'codereviewer/edit_profile.html', context)
 

@@ -42,7 +42,7 @@
         <div class="sidebar-header">
             <h3>Source Code Reviewer</h3>
         </div>
-
+        {% if not user.is_anonymous %}
         <ul class="list-unstyled components">
             <p>Project folders</p>
             {% if not user.is_anonymous %}
@@ -81,6 +81,7 @@
             </li>
             {% endif %}
         </ul>
+        {% endif %}
 
         <ul class="list-unstyled contacts">
             {% if not user.is_anonymous %}
@@ -100,8 +101,10 @@
 
     <!-- Page Content  -->
     <div id="content">
+        {% if not user.is_anonymous %}
         {% block navbar %}{% endblock %}
         {% block content %}{% endblock %}
+        {% endif %}
     </div>
 
 
