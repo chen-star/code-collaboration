@@ -259,7 +259,7 @@ def mark_read_then_review(request, msg_id):
     message = InvitationMessage.objects.get(id=msg_id)
     message.is_read = True
     message.save()
-    
+
     # To read this message means to accept the invitation of joining the repo.
     receiver = message.receiver
     repo = message.project
@@ -302,6 +302,14 @@ def get_codes(request, file_id):
                     new_line = new_line+'\\'
                 new_line=new_line+x
             lines[i]=new_line
+    digits = len(str(len(lines))) # make up for display indent
+    print(digits)
+    for d in range(1,digits):
+        for i in range(int('1'+'0'*(d))):
+            print(i)
+            lines[i] = ' '+lines[i]
+    for i in range(len(lines)):
+        lines[i] = ' '+lines[i]
     context = {'codes': lines}
     context['commented_lines'] = set()
     all_comments = file.comments.all()
@@ -533,7 +541,7 @@ def invite(request):
     # send invitation email to receiver
     invite_email(request, sender.user, receiver.user, project)
 
-    return HttpResponseRedirect(reverse('repo'))    
+    return HttpResponseRedirect(reverse('repo'))
 
 
 # email invitation
