@@ -165,8 +165,14 @@ def create_repo(request):
 @login_required
 def review(request, repo_id):
     context = {}
-    # TODO check existance
-    repo = Repo.objects.get(id=repo_id)
+    
+    # If repo not exists, return Http404.
+    try:
+        repo = Repo.objects.get(id=repo_id)
+    except Repo.DoesNotExist:
+        # TODO: We need a customized 404 page.
+        return render(request, reverse('404'), context)
+
     # TODO current assume only one file in a repo
     file = File.objects.filter(repo=repo)[3]
     url = ''
@@ -690,9 +696,8 @@ def unzip(file_name, store_dir, userid, repo):
             if file_ == '.DS_Store':
                 continue
 
-            fname = os.path.join(root, file_)            
-            
             # get the flattened file name like some__path__filename
+            fname = os.path.join(root, file_)                        
             zipfile_len = len(file_name[-len(file_name.split('/')[-1]):].split('.')[0])
 
             tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]            
