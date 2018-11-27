@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 from django.conf import settings as django_settings
+from django.core.files.base import ContentFile
 import datetime as dt
 
 import os
@@ -167,7 +168,7 @@ def review(request, repo_id):
     # TODO check existance
     repo = Repo.objects.get(id=repo_id)
     # TODO current assume only one file in a repo
-    file = File.objects.get(repo=repo)
+    file = File.objects.filter(repo=repo)[3]
     url = ''
     if re.match('^\/media.*$', file.file_name.url):
         url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
@@ -176,7 +177,7 @@ def review(request, repo_id):
     else:
         url = file.file_name.url[6:]
     f = open(url, 'r')
-    lines = f.read().splitlines().encode('utf-8').strip()
+    lines = f.read().splitlines()
     f.close()
     context['codes'] = lines
     context['repo'] = repo
@@ -257,7 +258,7 @@ def get_codes(request, file_id):
     # TODO check existance
     repo = Repo.objects.get(id=file_id)
     # TODO current assume only one file in a repo
-    file = File.objects.get(repo=repo)
+    file = File.objects.filter(repo=repo)[0]
     url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
     f = open(url, 'r')
     # file = File.objects.get(id=file_id)
