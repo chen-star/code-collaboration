@@ -131,9 +131,31 @@ def create_repo(request):
             modify_frequency = 0
             new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
-            file_obj = File(file_name=files, repo=new_repo)
-            file_obj.save()
+            
+            # handle a zip file or a single file.
+            uploaded_file = files
+            if not uploaded_file.name.endswith('.zip'):
+                file_obj = File(file_name=uploaded_file, repo=new_repo)
+                file_obj.save()
+            else:
+                # create a tmp directory for unzipping.
+                try:
+                    os.mkdir(os.path.join(django_settings.BASE_DIR, 'tmp'))
+                except:
+                    pass
+
+                # write the file to the tmp directory.
+                full_filename = os.path.join(django_settings.BASE_DIR, 'tmp', uploaded_file.name)
+                fout = open(full_filename, 'wb+')
+                for chunk in uploaded_file.chunks():
+                    fout.write(chunk)
+                fout.close()
+
+                # unzip the file and save them.
+                save_zip(full_filename, owner.user.id, new_repo)
+            # file upload ends.
             return redirect(reverse('repo'))
+    
     context['form'] = CreateRepoForm()
     return redirect(reverse('repo'))
 
