@@ -31,7 +31,7 @@ class Reply(models.Model):
 
     @property
     def html(self):
-        res = "<div class='left user-avatar' style='float:left;'> \
+        res = "<hr><div class='left user-avatar' style='float:left;'> \
         <a href='profile/%s'> \
         <img src='%s' alt='Avatar of %s' style='float:left;width:50px;' />\
         </a>\
