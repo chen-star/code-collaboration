@@ -17,3 +17,4 @@
 2. test (assert true)
 3. user test and modification
 4. hash the password
+5. after adding a member, should display a notification message/alert window like "You just invited XXX".
