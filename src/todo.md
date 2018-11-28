@@ -18,3 +18,4 @@
 3. user test and modification
 4. hash the password
 5. after adding a member, should display a notification message/alert window like "You just invited XXX".
+6. **we need a 404 page.**
