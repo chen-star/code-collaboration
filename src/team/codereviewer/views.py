@@ -22,7 +22,6 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
 from django.urls import reverse
-from django.utils import timezone
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
@@ -55,7 +54,7 @@ def settings(request):
         user = request.user
         username = user.developer
         this_developer = Developer.objects.get(user=user)
-        cur = timezone.now()
+        cur = django.utils.timezone.now()
 
         userAct = User.objects.get(developer=username)
         last_login = dt.datetime.combine(userAct.last_login.date(),
