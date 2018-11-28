@@ -46,7 +46,7 @@ def index(request):
 
     receiver = Developer.objects.get(user=user)
     messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')
-    context['messages'] = messages
+    context['messages'] = messages    
     return render(request, 'codereviewer/home.html', context)
 
 
@@ -114,6 +114,16 @@ def repositories(request):
 
         membering_repos = Repo.get_membering_repos(request.user).order_by('-modified_time')
         context['membering_repos'] = membering_repos
+        all_repos = Repo.objects.all().order_by('project_name')
+        files_per_repo = []
+        for repo in all_repos:
+            this_repo = []
+            all_files = File.objects.filter(repo=repo).order_by('file_name')
+            this_repo = list(all_files)
+            files_per_repo.append(this_repo)
+
+        context['all_repos'] = all_repos
+        context['files_per_repo'] = files_per_repo
 
     context['user'] = request.user
     return render(request, 'codereviewer/repo.html', context)
