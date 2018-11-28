@@ -366,7 +366,6 @@ def registration(request):
     context['form'] = form
 
     if not form.is_valid():
-        print(form.errors)
         return render(request, 'codereviewer/registration.html', context)
 
     new_user = User.objects.create_user(username=form.cleaned_data['username'],
