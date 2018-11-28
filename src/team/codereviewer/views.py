@@ -197,8 +197,8 @@ def review(request, file_id):
 
 
 @login_required
-def NotFound():
-    return
+def CodeNotFound(request):
+    return render(request, 'codereviewer/CodeNotFound.html')
 
 
 @login_required
@@ -668,6 +668,7 @@ def search_bar(request):
         fileName = request.POST.get('fileSearch', '')
         tmp = str(fileName).split(",")
         fileID = tmp[0]
+        print(fileID)
         if not id or not re.search('^[0-9]+,[0-9]+__[0-9]+__', str(fileName)):
             fileID = '-1'
             print(fileID)

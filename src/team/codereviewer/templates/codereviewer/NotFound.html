@@ -1,36 +1,15 @@
 {% extends "codereviewer/base_home.html" %}
-{% load static %}
-{% block title %}
-    Review My Code
-{% endblock %}
+{% load staticfiles %}
+{% load widget_tweaks %}
 
-{% block js %}
-    <link rel="stylesheet" href="{% static 'codereviewer/css/default.css' %}">
-    <script src="{% static 'codereviewer/js/review.js' %}"></script>
-{% endblock %}
-
-{% block navbar %}
-    <nav class="navbar navbar-expand-lg sticky-top">
-        <div class="container-fluid">
-            <div>
-                <a href="/">Home</a>
-                <a href="{% url 'settings' %}">Settings</a>
-                <a class="active" href="{% url 'repo' %}">Repositories</a>
-            </div>
-            <div class="collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
-                <form class="form-inline my-2 my-md-0 pl-5" autocomplete="off" action="{% url 'search' %}"
-                      method="post">
-                    {% csrf_token %}
-                    <input class="form-control" type="text" name="fileSearch" id="fileSearch"
-                           placeholder="Search file name">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
-    </nav>
-
-{% endblock %}
+{% block title %}Error{% endblock %}
 
 {% block content %}
-    <div class="code-block" id="code-block" style="line-height:0.7;background: #F0F0F0;"></div>
+     <h1>Error occurred</h1>
+
+    <p>
+        {{ error }}
+    </p>
+
+
 {% endblock %}
