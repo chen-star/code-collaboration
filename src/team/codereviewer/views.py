@@ -115,7 +115,7 @@ def repositories(request):
 
         membering_repos = Repo.get_membering_repos(request.user).order_by('-modified_time')
         context['membering_repos'] = membering_repos
-        all_repos = Repo.objects.all().order_by('project_name')
+        all_repos = owning_repos | membering_repos
         files_per_repo = []
         for repo in all_repos:
             this_repo = []
