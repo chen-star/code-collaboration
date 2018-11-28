@@ -165,18 +165,15 @@ def create_repo(request):
 
 
 @login_required
-def review(request, repo_id):
-    context = {}
-
-    # If repo not exists, return Http404.
+def review(request, file_id):
+    context = {} 
+    # Retrieve file object; return 404 if not found
     try:
-        repo = Repo.objects.get(id=repo_id)
+        file = File.objects.get(id=file_id)
     except Repo.DoesNotExist:
         # TODO: We need a customized 404 page.
         return render(request, reverse('404'), context)
-
-    # TODO current assume only one file in a repo
-    file = File.objects.filter(repo=repo)[0]
+    
     furl = ''
     if file.from_github:
         # url = file.file_name.name
@@ -188,9 +185,25 @@ def review(request, repo_id):
     lines = f.read().splitlines()
     f.close()
     context['codes'] = lines
-    context['repo'] = repo
+    context['repo'] = file.repo
     context['filename'] = file.file_name
     return render(request, 'codereviewer/review.html', context)
+
+
+@login_required
+def review_repo(request, repo_id):
+    context = {}
+    # If repo not exists, return Http404.
+    try:
+        repo = Repo.objects.get(id=repo_id)
+    except Repo.DoesNotExist:
+        # TODO: We need a customized 404 page.
+        return render(request, reverse('404'), context)
+
+    # Serve the first file in the repo to user. 
+    # User may browse the whole repo once she gets into the repo.
+    file = File.objects.filter(repo=repo)[0]
+    return redirect(reverse('review', kwargs={'file_id': file.id}))
 
 
 def add_comment(request):
@@ -270,24 +283,17 @@ def mark_read_then_review(request, msg_id):
 
 
 @login_required
-def get_codes(request, file_id):
-    # TODO check existance
-    repo = Repo.objects.get(id=file_id)
-    # TODO current assume only one file in a repo
-    file = File.objects.filter(repo=repo)[0]
+def get_codes(request, file_id):    
+    file = File.objects.get(id=file_id)
     furl = ''
     if file.from_github:
-        # url = file.file_name.name
         furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
         furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
     print(furl)
     f = open(furl, 'r')
-    # file = File.objects.get(id=file_id)
-    # f = open(file.file_name.url, 'r')
     lines = f.read().splitlines()
     for i in range(len(lines)):
-        # line = line.encode('unicode-escape').replace(b'"', b'\\"')
         if lines[i].find('"')>-1:
             new_line =""
             pass_flag=False
