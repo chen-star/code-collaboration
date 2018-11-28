@@ -3,7 +3,6 @@ from django.core.validators import MinValueValidator
 from django.contrib.auth.models import User
 from datetime import datetime, timezone
 
-
 # User login and registration model
 class Developer(models.Model):
     user = models.OneToOneField('auth.User', on_delete=models.CASCADE, primary_key=True)

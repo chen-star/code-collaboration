@@ -61,7 +61,8 @@ def settings(request):
         cur = timezone.now()
 
         userAct = User.objects.get(developer=username)
-        last_login = datetime.datetime.combine(userAct.last_login.date(), datetime.time(userAct.last_login.hour, userAct.last_login.minute))
+        last_login = datetime.datetime.combine(userAct.last_login.date(),
+                                               datetime.time(userAct.last_login.hour, userAct.last_login.minute))
 
         numOfRepo = Repo.objects.filter(owner=username).count()
         repoTrend = Repo.objects.filter(owner=username, create_time__gte=cur - datetime.timedelta(days=7)).count()
@@ -288,28 +289,28 @@ def get_codes(request, file_id):
     lines = f.read().splitlines()
     for i in range(len(lines)):
         # line = line.encode('unicode-escape').replace(b'"', b'\\"')
-        if lines[i].find('"')>-1:
-            new_line =""
-            pass_flag=False
+        if lines[i].find('"') > -1:
+            new_line = ""
+            pass_flag = False
             for x in lines[i]:
                 if pass_flag:
-                    pass_flag=False
-                    new_line=new_line+x
+                    pass_flag = False
+                    new_line = new_line + x
                     continue
-                if x=='\\':
-                    pass_flag=True
-                if x=='"':
-                    new_line = new_line+'\\'
-                new_line=new_line+x
-            lines[i]=new_line
-    digits = len(str(len(lines))) # make up for display indent
+                if x == '\\':
+                    pass_flag = True
+                if x == '"':
+                    new_line = new_line + '\\'
+                new_line = new_line + x
+            lines[i] = new_line
+    digits = len(str(len(lines)))  # make up for display indent
     print(digits)
-    for d in range(1,digits):
-        for i in range(int('1'+'0'*(d))-1):
+    for d in range(1, digits):
+        for i in range(int('1' + '0' * (d)) - 1):
             print(i)
-            lines[i] = ' '+lines[i]
+            lines[i] = ' ' + lines[i]
     for i in range(len(lines)):
-        lines[i] = ' '+lines[i]
+        lines[i] = ' ' + lines[i]
     context = {'codes': lines}
     context['commented_lines'] = set()
     all_comments = file.comments.all()
