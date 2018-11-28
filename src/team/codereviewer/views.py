@@ -189,8 +189,7 @@ def review(request, file_id):
         # url = file.file_name.name
         furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
-        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-    print(furl)
+        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])    
     f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
