@@ -3,6 +3,12 @@ var last_update_time;
 var linesWithComment=new Set();
 var openLines=new Set();
 var file_id;
+function show(id) {
+  document.getElementById(id).style.visibility = "visible";
+}
+function hide(id) {
+  document.getElementById(id).style.visibility = "hidden";
+}
 function populateCode(file_id){
     var jqXHR = $.get("/codereviewer/get-codes/"+file_id)
       .done(function(data){
@@ -12,10 +18,10 @@ function populateCode(file_id){
         var html='<pre>';
         for (var i = 0; i < data.codes.length; i++) {
               var new_line = (data.codes[i]);
-              // console.log(new_line);
-              html+=('<code class="java hljs" id="code-'+i+'">'+new_line+'</code>');
-              html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><a id='"+i+"' type='submit' class='cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Comment</a></td></tr>\
-                    </tbody></table><hr><div id='cmt-list-"+i+"'></div></span>";
+              html+=('<code class="hljs" id="code-'+i+'"><a onMouseOver="show(\'guide-'+i+'\')" onMouseOut="hide(\'guide-'+i+'\')">'+new_line+'<span id="guide-'+i+'" style="visibility:hidden;font-style: italic;"> # click to comment</span></code></a>');
+              html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><a id='"+i+"' type='submit' class='cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Comment</a>\
+              <div id='popUp-"+i+"' style='display: none;'>   You have successfully sent the comment! </div>\
+              </td></tr></tbody></table><div id='cmt-list-"+i+"'></div></span>";
 
           }
           html+=('</pre>');
@@ -25,10 +31,6 @@ function populateCode(file_id){
         var list = $('#code-block');
         list.append("<h4>There is something wrong when opening the files.</h4>");
         list.append("<h5>"+errorThrown+"</h5>");
-      });
-      $('pre code').each(function(i, block) {
-        hljs.highlightBlock(block);
-        console.log("here");
       });
 
 }
@@ -60,19 +62,18 @@ function clickOnLine(file_id,line_num){
       user = (data.current_user);
       for (var i=0;i<data.comments.length;i++){
         var line_num = data.comments[i].line_num;
-        var s = (data.comments[i].html);
+        var s = "<hr>"+(data.comments[i].html);
         s+="<table><tbody><tr><th><label for='id_replycontent'>  reply... </label></th><td><input type='text' name='replycontent' required id='id_replycontent_reply-"+data.comments[i].id+"'>";
         if(user==data.comments[i].commenter){
           s+="<a id='"+line_num+"-delete-"+data.comments[i].id+"' type='submit' class='delete-cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Delete</a>";
-          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div>";
         }else{
-          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div><hr>";
+          s+="<a id='"+line_num+"-reply-"+data.comments[i].id+"' type='submit' class='reply-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Reply</a></td></tr></tbody></table></div>";
         }
         for(var j=0;j<data.comments[i].replies.length;j++){
           s+=data.comments[i].replies[j].html;
         }
         list.append(s);
-        // add reply
       }
     });
 }
@@ -149,15 +150,23 @@ function getUpdates(){
 }
 
 $(document).ready(function() {
+
  file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
- //  $.getScript("/codereviewer/js/highlight.pack.js", function() {
- //   alert("Script loaded but not necessarily executed.");
- //
- // });
+
  var linesWithComment=new Set();
  var openLines=new Set();
   console.log(file_id);
   populateCode(file_id);
+  $.getScript('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js')
+    .done(function(data, textStatus, jqxhr){
+      $('pre code').each(function(i, block) {
+  hljs.highlightBlock(block);
+});
+  })
+  .fail(function( jqxhr, settings, exception ) {
+    console.log(exception);
+});
+
   updateTime();
   window.setInterval(getUpdates, 5000);
   // CSRF set-up copied from Django docs
@@ -205,8 +214,13 @@ $(document).on("click", ".cmt-btn", function(event){
           var cmt_list = $("#cmt-list-"+this.id);
           // populateList();
           $(selector).val('');
-          linesWithComment.add(line_num);
+          linesWithComment.push(line_num);
           clickOnLine(file_id,line_num);
+          $( "#popUp-"+line_num ).show();
+          console.log("here!!");
+          setTimeout(function() {
+            $( "#popUp-"+line_num ).hide();
+          }, 2000);
       });
   }
 

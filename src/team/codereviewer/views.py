@@ -21,6 +21,7 @@ from django.contrib.auth.decorators import login_required
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 from django.conf import settings as django_settings
+from django.core.files.base import ContentFile
 import datetime as dt
 
 import os
@@ -131,9 +132,34 @@ def create_repo(request):
             modify_frequency = 0
             new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
-            file_obj = File(file_name=files, repo=new_repo)
-            file_obj.save()
+
+            # handle a zip file or a single file.
+            uploaded_file = files
+            if not uploaded_file.name.endswith('.zip'):
+                file_obj = File()
+                file_obj.file_name = uploaded_file
+                file_obj.file_name.name = str(owner.user.id) + '__' + str(new_repo.id) + '__' + uploaded_file.name
+                file_obj.repo = new_repo
+                file_obj.save()
+            else:
+                # create a tmp directory for unzipping.
+                try:
+                    os.mkdir(os.path.join(django_settings.BASE_DIR, 'tmp'))
+                except:
+                    pass
+
+                # write the file to the tmp directory.
+                full_filename = os.path.join(django_settings.BASE_DIR, 'tmp', uploaded_file.name)
+                fout = open(full_filename, 'wb+')
+                for chunk in uploaded_file.chunks():
+                    fout.write(chunk)
+                fout.close()
+
+                # unzip the file and save them.
+                save_zip(full_filename, owner.user.id, new_repo)
+            # file upload ends.
             return redirect(reverse('repo'))
+
     context['form'] = CreateRepoForm()
     return redirect(reverse('repo'))
 
@@ -141,8 +167,14 @@ def create_repo(request):
 @login_required
 def review(request, repo_id):
     context = {}
-    # TODO check existance
-    repo = Repo.objects.get(id=repo_id)
+
+    # If repo not exists, return Http404.
+    try:
+        repo = Repo.objects.get(id=repo_id)
+    except Repo.DoesNotExist:
+        # TODO: We need a customized 404 page.
+        return render(request, reverse('404'), context)
+
     # TODO current assume only one file in a repo
     file = File.objects.filter(repo=repo)[0]
     furl = ''
@@ -220,17 +252,21 @@ def add_reply(request):
 
 
 @login_required
-def mark_read_then_review(request, repo_id):
+def mark_read_then_review(request, msg_id):
     context = {}
 
-    receiver = Developer.objects.get(user=request.user)
-    project = Repo.objects.get(id=repo_id)
-
-    message = InvitationMessage.objects.filter(receiver=receiver).filter(project=project)[0]
+    # Mark this message as read.
+    message = InvitationMessage.objects.get(id=msg_id)
     message.is_read = True
     message.save()
-    return render(request, reverse('review', kwargs = {'repo_id': repo_id}), context)
-    #return redirect(reverse('review', kwargs={'repo_id': repo_id}))
+
+    # To read this message means to accept the invitation of joining the repo.
+    receiver = message.receiver
+    repo = message.project
+    repo.members.add(receiver)
+    repo.save()
+
+    return redirect(reverse('review', kwargs={'repo_id': message.project.id}))
 
 
 @login_required
@@ -266,6 +302,14 @@ def get_codes(request, file_id):
                     new_line = new_line+'\\'
                 new_line=new_line+x
             lines[i]=new_line
+    digits = len(str(len(lines))) # make up for display indent
+    print(digits)
+    for d in range(1,digits):
+        for i in range(int('1'+'0'*(d))-1):
+            print(i)
+            lines[i] = ' '+lines[i]
+    for i in range(len(lines)):
+        lines[i] = ' '+lines[i]
     context = {'codes': lines}
     context['commented_lines'] = set()
     all_comments = file.comments.all()
@@ -277,7 +321,6 @@ def get_codes(request, file_id):
 
 def get_comments(request, file_id, line_num):
     # TODO check existance
-    # id=int(repo_id)
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments}
     context['current_user'] = request.user
@@ -498,7 +541,6 @@ def invite(request):
     invite_email(request, sender.user, receiver.user, project)
 
     return HttpResponseRedirect(reverse('repo'))
-    # redirect(reverse('repo'))
 
 
 # email invitation
@@ -671,9 +713,11 @@ def create_github_file(download_url):
 
 def create_file_model(file, repo, fname):
     myFile = django.core.files.File(file)
+    user_id = repo.owner.user.id
+    repo_id = repo.id
     file_model = codereviewer.models.File()
     file_model.file_name = myFile
-    file_model.file_name.name = fname
+    file_model.file_name.name = (str(user_id) + '/' + str(repo_id) + '/' + fname).replace('/', '__')
     file_model.from_github = True
     file_model.repo = repo
     file_model.save()
@@ -689,7 +733,7 @@ def create_repo_model(repository):
 
 # Unzip the uploaded zip file in place, and generate flattened file name
 # Format like: some__path__name__filename
-def unzip(file_name, store_dir):
+def unzip(file_name, store_dir, userid, repo):
     with open(file_name, 'rb') as file:
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
@@ -698,15 +742,29 @@ def unzip(file_name, store_dir):
     junkfolder = os.path.join(store_dir, '__MACOSX')
     shutil.rmtree(junkfolder)
 
+    prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
+
     # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
         for file_ in files:
-            fname = os.path.join(root, file_)
-            ffname = fname
-            dumped_fname = fname.replace('/', '__')
+            if file_ == '.DS_Store':
+                continue
 
-            # move file from temp folder to sourcecode folder
-            os.rename(ffname, settings.MEDIA_DIR + 'sourcecode/' + dumped_fname)
+            # get the flattened file name like some__path__filename
+            fname = os.path.join(root, file_)
+            zipfile_len = len(file_name[-len(file_name.split('/')[-1]):].split('.')[0])
+
+            tmp_flat_fname = str(userid) + '/' + str(repo.id) + fname[len(store_dir) + zipfile_len + 1:]
+            flat_file_name = tmp_flat_fname.replace('/', '__')
+
+            # move to media folder and save it as a Django object
+            with open(fname, "r") as fh:
+                myFile = django.core.files.File(fh)
+                file_model = File()
+                file_model.file_name = myFile
+                file_model.file_name.name = flat_file_name
+                file_model.repo = repo
+                file_model.save()
 
     # remove temp folder and original zip file
     try:
@@ -717,11 +775,9 @@ def unzip(file_name, store_dir):
 
 
 # Handle an uploaded zip file and save it in file system
-def save_zip(file_name):
-    unzip(file_name, file_name.split('.')[0])
-
-
-# save_zip_to_database('/Users/jinyili/Documents/CMU/WEB_APPLICATION_DEVELOPMENT/Team17/src/team/media/sourcecode/pic.zip')
+def save_zip(file_name, userid, repo):
+    store_dir = file_name.split('.')[0]
+    unzip(file_name, store_dir, userid, repo)
 
 
 def stat_console(request):
