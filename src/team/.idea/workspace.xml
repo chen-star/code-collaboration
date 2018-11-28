@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="50b6cdf2-4001-4111-a26d-ceee889622bb" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codereviewer/templates/codereviewer/settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/codereviewer/templates/codereviewer/settings.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/codereviewer/tests.py" beforeDir="false" afterPath="$PROJECT_DIR$/codereviewer/tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/media/sourcecode/InterestingPictureServlet_Qz3eOfg.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codereviewer/templates/codereviewer/json/codes.json" beforeDir="false" afterPath="$PROJECT_DIR$/codereviewer/templates/codereviewer/json/codes.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codereviewer/templates/codereviewer/review.html" beforeDir="false" afterPath="$PROJECT_DIR$/codereviewer/templates/codereviewer/review.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/codereviewer/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/codereviewer/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,7 +21,7 @@
     <session id="-1362137964">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="4" />
+          <entry key="project.closed" value="5" />
           <entry key="project.open.time.17" value="1" />
           <entry key="project.open.time.4" value="1" />
           <entry key="project.open.time.5" value="4" />
@@ -116,11 +117,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/codereviewer/templates/codereviewer/settings.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="373">
-              <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
+            <state relative-caret-position="388">
+              <caret line="36" column="64" selection-start-line="36" selection-start-column="64" selection-end-line="36" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -134,10 +135,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/codereviewer/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
+            <state relative-caret-position="-1328">
               <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
@@ -207,7 +208,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" fullScreen="true">
+  <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
     <option name="y" value="23" />
     <option name="width" value="80" />
     <option name="height" value="22" />
@@ -228,40 +229,6 @@
             <path>
               <item name="team" type="b2602c69:ProjectViewProjectNode" />
               <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="team" type="b2602c69:ProjectViewProjectNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="team" type="b2602c69:ProjectViewProjectNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="team" type="b2602c69:ProjectViewProjectNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-              <item name="img" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="team" type="b2602c69:ProjectViewProjectNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="team" type="b2602c69:ProjectViewProjectNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-              <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -353,12 +320,12 @@
     <frame x="0" y="0" width="1680" height="1050" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24297924" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24297924" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.4981685" visible="true" weight="0.2244898" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4981685" weight="0.2244898" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -523,16 +490,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/codereviewer/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/codereviewer/tests.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="646">
@@ -565,8 +522,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/codereviewer/templates/codereviewer/settings.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="35" column="25" selection-start-line="35" selection-start-column="25" selection-end-line="35" selection-end-column="25" />
+        <state relative-caret-position="388">
+          <caret line="36" column="64" selection-start-line="36" selection-start-column="64" selection-end-line="36" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/codereviewer/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1328">
+          <caret line="60" lean-forward="true" selection-start-line="60" selection-end-line="60" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
