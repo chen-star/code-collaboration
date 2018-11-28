@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 {% load static %}
 <head>
@@ -52,15 +52,12 @@
             <li>
                 <a href="#{{repo.id}}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{repo.project_name}}</a>
                 <ul class="collapse list-unstyled" id="{{repo.id}}">
+                    {% for file in repo.repository.all %}
                     <li>
-                        <a href="{% url 'review' files_per_repo.0.0.file_name %}">{{files_per_repo.0.0.file_name}}</a>
-                    </li>
-                    <li>
-                        <a href="#">File 2</a>
-                    </li>
-                    <li>
-                        <a href="#">File 3</a>
-                    </li>
+                        <a href={% url 'review' file.id %}>{{file.file_name}}
+                        </a>
+                    </li>  
+                    {% endfor %}
                 </ul>
             </li>
             {% endfor %}
