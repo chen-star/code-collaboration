@@ -10,6 +10,7 @@
 9. indent for replies to comments
 10. check if user has permission for reviewing a file
 11. add new member to repo
+12. http://localhost:8000/codereviewer/repositories nav-bar not display correctly - "Repository" on the nav-bar is not selected and not in bold.
 
 ## Todo
 1. deploy
