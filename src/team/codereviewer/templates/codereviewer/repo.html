@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-    <title>Review My Code - Repositories</title>
+    Review My Code - Repositories
 {% endblock %}
 
 {% block navbar %}
@@ -15,9 +15,9 @@
     <nav class="navbar navbar-expand-lg navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div>
-                <a class="active" href="/">Home</a>
+                <a href="/">Home</a>
                 <a href="{% url 'settings' %}">Settings</a>
-                <a href="{% url 'repo' %}">Repositories</a>
+                <a class="active" href="{% url 'repo' %}">Repositories</a>
             </div>
             <div class="ui-widge collapse navbar-collapse float-lg-right d-flex flex-row-reverse">
                 <form class="form-inline my-2 my-md-0 pl-5" autocomplete="off" action="{% url 'search' %}"
@@ -30,7 +30,6 @@
             </div>
         </div>
     </nav>
-
 {% endblock %}
 
 {% block content %}
@@ -74,8 +73,6 @@
                                 <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
                                     <div class="d-flex justify-content-between align-items-center w-100">
                                         <strong class="text-gray-dark">{{ reviewer.user.username }} (Reviewer)</strong>
-
-                                        <!-- <a id="add_delete" href="#">Remove</a> -->
                                     </div>
                                     <span class="d-block"><a href="#">{{ reviewer.user.email }}</a> </span>
                                 </div>
@@ -111,7 +108,7 @@
                     {% for repo in membering_repos %}
                         <div class="my-3 p-3 bg-white rounded box-shadow">
                             <h6 class="border-bottom border-gray pb-2 mb-0"><a
-                                    href={% url 'review' repo.id %}>{{ repo.project_name }}</a></h6>
+                                    href={% url 'review_repo' repo.id %}>{{ repo.project_name }}</a></h6>
                             <div class="media text-muted pt-3">
                                 <img src="#" alt="" class="mr-2 rounded">
                                 <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
@@ -145,5 +142,4 @@
             </form>
         </div>
     </div>
-
 {% endblock %}
