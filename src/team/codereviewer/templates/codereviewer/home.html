@@ -41,7 +41,7 @@
                 <p class="media-body pb-2 mb-0 lh-150 pl-2">
                     <span>
                         {% if message.is_read %}
-                        <a href="{% url 'review' message.project.id %}">[{{message.time}}] {{ message.sender.user.username }} invites you to review new code!</a>
+                        <a href="{% url 'review_repo' message.project.id %}">[{{message.time}}] {{ message.sender.user.username }} invites you to review new code!</a>
                         {% else %}
                         <a href="{% url 'mark_read_then_review' message.id %}" style="font-weight:bold;">[{{message.time}}] [New Message] {{ message.sender.user.username }} invites you to review new code!</a>
                         {% endif %}
