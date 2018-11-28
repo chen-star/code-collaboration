@@ -31,5 +31,6 @@
 ## Review page
 1. What if upload a zip file? which page to direct to
 2. [bug] default avatar could not sent comment
-3. unclear how to send comment
-4. Missing message for successfully sent comments
+3. ~~unclear how to send comment~~
+4. ~~Missing message for successfully sent comments~~
+5. ~~unclear side nav bar~~
