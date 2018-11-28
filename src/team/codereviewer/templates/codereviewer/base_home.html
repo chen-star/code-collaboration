@@ -43,43 +43,27 @@
             <h3>Source Code Reviewer</h3>
         </div>
         {% if not user.is_anonymous %}
-        <ul class="list-unstyled components">
+        <ul class="list-unstyled components">            
+            {% if not user.is_anonymous %}            
+
+            {% if all_repos %}
             <p>Project folders</p>
-            {% if not user.is_anonymous %}
-            <li class="active">
-                <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Project
-                    1</a>
-                <ul class="collapse list-unstyled" id="homeSubmenu">
+            {% for repo in all_repos %}
+            <li>
+                <a href="#{{repo.id}}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{repo.project_name}}</a>
+                <ul class="collapse list-unstyled" id="{{repo.id}}">
+                    {% for file in repo.repository.all %}
                     <li>
-                        <a href="#">File 1</a>
-                    </li>
-                    <li>
-                        <a href="#">File 2</a>
-                    </li>
-                    <li>
-                        <a href="#">File 3</a>
-                    </li>
+                        <a href={% url 'review' file.id %}>{{file.file_name}}
+                        </a>
+                    </li>  
+                    {% endfor %}
                 </ul>
             </li>
-            <li>
-                <a href="#">Project 2</a>
-            </li>
-            <li>
-                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Project
-                    3</a>
-                <ul class="collapse list-unstyled" id="pageSubmenu">
-                    <li>
-                        <a href="#">File 1</a>
-                    </li>
-                    <li>
-                        <a href="#">File 2</a>
-                    </li>
-                    <li>
-                        <a href="#">File 3</a>
-                    </li>
-                </ul>
-            </li>
+            {% endfor %}
             {% endif %}
+            
+        {% endif %}
         </ul>
         {% endif %}
 
