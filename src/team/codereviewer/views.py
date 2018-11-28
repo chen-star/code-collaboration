@@ -43,10 +43,12 @@ def index(request):
     user = request.user
     if not request.user.is_authenticated:
         return render(request, 'codereviewer/home.html', context)
-
+    context['user']=user
     receiver = Developer.objects.get(user=user)
     messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')
-    context['messages'] = messages    
+    context['messages'] = messages
+    new_reply_messages = NewReplyMessage.objects.filter(new_reply_receiver=receiver).order_by('-time')
+    context['new_reply_messages']=new_reply_messages
     return render(request, 'codereviewer/home.html', context)
 
 
@@ -177,20 +179,20 @@ def create_repo(request):
 
 @login_required
 def review(request, file_id):
-    context = {} 
+    context = {}
     # Retrieve file object; return 404 if not found
     try:
         file = File.objects.get(id=file_id)
     except Repo.DoesNotExist:
         # TODO: We need a customized 404 page.
         return render(request, reverse('404'), context)
-    
+
     furl = ''
     if file.from_github:
         # url = file.file_name.name
         furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
-        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])    
+        furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
     f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
@@ -210,16 +212,14 @@ def review_repo(request, repo_id):
         # TODO: We need a customized 404 page.
         return render(request, reverse('404'), context)
 
-    # Serve the first file in the repo to user. 
+    # Serve the first file in the repo to user.
     # User may browse the whole repo once she gets into the repo.
     file = File.objects.filter(repo=repo)[0]
     return redirect(reverse('review', kwargs={'file_id': file.id}))
 
 
 def add_comment(request):
-    # messages =[]
     context = {}
-    # context = {'msg':messages}
     if request.method == 'POST':
         print("post comment")
         form = AddCommentForm(request.POST)
@@ -235,14 +235,12 @@ def add_comment(request):
         file.comments.add(new_comment)
         context['comment'] = new_comment
     print("add comment")
-    # messages.append("Successfully sent a comment!")
     return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
 
 
 def delete_comment(request):
     # todo: check 404
     cmt_to_delete = Comment.objects.get(id=request.POST.get('comment_id')).delete()
-    # cmt_to_delete.deleted = true
     return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
 
 
@@ -291,9 +289,17 @@ def mark_read_then_review(request, msg_id):
 
     return redirect(reverse('review_repo', kwargs={'repo_id': message.project.id}))
 
+@login_required
+def mark_read_then_review_new_reply(request, msg_id):
+    context = {}
+    # Mark this message as read.
+    message = NewReplyMessage.objects.get(id=msg_id)
+    message.is_read = True
+    message.save()
+    return redirect(reverse('review', kwargs={'file_id': message.file.id}))
 
 @login_required
-def get_codes(request, file_id):    
+def get_codes(request, file_id):
     file = File.objects.get(id=file_id)
     furl = ''
     if file.from_github:
@@ -328,7 +334,6 @@ def get_codes(request, file_id):
     print(digits)
     for d in range(1, digits):
         for i in range(int('1' + '0' * (d)) - 1):
-            print(i)
             lines[i] = ' ' + lines[i]
     for i in range(len(lines)):
         lines[i] = ' ' + lines[i]
@@ -804,3 +809,21 @@ def save_zip(file_name, userid, repo):
 
 def stat_console(request):
     return 0
+
+def send_new_reply_msg(request):
+    user = request.user
+    replier = Developer.get_developer(user)[0]
+    comment_id = request.POST.get('comment_id')[6:]
+    file_id = request.POST.get('file_id')
+    comment = Comment.objects.get(id=comment_id)
+    receiver = comment.commenter
+    if user.username == receiver.user.username:
+        return render(request, 'codereviewer/json/reply.json', {}, content_type='application/json')
+
+    file = File.objects.get(id=file_id)
+    new_msg = NewReplyMessage(replier = replier,
+                              new_reply_receiver = receiver,
+                              file = file,
+                              comment = comment)
+    new_msg.save()
+    return render(request, 'codereviewer/json/reply.json', {}, content_type='application/json')

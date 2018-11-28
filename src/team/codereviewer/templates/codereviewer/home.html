@@ -14,7 +14,7 @@
     <nav class="navbar navbar-expand-lg navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div>
-                <a class="active" href=" ">Home</a >
+                <a class="active" href="/">Home</a >
                 <a href="{% url 'settings' %}">Settings</a >
                 <a href="{% url 'repo' %}">Repositories</a >
             </div>
@@ -33,11 +33,15 @@
 {% endblock %}
 
 {% block content %}
-    <div id="notification-box">
-        <h4>Message Box</h4><br>        
+<div class="row">
+    <div class="col-sm-10"><h1>Hello, {{ user.username }}</h1></div>
+    <div class="col-sm-10" id="notification-box">
+        <h4>Message Box</h4><br>
         <div>
-            {% for message in messages %}   
-            <div class="card media pt-3 pb-2 mb-2 border-bottom border-gray">
+          <h5> New Invitations</h5><hr>
+          {% if messages %}
+            {% for message in messages %}
+
                 <p class="media-body pb-2 mb-0 lh-150 pl-2">
                     <span>
                         {% if message.is_read %}
@@ -46,9 +50,44 @@
                         <a href="{% url 'mark_read_then_review' message.id %}" style="font-weight:bold;">[{{message.time}}] [New Message] {{ message.sender.user.username }} invites you to review new code!</a>
                         {% endif %}
                     </span>
-                </p>                            
-            </div>
+                </p>
+
             {% endfor %}
-        </div>                      
+            {% else %}
+
+                <p class="media-body pb-2 mb-0 lh-150 pl-2">
+                    <span>
+                        <p>There is currently no new invitation for reviewing codes.</p>
+                    </span>
+                </p>
+
+            {% endif %}
+        </div>
+        <div>
+          <h5> New Replies</h5><hr>
+          {% if new_reply_messages %}
+            {% for message in new_reply_messages %}
+                <p class="media-body pb-2 mb-0 lh-150 pl-2">
+                    <span>
+                        {% if message.is_read %}
+                        <a href="{% url 'review' message.file.id %}">[{{message.time}}] {{ message.reply_message_body }}</a>
+                        {% else %}
+                        <a href="{% url 'mark_read_then_review_new_reply' message.id %}" style="font-weight:bold;">[{{message.time}}] [New Message] {{ message.reply_message_body }}</a>
+                        {% endif %}
+                    </span>
+                </p>
+
+            {% endfor %}
+            {% else %}
+
+                <p class="media-body pb-2 mb-0 lh-150 pl-2">
+                    <span>
+                        <p>There is currently no new reply to your Comments.</p>
+                    </span>
+                </p>
+
+            {% endif %}
+        </div>
+
     </div>
 {% endblock %}

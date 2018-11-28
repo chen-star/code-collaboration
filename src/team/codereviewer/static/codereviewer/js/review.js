@@ -246,6 +246,14 @@ $(document).on("click", ".reply-btn", function(event){
           // update comment reply list;
           $(selector).val('');
           clickOnLine(file_id,line_num);
+          // send new msg to replied comment, if different user, check in views
+          $.post("/codereviewer/send-new-reply-msg",{
+            'comment_id':comment_id,
+            'file_id':file_id
+          })
+          .done(function(data){
+            console.log("sent msg");
+          })
       });
   }
 

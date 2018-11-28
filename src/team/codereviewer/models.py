@@ -55,7 +55,7 @@ class Comment(models.Model):
     deleted = models.BooleanField(default=False)
 
     def __str__(self):
-        return str(self.id)
+        return self.id
 
     @property
     def html(self):
@@ -158,3 +158,25 @@ class InvitationMessage(models.Model):
 
     def __str__(self):
         return 'sender: {0}, receiver: {1}'.format(self.sender, self.receiver)
+
+class NewReplyMessage(models.Model):
+    replier = models.ForeignKey(Developer, on_delete=models.CASCADE, related_name='new_reply_replier')
+    new_reply_receiver = models.ForeignKey(Developer, on_delete=models.CASCADE)
+    file = models.ForeignKey(File, on_delete=models.CASCADE)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    time = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return str(self.id)
+
+    @property
+    def reply_message_body(self):
+        content = self.comment.content
+        if len(content)>6:
+            content = content[:6]+"..."
+        filename = self.file.file_name.name[11:]
+        if len(filename)>15:
+            filename = filename[:15]+"..."
+        replier_name = self.replier.user.username
+        return 'Your comment "{0}" at file "{1}" received a new reply from {2}.'.format(content,filename,replier_name)
