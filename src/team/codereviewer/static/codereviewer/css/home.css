@@ -230,3 +230,9 @@ span.cmt-block-span{
   width:5%;
   height:auto;
 }
+
+.card {
+    background-color: white;
+    max-width: 80%;
+    margin: 20px;
+}
