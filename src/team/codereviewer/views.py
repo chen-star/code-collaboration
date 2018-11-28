@@ -288,7 +288,7 @@ def mark_read_then_review(request, msg_id):
     repo.members.add(receiver)
     repo.save()
 
-    return redirect(reverse('review', kwargs={'repo_id': message.project.id}))
+    return redirect(reverse('review_repo', kwargs={'repo_id': message.project.id}))
 
 
 @login_required
