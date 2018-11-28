@@ -19,8 +19,9 @@ function populateCode(file_id){
         for (var i = 0; i < data.codes.length; i++) {
               var new_line = (data.codes[i]);
               html+=('<code class="hljs" id="code-'+i+'"><a onMouseOver="show(\'guide-'+i+'\')" onMouseOut="hide(\'guide-'+i+'\')">'+new_line+'<span id="guide-'+i+'" style="visibility:hidden;font-style: italic;"> # click to comment</span></code></a>');
-              html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><a id='"+i+"' type='submit' class='cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Comment</a></td></tr>\
-                    </tbody></table><div id='cmt-list-"+i+"'></div></span>";
+              html+="<span class='cmt-block-span' id='cmt-span-"+i+"'><table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_"+i+"'><a id='"+i+"' type='submit' class='cmt-btn' style='-webkit-appearance: initial;color:darkgrey;'>  Comment</a>\
+              <div id='popUp-"+i+"' style='display: none;'>   You have successfully sent the comment! </div>\
+              </td></tr></tbody></table><div id='cmt-list-"+i+"'></div></span>";
 
           }
           html+=('</pre>');
@@ -30,10 +31,6 @@ function populateCode(file_id){
         var list = $('#code-block');
         list.append("<h4>There is something wrong when opening the files.</h4>");
         list.append("<h5>"+errorThrown+"</h5>");
-      });
-      $('pre code').each(function(i, block) {
-        hljs.highlightBlock(block);
-        console.log("here");
       });
 
 }
@@ -217,8 +214,13 @@ $(document).on("click", ".cmt-btn", function(event){
           var cmt_list = $("#cmt-list-"+this.id);
           // populateList();
           $(selector).val('');
-          linesWithComment.append(line_num);
+          linesWithComment.push(line_num);
           clickOnLine(file_id,line_num);
+          $( "#popUp-"+line_num ).show();
+          console.log("here!!");
+          setTimeout(function() {
+            $( "#popUp-"+line_num ).hide();
+          }, 2000);
       });
   }
 
