@@ -10,7 +10,7 @@ class Developer(models.Model):
     department = models.CharField(max_length=30, blank=True, default="IT")
     group = models.CharField(max_length=30, blank=True, default="1")
     title = models.CharField(max_length=20, blank=True, default="SDE")
-    avatar = models.ImageField(upload_to='avatars/', blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True, default='avatars/default-user-avatar.jpg')
 
     def __str__(self):
         return self.user.username

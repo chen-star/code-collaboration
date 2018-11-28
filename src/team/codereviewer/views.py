@@ -1,41 +1,36 @@
+import base64
+import datetime as dt
+import json
+import os
+import re
+import shutil
 import urllib
+import zipfile
+from urllib.request import *
+
+import django
+from django.conf import settings as django_settings
 from django.contrib import auth
 from django.contrib.auth import authenticate
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.files.base import ContentFile
 from django.core.mail import send_mail
-import json
 from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.template.response import TemplateResponse
+from django.urls import reverse
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
-
-from codereviewer.forms import *
-
-from django.shortcuts import render, redirect
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-
-from codereviewer.tokens import account_activation_token, password_reset_token
-
-from django.conf import settings as django_settings
-from django.core.files.base import ContentFile
-import datetime as dt
-
-import os
-import re
-import zipfile
-import shutil
-import string
 from github import Github
-import base64
-from urllib.request import *
-import django
-import datetime
-from django.utils import timezone
+
 import codereviewer
+from codereviewer.forms import *
+from codereviewer.tokens import account_activation_token, password_reset_token
 
 
 def index(request):
@@ -48,7 +43,7 @@ def index(request):
     messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')
     context['messages'] = messages
     new_reply_messages = NewReplyMessage.objects.filter(new_reply_receiver=receiver).order_by('-time')
-    context['new_reply_messages']=new_reply_messages
+    context['new_reply_messages'] = new_reply_messages
     return render(request, 'codereviewer/home.html', context)
 
 
@@ -63,14 +58,14 @@ def settings(request):
         cur = timezone.now()
 
         userAct = User.objects.get(developer=username)
-        last_login = datetime.datetime.combine(userAct.last_login.date(),
-                                               datetime.time(userAct.last_login.hour, userAct.last_login.minute))
+        last_login = dt.datetime.combine(userAct.last_login.date(),
+                                               dt.time(userAct.last_login.hour, userAct.last_login.minute))
 
         numOfRepo = Repo.objects.filter(owner=username).count()
-        repoTrend = Repo.objects.filter(owner=username, create_time__gte=cur - datetime.timedelta(days=7)).count()
+        repoTrend = Repo.objects.filter(owner=username, create_time__gte=cur - dt.timedelta(days=7)).count()
         numOfCom = Comment.objects.filter(commenter=this_developer).count()
         comTrend = Comment.objects.filter(commenter=this_developer,
-                                          comment_time__gte=cur - datetime.timedelta(days=7)).count()
+                                          comment_time__gte=cur - dt.timedelta(days=7)).count()
         context['this_developer'] = this_developer
         context['active'] = last_login
         context['repos'] = numOfRepo
@@ -185,7 +180,7 @@ def review(request, file_id):
         file = File.objects.get(id=file_id)
     except Repo.DoesNotExist:
         # TODO: We need a customized 404 page.
-        return render(request, reverse('404'), context)
+        return render(request, reverse('NotFound'), context)
 
     furl = ''
     if file.from_github:
@@ -200,6 +195,11 @@ def review(request, file_id):
     context['repo'] = file.repo
     context['filename'] = file.file_name
     return render(request, 'codereviewer/review.html', context)
+
+
+@login_required
+def NotFound():
+    return
 
 
 @login_required
@@ -249,8 +249,8 @@ def get_changed_comments(request, file_id, line_num, time):
     file = File.objects.get(id=file_id)
     cmt = file.comments.all().filter(line_num=line_num)
     context = {
-        'comments': Comment.objects.filter(id__in=cmt, comment_time__gt=timestamp).order_by('-comment_time').distinct()}
-    context['current_user'] = request.user
+        'comments': Comment.objects.filter(id__in=cmt, comment_time__gt=timestamp).order_by('-comment_time').distinct(),
+        'current_user': request.user}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
 
@@ -653,7 +653,6 @@ def search_bar(request):
         user = Repo.objects.filter(owner=owner)
         results = []
         for repo in user:
-            # files = File.objects.filter(repo=repo)
             file = codereviewer.models.File.objects.get(repo=repo)
             url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
             filename = url[url.rfind('/') + 1:]
@@ -664,14 +663,17 @@ def search_bar(request):
         return HttpResponse(data, 'application/json')
     else:
         fileName = request.POST.get('fileSearch', '')
-        fileName = fileName[fileName.find(',') + 1:]
-        if not re.match('!^\/media.+$', fileName):
-            fileName = 'sourcecode/' + fileName
+        tmp = str(fileName).split(",")
+        fileID = tmp[0]
+        if not id or not re.search('^[0-9]+,[0-9]+__[0-9]+__', str(fileName)):
+            fileID = '-1'
+            print(fileID)
         else:
-            fileName = '/Users/chenjiaxin/programmes/webgroup/Team17/src/team/media/sourcecode/' + fileName
-        file = codereviewer.models.File.objects.filter(file_name=fileName)[:1].get()
-        repo = file.repo
-        return review(request, repo.id)
+            repo = Repo.objects.get(id=fileID)
+            file = File.objects.filter(repo=repo)[0]
+            fileID = file.id
+            print(fileID)
+        return redirect(reverse('review', kwargs={'file_id': fileID}))
 
 
 @csrf_exempt
@@ -809,6 +811,7 @@ def save_zip(file_name, userid, repo):
 
 def stat_console(request):
     return 0
+
 
 def send_new_reply_msg(request):
     user = request.user

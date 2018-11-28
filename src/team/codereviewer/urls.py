@@ -38,4 +38,5 @@ urlpatterns = [
     url(r'github/$', views.github_auth, name='github_oauth'),
     url(r'githubRepo/$', views.get_repo_from_github, name='github_repo'),
     url(r'^search', views.search_bar, name='search'),
+    url(r'^NotFound', views.NotFound, name='NotFound'),
 ]
