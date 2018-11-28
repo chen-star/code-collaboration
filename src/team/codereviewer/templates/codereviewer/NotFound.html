@@ -28,15 +28,9 @@
             </div>
         </div>
     </nav>
+
 {% endblock %}
 
 {% block content %}
-    <div>
-        <p>Owner: {{ repo.owner }} ({{ repo.owner.user.email }}) File: {{ filename }}</p>
-        <a class="badge badge-dark" id="expand-all" style="color:white;">Show All Comments</a>
-    </div>
-
-    <div class="col-md-2"></div>
-
     <div class="code-block" id="code-block" style="line-height:0.7;background: #F0F0F0;"></div>
 {% endblock %}
