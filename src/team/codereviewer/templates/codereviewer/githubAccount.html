@@ -2,12 +2,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+  {% load static %}
     <meta charset="UTF-8">
     <title>Github Account</title>
-    <link rel="stylesheet" id="bootstrap-css" href="../../static/codereviewer/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../static/codereviewer/css/style.css">
-    <script src="../../static/codereviewer/js/bootstrap.min.js"></script>
-    <script src="../../static/codereviewer/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="{% static 'codereviewer/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'codereviewer/css/style.css' %}">
+    <script src="{% static 'codereviewer/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'codereviewer/js/bootstrap.bundle.min.js' %}"></script>
 </head>
 <body>
 <div class="">
