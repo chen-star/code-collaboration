@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 
 from codereviewer.models import *
 
@@ -28,8 +27,8 @@ class DeveloperRegForm(forms.Form):
                                 widget=forms.TextInput())
     email = forms.EmailField(label='Email address',
                              widget=forms.TextInput())
-    password1 = forms.CharField(widget=forms.PasswordInput())
-    password2 = forms.CharField(widget=forms.PasswordInput())
+    password1 = forms.CharField(widget=forms.PasswordInput(), label="Password")
+    password2 = forms.CharField(widget=forms.PasswordInput(), label="Confirm password")
     company = forms.CharField(max_length=30, required=True)
     department = forms.CharField(max_length=30, required=True)
     group = forms.CharField(max_length=30, required=True)
