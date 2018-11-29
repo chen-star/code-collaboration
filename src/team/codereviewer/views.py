@@ -714,7 +714,7 @@ def get_repo_from_github(request):
             fname = first_con.name
             file = create_github_file(download_url)
             # create models
-            repo_model = create_repo_model(reposi)
+            repo_model = create_repo_model(reposi, username)
             create_file_model(file, repo_model, fname)
 
             while len(contents) >= 1:
@@ -762,9 +762,9 @@ def create_file_model(file, repo, fname):
     file_model.save()
 
 
-def create_repo_model(repository):
-    print(repository.owner.name)
-    owner = User.objects.get(username=repository.owner.name)
+def create_repo_model(repository, username):
+    print(username)
+    owner = User.objects.get(username=username)
     owner = Developer.objects.get(user=owner)
     print(owner)
     repo = Repo(owner=owner, project_name=repository.name)
