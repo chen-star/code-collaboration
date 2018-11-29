@@ -519,8 +519,8 @@ def github_auth(request):
     html = response.read()
     html = html.decode('ascii')
     data = json.loads(html)
-    print(data)
     username = data['login']
+    print(username)
     email = data['email']
     password = 'default_pw'
 
@@ -691,6 +691,14 @@ def get_repo_from_github(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         repo = request.POST.get('repository', '')
+        user = request.user
+        developer = Developer.objects.get(user=user)
+
+        if username != developer.user.username:
+            print(username)
+            print(developer.user.username)
+            return render(request, 'codereviewer/NotFound.html',
+                          {'error': 'Sorry, This repository is not under your Github Account. Please try again!'})
 
         # log into github account
         try:
@@ -701,7 +709,8 @@ def get_repo_from_github(request):
 
             # no file in github repo
             if len(contents) == 0:
-                return redirect(reverse('repo'))
+                return render(request, 'codereviewer/NotFound.html',
+                              {'error': 'Sorry, No file under this repository. Please check again!'})
 
             # only one file in github repo
             first_con = contents.pop(0)
@@ -725,7 +734,8 @@ def get_repo_from_github(request):
 
         except Exception as e:
             print(e)
-            return redirect(reverse('repo'))
+            return render(request, 'codereviewer/NotFound.html',
+                          {'error': 'Sorry, No such repository under this username. Please check again!'})
 
     return redirect(reverse('repo'))
 
@@ -757,9 +767,12 @@ def create_file_model(file, repo, fname):
 
 
 def create_repo_model(repository):
+    print(repository.owner.name)
     owner = User.objects.get(username=repository.owner.name)
     owner = Developer.objects.get(user=owner)
+    print(owner)
     repo = Repo(owner=owner, project_name=repository.name)
+    print(repo)
     repo.save()
     return repo
 
