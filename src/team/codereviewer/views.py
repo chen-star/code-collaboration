@@ -150,6 +150,7 @@ def create_repo(request):
                 file_obj = File()
                 file_obj.file_name = uploaded_file
                 file_obj.file_name.name = str(owner.user.id) + '__' + str(new_repo.id) + '__' + uploaded_file.name
+                file_obj.display_name = file_obj.file_name.name.split('__')[-1]
                 file_obj.repo = new_repo
                 file_obj.save()
             else:
@@ -195,9 +196,10 @@ def review(request, file_id):
     f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
+    context['all_repos'] = [file.repo]
     context['codes'] = lines
     context['repo'] = file.repo
-    context['filename'] = file.file_name.name[11:]
+    context['filename'] = file.display_name
     return render(request, 'codereviewer/review.html', context)
 
 
@@ -346,8 +348,7 @@ def get_codes(request, file_id):
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
-def get_comments(request, file_id, line_num):
-    # TODO check existance
+def get_comments(request, file_id, line_num):    
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments, 'current_user': request.user}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
@@ -460,7 +461,7 @@ def github_login(request):
     # define github account parameters
     GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
     GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
-    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
+    GITHUB_CALLBACK = 'http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com:80/codereviewer/github/'
     GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 
     data = {
@@ -487,7 +488,7 @@ def github_auth(request):
     # define github account parameters
     GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
     GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
-    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
+    GITHUB_CALLBACK = 'http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com:80/codereviewer/github/'
 
     if 'code' not in request.GET:
         return redirect(reverse('index'))
@@ -583,8 +584,7 @@ def invite_email(request, sender, receiver, project):
         'domain': current_site.domain,
     })
     send_email([receiver.email], sbj, msg)
-    print(msg)
-    # TODO: change receiver parameter name
+    print(msg)    
     return render(request, 'codereviewer/registration_done.html', {'receiver': receiver})
 
 
@@ -751,6 +751,7 @@ def create_file_model(file, repo, fname):
     file_model = codereviewer.models.File()
     file_model.file_name = myFile
     file_model.file_name.name = (str(user_id) + '/' + str(repo_id) + '/' + fname).replace('/', '__')
+    file_model.display_name = file_model.file_name.name.split('__')[-1]
     file_model.from_github = True
     file_model.repo = repo
     file_model.save()
@@ -771,9 +772,12 @@ def unzip(file_name, store_dir, userid, repo):
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
 
-    # remove junk folder
-    junkfolder = os.path.join(store_dir, '__MACOSX')
-    shutil.rmtree(junkfolder)
+    # remove junk folder; ignore if not exists.
+    try:
+        junkfolder = os.path.join(store_dir, '__MACOSX')
+        shutil.rmtree(junkfolder)
+    except:
+        pass
 
     prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
 
@@ -791,13 +795,17 @@ def unzip(file_name, store_dir, userid, repo):
             flat_file_name = tmp_flat_fname.replace('/', '__')
 
             # move to media folder and save it as a Django object
-            with open(fname, "r") as fh:
-                myFile = django.core.files.File(fh)
-                file_model = File()
-                file_model.file_name = myFile
-                file_model.file_name.name = flat_file_name
-                file_model.repo = repo
-                file_model.save()
+            try:
+                with open(fname, "r") as fh:
+                    myFile = django.core.files.File(fh)
+                    file_model = File()
+                    file_model.file_name = myFile
+                    file_model.file_name.name = flat_file_name
+                    file_model.display_name = flat_file_name.split('__')[-1]
+                    file_model.repo = repo
+                    file_model.save()
+            except:
+                pass
 
     # remove temp folder and original zip file
     try:
