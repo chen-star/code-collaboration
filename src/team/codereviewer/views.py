@@ -121,7 +121,6 @@ def repositories(request):
             files_per_repo.append(this_repo)
 
         context['all_repos'] = all_repos
-        context['files_per_repo'] = files_per_repo
 
     context['user'] = request.user
     return render(request, 'codereviewer/repo.html', context)
@@ -147,6 +146,7 @@ def create_repo(request):
                 file_obj = File()
                 file_obj.file_name = uploaded_file
                 file_obj.file_name.name = str(owner.user.id) + '__' + str(new_repo.id) + '__' + uploaded_file.name
+                file_obj.display_name = file_obj.file_name.name.split('__')[-1]
                 file_obj.repo = new_repo
                 file_obj.save()
             else:
@@ -189,9 +189,11 @@ def review(request, file_id):
     f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
+
+    context['all_repos'] = [file.repo]
     context['codes'] = lines
     context['repo'] = file.repo
-    context['filename'] = file.file_name
+    context['filename'] = file.display_name
     return render(request, 'codereviewer/review.html', context)
 
 
@@ -213,7 +215,6 @@ def review_repo(request, repo_id):
 def add_comment(request):
     context = {}
     if request.method == 'POST':
-        print("post comment")
         form = AddCommentForm(request.POST)
         if not form.is_valid():
             context['comment'] = []
@@ -226,7 +227,6 @@ def add_comment(request):
         new_comment.save()
         file.comments.add(new_comment)
         context['comment'] = new_comment
-    print("add comment")
     return render(request, 'codereviewer/json/comment.json', context, content_type='application/json')
 
 
@@ -303,7 +303,6 @@ def get_codes(request, file_id):
         furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
         furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-    print(furl)
     f = open(furl, 'r')
     lines = f.read().splitlines()
     for i in range(len(lines)):
@@ -328,7 +327,6 @@ def get_codes(request, file_id):
                 new_line = new_line + x
             lines[i] = new_line
     digits = len(str(len(lines)))  # make up for display indent
-    print(digits)
     for d in range(1, digits):
         for i in range(int('1' + '0' * (d)) - 1):
             lines[i] = ' ' + lines[i]
@@ -745,6 +743,7 @@ def create_file_model(file, repo, fname):
     file_model = codereviewer.models.File()
     file_model.file_name = myFile
     file_model.file_name.name = (str(user_id) + '/' + str(repo_id) + '/' + fname).replace('/', '__')
+    file_model.display_name = file_model.file_name.name.split('__')[-1]
     file_model.from_github = True
     file_model.repo = repo
     file_model.save()
@@ -766,8 +765,11 @@ def unzip(file_name, store_dir, userid, repo):
         zfile.extractall(store_dir)
 
     # remove junk folder
-    junkfolder = os.path.join(store_dir, '__MACOSX')
-    shutil.rmtree(junkfolder)
+    try:
+        junkfolder = os.path.join(store_dir, '__MACOSX')
+        shutil.rmtree(junkfolder)
+    except FileNotFoundError:
+        pass
 
     prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
 
@@ -785,13 +787,17 @@ def unzip(file_name, store_dir, userid, repo):
             flat_file_name = tmp_flat_fname.replace('/', '__')
 
             # move to media folder and save it as a Django object
-            with open(fname, "r") as fh:
-                myFile = django.core.files.File(fh)
-                file_model = File()
-                file_model.file_name = myFile
-                file_model.file_name.name = flat_file_name
-                file_model.repo = repo
-                file_model.save()
+            try:
+                with open(fname, "r") as fh:
+                    myFile = django.core.files.File(fh)
+                    file_model = File()
+                    file_model.file_name = myFile
+                    file_model.file_name.name = flat_file_name
+                    file_model.display_name = flat_file_name.split('__')[-1]
+                    file_model.repo = repo
+                    file_model.save()
+            except:
+                pass
 
     # remove temp folder and original zip file
     try:
@@ -799,6 +805,11 @@ def unzip(file_name, store_dir, userid, repo):
         os.remove(file_name)
     except:
         pass
+
+    # if all files are invalid, delete the repo object.
+    if Repo.objects.get(id=repo.id).repository is None:
+        Repo.objects.get(id=repo.id).delete()
+
 
 
 # Handle an uploaded zip file and save it in file system

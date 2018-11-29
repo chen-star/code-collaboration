@@ -130,6 +130,7 @@ class Repo(models.Model):
 
 class File(models.Model):
     file_name = models.FileField(upload_to='sourcecode', blank=True)
+    display_name = models.CharField(max_length=200, blank=True)
     repo = models.ForeignKey(Repo, on_delete=models.CASCADE, related_name="repository")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     comments = models.ManyToManyField(Comment, blank=True)
