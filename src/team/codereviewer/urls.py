@@ -1,11 +1,7 @@
-from django.contrib import admin
-from django.urls import path, include, re_path
 from django.conf.urls import url
+from django.urls import path, re_path
 
-from django.contrib.auth.views import LoginView, LogoutView
-from codereviewer import views, forms
-from django.conf import settings
-from django.conf.urls.static import static
+from codereviewer import views
 
 urlpatterns = [
     url(r'^settings/?$', views.settings, name='settings'),
@@ -38,5 +34,4 @@ urlpatterns = [
     url(r'github/$', views.github_auth, name='github_oauth'),
     url(r'githubRepo/$', views.get_repo_from_github, name='github_repo'),
     url(r'^search', views.search_bar, name='search'),
-    url(r'^CodeNotFound', views.CodeNotFound, name='NotFound'),
 ]

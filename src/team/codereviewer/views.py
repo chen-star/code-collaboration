@@ -174,12 +174,10 @@ def create_repo(request):
 @login_required
 def review(request, file_id):
     context = {}
-    # Retrieve file object; return 404 if not found
     try:
         file = File.objects.get(id=file_id)
-    except Repo.DoesNotExist:
-        # TODO: We need a customized 404 page.
-        return render(request, reverse('NotFound'), context)
+    except File.DoesNotExist:
+        return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've entered a correct filename"})
 
     furl = ''
     if file.from_github:
@@ -197,18 +195,12 @@ def review(request, file_id):
 
 
 @login_required
-def CodeNotFound(request):
-    return render(request, 'codereviewer/CodeNotFound.html')
-
-
-@login_required
 def review_repo(request, repo_id):
     context = {}
     # If repo not exists, return Http404.
     try:
         repo = Repo.objects.get(id=repo_id)
     except Repo.DoesNotExist:
-        # TODO: We need a customized 404 page.
         return render(request, reverse('404'), context)
 
     # Serve the first file in the repo to user.
@@ -299,6 +291,11 @@ def mark_read_then_review_new_reply(request, msg_id):
 
 @login_required
 def get_codes(request, file_id):
+    try:
+        file = File.objects.get(id=file_id)
+    except File.DoesNotExist:
+        return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've entered a correct filename"})
+
     file = File.objects.get(id=file_id)
     furl = ''
     if file.from_github:
@@ -348,8 +345,7 @@ def get_codes(request, file_id):
 def get_comments(request, file_id, line_num):
     # TODO check existance
     comments = Comment.get_comments(file_id, line_num)
-    context = {'comments': comments}
-    context['current_user'] = request.user
+    context = {'comments': comments, 'current_user': request.user}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
 
 
