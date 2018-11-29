@@ -231,8 +231,10 @@ def add_comment(request):
 
 
 def delete_comment(request):
-    # todo: check 404
-    cmt_to_delete = Comment.objects.get(id=request.POST.get('comment_id')).delete()
+    # check if the cmt exists
+    cmt_to_delete = Comment.objects.filter(id=request.POST.get('comment_id'))
+    if len(cmt_to_delete)>0:
+        cmt_to_delete.delete
     return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
 
 
