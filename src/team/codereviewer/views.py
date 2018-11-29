@@ -147,6 +147,7 @@ def create_repo(request):
                 file_obj = File()
                 file_obj.file_name = uploaded_file
                 file_obj.file_name.name = str(owner.user.id) + '__' + str(new_repo.id) + '__' + uploaded_file.name
+                file_obj.display_name = file_obj.file_name.name.split('__')[-1]
                 file_obj.repo = new_repo
                 file_obj.save()
             else:
@@ -192,6 +193,8 @@ def review(request, file_id):
     f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
+
+    context['all_repos'] = [file.repo]
     context['codes'] = lines
     context['repo'] = file.repo
     context['filename'] = file.file_name
@@ -404,7 +407,7 @@ def confirm_email(request, new_user):
 
 # send email helper function
 def send_email(address, sbj, msg):
-    send_mail(subject=sbj, message=msg, from_email="coderviewerTeam@andrew.cmu.edu", recipient_list=address)
+    send_mail(subject=sbj, message=msg, from_email=django_settings.FROM_EMAIL_ADDRESS, recipient_list=address)
 
 
 # activate account
@@ -746,6 +749,7 @@ def create_file_model(file, repo, fname):
     file_model = codereviewer.models.File()
     file_model.file_name = myFile
     file_model.file_name.name = (str(user_id) + '/' + str(repo_id) + '/' + fname).replace('/', '__')
+    file_model.display_name = file_model.file_name.name.split('__')[-1]
     file_model.from_github = True
     file_model.repo = repo
     file_model.save()
@@ -791,6 +795,7 @@ def unzip(file_name, store_dir, userid, repo):
                 file_model = File()
                 file_model.file_name = myFile
                 file_model.file_name.name = flat_file_name
+                file_model.display_name = flat_file_name.split('__')[-1]
                 file_model.repo = repo
                 file_model.save()
 

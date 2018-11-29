@@ -1,61 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9b089fbb-c0ac-46d3-bd6c-e706db271496" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Team17.iml" afterPath="$PROJECT_DIR$/.idea/Team17.iml" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/team.zip" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/sourcecode/1__1__HelloWorldServlet.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/sourcecode/HelloWorldServlet.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5.zip" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task0/.Task0Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task0/Task0Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task0/WordCount.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task0/wordcount.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task1/.Task1Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task1/Task1Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task1/TotalWords.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task1/total_words.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task2/.Task2Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task2/RandR.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task2/Task2Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task2/randr.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task3/.Task3Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task3/RRandNotRR.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task3/Task3Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task3/rrandnotrr.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task4/.Task4Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task4/MaxTemperature.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task4/MaxTemperatureMapper.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task4/MaxTemperatureReducer.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task4/Task4Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task4/maxtemperature.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task5/.Task5Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task5/MinTemperature.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task5/MinTemperatureMapper.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task5/MinTemperatureReducer.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task5/Task5Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task5/mintemperature.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task6/.Task6Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task6/RapesPlusRobberies.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task6/Task6Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task6/rapesplusrobberies.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task7/.Task7Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task7/OaklandCrimeStats.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task7/Task7Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task7/oaklandcrimestats.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task8/.Task8Output.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task8/OaklandCrimeStatsKML.java" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task8/Task8Output" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task8/Task8OutputGoogleEarthScreenshot/Task8Screenshot.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_1/Task8/oaklandcrimestatskml.jar" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_2/Project5Spark.zip" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_2/TheTempestOutputDir1/.part-00000.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_2/TheTempestOutputDir1/_SUCCESS" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_2/TheTempestOutputDir1/part-00000" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_2/TheTempestOutputDir2/.part-00000.crc" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_2/TheTempestOutputDir2/_SUCCESS" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/tmp/weitongzProject5/weitongzProject5/Project5/Part_2/TheTempestOutputDir2/part-00000" afterPath="" />
+    <list default="true" id="cb165581-d60c-4257-92ad-dbb44771242f" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/src/team/codereviewer/views.py" afterPath="$PROJECT_DIR$/src/team/codereviewer/views.py" />
+      <change beforePath="$PROJECT_DIR$/src/team/db.sqlite3" afterPath="$PROJECT_DIR$/src/team/db.sqlite3" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -64,95 +12,13 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FUSProjectUsageTrigger">
-    <session id="-1927121616">
-      <usages-collector id="statistics.lifecycle.project">
-        <counts>
-          <entry key="project.closed" value="1" />
-          <entry key="project.open.time.0" value="1" />
-          <entry key="project.opened" value="1" />
-        </counts>
-      </usages-collector>
-    </session>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="master" />
-      </map>
-    </option>
-  </component>
-  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
-  <component name="JsGulpfileManager">
-    <detection-done>true</detection-done>
-    <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
     <option name="width" value="1440" />
     <option name="height" value="827" />
-  </component>
-  <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
-      <flattenPackages />
-      <showMembers />
-      <showModules />
-      <showLibraryContents />
-      <hideEmptyPackages />
-      <abbreviatePackageNames />
-      <autoscrollToSource />
-      <autoscrollFromSource />
-      <sortByType />
-      <manualOrder />
-      <foldersAlwaysOnTop value="true" />
-    </navigator>
-    <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Team17" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Team17" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Team17" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Team17" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Team17" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Team17" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Team17" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Team17" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="media" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Team17" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Team17" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="media" type="462c0819:PsiDirectoryNode" />
-              <item name="sourcecode" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
-    </panes>
-  </component>
-  <component name="PropertiesComponent">
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -174,24 +40,24 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="9b089fbb-c0ac-46d3-bd6c-e706db271496" name="Default Changelist" comment="" />
-      <created>1541212833191</created>
+      <changelist id="cb165581-d60c-4257-92ad-dbb44771242f" name="Default" comment="" />
+      <created>1543463991092</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1541212833191</updated>
+      <updated>1543463991092</updated>
     </task>
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="827" extended-state="0" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.329235" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -205,9 +71,6 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
