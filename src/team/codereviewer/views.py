@@ -231,8 +231,10 @@ def add_comment(request):
 
 
 def delete_comment(request):
-    # todo: check 404
-    cmt_to_delete = Comment.objects.get(id=request.POST.get('comment_id')).delete()
+    # check if the cmt exists
+    cmt_to_delete = Comment.objects.filter(id=request.POST.get('comment_id'))
+    if len(cmt_to_delete)>0:
+        cmt_to_delete.delete
     return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
 
 
@@ -305,19 +307,18 @@ def get_codes(request, file_id):
         furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
         furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-    print(furl)
     f = open(furl, 'r')
     lines = f.read().splitlines()
     for i in range(len(lines)):
         if lines[i].find('"') > -1:
             new_line = ""
             pass_flag = False
-        if lines[i].find('"') > -1:
-            new_line = ""
-            pass_flag = False
-        if lines[i].find('"') > -1:
-            new_line = ""
-            pass_flag = False
+        if lines[i].find('"')>-1:
+            new_line =""
+            pass_flag=False
+        if lines[i].find('"')>-1:
+            new_line =""
+            pass_flag=False
             for x in lines[i]:
                 if pass_flag:
                     pass_flag = False

@@ -32,6 +32,7 @@ function populateCode(file_id){
       .fail(function(jqXHR, textStatus, errorThrown){
         var list = $('#code-block');
         list.append("<h4>There is something wrong when opening the files.</h4>");
+        list.append(errorThrown);
         list.append("<h5>Please try again!</h5>");
       });
 
