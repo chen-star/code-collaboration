@@ -596,7 +596,7 @@ def invite_email(request, sender, receiver, project):
         'domain': current_site.domain,
     })
     send_email([receiver.email], sbj, msg)
-    print(msg)    
+    print(msg)
     return render(request, 'codereviewer/registration_done.html', {'receiver': receiver})
 
 
@@ -750,7 +750,7 @@ def create_github_file(download_url):
     code_file = urlopen(download_url)
     file_url = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                             'media/sourcecode/' + download_url[download_url.rfind('/') + 1:])
-    print("**** file_url **** " + file_url)
+    print("file_url = " + file_url)
     with open(file_url, 'wb') as output:
         output.write(code_file.read())
     input = open(file_url)
