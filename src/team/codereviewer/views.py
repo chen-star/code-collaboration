@@ -38,7 +38,7 @@ def index(request):
     user = request.user
     if not request.user.is_authenticated:
         return render(request, 'codereviewer/home.html', context)
-    context['user'] = user
+    context['user']=user
     receiver = Developer.objects.get(user=user)
     messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')
     context['messages'] = messages
@@ -59,7 +59,7 @@ def settings(request):
 
         userAct = User.objects.get(developer=username)
         last_login = dt.datetime.combine(userAct.last_login.date(),
-                                         dt.time(userAct.last_login.hour, userAct.last_login.minute))
+                                               dt.time(userAct.last_login.hour, userAct.last_login.minute))
 
         numOfRepo = Repo.objects.filter(owner=username).count()
         repoTrend = Repo.objects.filter(owner=username, create_time__gte=cur - dt.timedelta(days=7)).count()
@@ -179,7 +179,10 @@ def review(request, file_id):
         file = File.objects.get(id=file_id)
     except File.DoesNotExist:
         return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've entered a correct filename"})
-
+    # get the repo and check if current user has permission
+    repo = file.repo
+    if not (repo in Repo.get_membering_repos(request.user) or repo in Repo.get_owning_repos(request.user)):
+        return render(request, 'codereviewer/NotFound.html', {'error': "You do not have permission to this file."})
     furl = ''
     if file.from_github:
         # url = file.file_name.name
@@ -283,7 +286,6 @@ def mark_read_then_review(request, msg_id):
 
     return redirect(reverse('review_repo', kwargs={'repo_id': message.project.id}))
 
-
 @login_required
 def mark_read_then_review_new_reply(request, msg_id):
     context = {}
@@ -292,7 +294,6 @@ def mark_read_then_review_new_reply(request, msg_id):
     message.is_read = True
     message.save()
     return redirect(reverse('review', kwargs={'file_id': message.file.id}))
-
 
 @login_required
 def get_codes(request, file_id):
@@ -307,18 +308,13 @@ def get_codes(request, file_id):
         furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
         furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+    print(furl)
     f = open(furl, 'r')
     lines = f.read().splitlines()
     for i in range(len(lines)):
         if lines[i].find('"') > -1:
             new_line = ""
             pass_flag = False
-        if lines[i].find('"')>-1:
-            new_line =""
-            pass_flag=False
-        if lines[i].find('"')>-1:
-            new_line =""
-            pass_flag=False
             for x in lines[i]:
                 if pass_flag:
                     pass_flag = False
@@ -330,6 +326,8 @@ def get_codes(request, file_id):
                     new_line = new_line + '\\'
                 new_line = new_line + x
             lines[i] = new_line
+        while lines[i].find('\t')>-1:
+            lines[i] = lines[i][0:lines[i].find('\t')]+'    '+lines[i][lines[i].find('\t')+1:]
     digits = len(str(len(lines)))  # make up for display indent
     for d in range(1, digits):
         for i in range(int('1' + '0' * (d)) - 1):
@@ -369,6 +367,7 @@ def registration(request):
     context['form'] = form
 
     if not form.is_valid():
+        print(form.errors)
         return render(request, 'codereviewer/registration.html', context)
 
     new_user = User.objects.create_user(username=form.cleaned_data['username'],
@@ -516,16 +515,14 @@ def github_auth(request):
     html = response.read()
     html = html.decode('ascii')
     data = json.loads(html)
-    username = data['login']
-    print(username)
-    email = data['email']
-    password = 'default_pw'
+    username = data['name']
+    password = 'admin'
 
     try:
         user1 = User.objects.get(username=username)
     except:
         user2 = User.objects.create_user(username=username,
-                                         password=password, email=email)
+                                         password=password)
         user2.save()
         new_developer = Developer(user=user2)
         new_developer.save()
@@ -652,13 +649,12 @@ def search_bar(request):
         user = Repo.objects.filter(owner=owner)
         results = []
         for repo in user:
-            files = codereviewer.models.File.objects.filter(repo=repo)
-            for file in files:
-                url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-                filename = url[url.rfind('/') + 1:]
-                if re.search(q, filename, re.IGNORECASE):
-                    result = str(repo.id) + ',' + url[url.rfind('/') + 1:]
-                    results.append(result)
+            file = codereviewer.models.File.objects.get(repo=repo)
+            url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+            filename = url[url.rfind('/') + 1:]
+            if re.search(q, filename, re.IGNORECASE):
+                result = str(repo.id) + ',' + url[url.rfind('/') + 1:]
+                results.append(result)
         data = json.dumps(results)
         return HttpResponse(data, 'application/json')
     else:
@@ -688,15 +684,6 @@ def get_repo_from_github(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         repo = request.POST.get('repository', '')
-        user = request.user
-        print(user)
-        developer = Developer.objects.get(user=user)
-
-        if username != developer.user.username:
-            print(username)
-            print(developer.user.username)
-            return render(request, 'codereviewer/NotFound.html',
-                          {'error': 'Sorry, This repository is not under your Github Account. Please try again!'})
 
         # log into github account
         try:
@@ -707,8 +694,7 @@ def get_repo_from_github(request):
 
             # no file in github repo
             if len(contents) == 0:
-                return render(request, 'codereviewer/NotFound.html',
-                              {'error': 'Sorry, No file under this repository. Please check again!'})
+                return redirect(reverse('repo'))
 
             # only one file in github repo
             first_con = contents.pop(0)
@@ -716,7 +702,7 @@ def get_repo_from_github(request):
             fname = first_con.name
             file = create_github_file(download_url)
             # create models
-            repo_model = create_repo_model(reposi, username)
+            repo_model = create_repo_model(reposi)
             create_file_model(file, repo_model, fname)
 
             while len(contents) >= 1:
@@ -732,8 +718,7 @@ def get_repo_from_github(request):
 
         except Exception as e:
             print(e)
-            return render(request, 'codereviewer/NotFound.html',
-                          {'error': 'Sorry, No such repository under this username. Please check again!'})
+            return redirect(reverse('repo'))
 
     return redirect(reverse('repo'))
 
@@ -764,13 +749,10 @@ def create_file_model(file, repo, fname):
     file_model.save()
 
 
-def create_repo_model(repository, username):
-    print(username)
-    owner = User.objects.get(username=username)
+def create_repo_model(repository):
+    owner = User.objects.get(username=repository.owner.name)
     owner = Developer.objects.get(user=owner)
-    print(owner)
     repo = Repo(owner=owner, project_name=repository.name)
-    print(repo)
     repo.save()
     return repo
 
@@ -839,9 +821,9 @@ def send_new_reply_msg(request):
         return render(request, 'codereviewer/json/reply.json', {}, content_type='application/json')
 
     file = File.objects.get(id=file_id)
-    new_msg = NewReplyMessage(replier=replier,
-                              new_reply_receiver=receiver,
-                              file=file,
-                              comment=comment)
+    new_msg = NewReplyMessage(replier = replier,
+                              new_reply_receiver = receiver,
+                              file = file,
+                              comment = comment)
     new_msg.save()
     return render(request, 'codereviewer/json/reply.json', {}, content_type='application/json')

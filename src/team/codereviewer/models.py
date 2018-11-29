@@ -73,13 +73,6 @@ class Comment(models.Model):
                               '%Y-%m-%d %H:%M:%S'), self.content)
         return res
 
-    # res=res+"<table><tbody><tr><th><label for='id_commentcontent'>Comments... </label></th><td><input type='text' name='commentcontent' required id='id_commentcontent_%s'></td>\
-    # <input type='hidden' name='post_id' value='%s' </tr>\
-    # </tbody></table><div id='cmt-msg-%s' class='col-sm-offset-11'><button id='%s' type='submit' class='btn btn-success cmt-btn'>Send</button></div>\
-    # <div id='cmt-list-%s'></div><hr>"% (self.id,self.id,self.id,self.id,self.id)
-
-    # return self.commenter.user.username +' comments on '+(str(self.comment_time))+': '+self.content
-
     @staticmethod
     def get_comments(file_id, line_num):
         file_cmt = File.objects.get(id=file_id).comments.all()
@@ -89,10 +82,6 @@ class Comment(models.Model):
     def get_replies(comment):
         replies = comment.reply
         return Reply.objects.filter(id__in=replies)
-# @staticmethod
-# def get_reply_num(comment):
-# 	return len(Comment.get_replies(comment))
-
 
 # Data model of project repository.
 class Repo(models.Model):
