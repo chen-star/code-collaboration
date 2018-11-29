@@ -85,6 +85,11 @@
         {% if not user.is_anonymous %}
         {% block navbar %}{% endblock %}
         {% block content %}{% endblock %}
+        {% else %}
+        <h3> Welcome to Code Reviewer! </h3><hr>
+        <h5> You can upload from local files or from GitHub account, and invite your group members to review your code!</h5>
+        <h5> If you try to proceed registration using GitHub account, Your default password is 'default_pw'. For security reasons, please reset your password later.</h6>
+
         {% endif %}
     </div>
 </div>

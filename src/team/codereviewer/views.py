@@ -211,7 +211,7 @@ def review_repo(request, repo_id):
     try:
         repo = Repo.objects.get(id=repo_id)
     except Repo.DoesNotExist:
-        return render(request, reverse('404'), context)
+        return render(request, 'codereviewer/NotFound.html', {'error': "There is no such repo."})
 
     # Serve the first file in the repo to user.
     # User may browse the whole repo once she gets into the repo.
