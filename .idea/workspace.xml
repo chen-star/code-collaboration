@@ -3,22 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="cb165581-d60c-4257-92ad-dbb44771242f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/src/team/codereviewer/views.py" afterPath="$PROJECT_DIR$/src/team/codereviewer/views.py" />
-      <change beforePath="$PROJECT_DIR$/src/team/db.sqlite3" afterPath="$PROJECT_DIR$/src/team/db.sqlite3" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/2037397170.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/800px-Andrew_Carnegie__three-quarter_length_portrait__seated__facing_slightl_6P2nEwK.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/default-user-avatar.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/default-user-avatar_eKNEcjW.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/hongliaz.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/hongliaz_amHHRvI.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/hongliaz_amHHRvI_ASD3mKR.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/hongliaz_amHHRvI_vLy7tcr.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/hongliaz_o0AW8s5.jpg" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/no-smoking-sign-with-white-smoke-on-black-background_hraksnvme_thumbnail-full05.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/snoopy-2.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/snoopy-2_oYViiiI.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/snoopy-2_oYViiiI_6vA9HFT.png" afterPath="" />
-      <change beforePath="$PROJECT_DIR$/src/team/media/avatars/snoopy-2_oYViiiI_rHVJiGP.png" afterPath="" />
+      <change beforePath="$PROJECT_DIR$/src/README.md" afterPath="$PROJECT_DIR$/src/README.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -29,14 +14,27 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="views.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/team/codereviewer/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="118">
-              <caret line="831" column="45" lean-forward="false" selection-start-line="831" selection-start-column="45" selection-end-line="831" selection-end-column="45" />
+            <state relative-caret-position="461">
+              <caret line="692" column="70" lean-forward="false" selection-start-line="692" selection-start-column="70" selection-end-line="692" selection-end-column="70" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="270">
+                <caret line="18" column="60" lean-forward="false" selection-start-line="18" selection-start-column="60" selection-end-line="18" selection-end-column="60" />
+                <folding />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -46,6 +44,8 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>def review</find>
+      <find>searhc</find>
+      <find>def search</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -56,6 +56,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/team/codereviewer/views.py" />
+        <option value="$PROJECT_DIR$/src/README.md" />
       </list>
     </option>
   </component>
@@ -92,19 +93,6 @@
               <item name="Team17" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="Team17" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Team17" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Team17" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Team17" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="team" type="462c0819:PsiDirectoryNode" />
-              <item name="codereviewer" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -138,6 +126,14 @@
       <option name="presentableId" value="Default" />
       <updated>1543463991092</updated>
     </task>
+    <task id="LOCAL-00001" summary="[fix] fix merge error.">
+      <created>1543512213910</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1543512213910</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -148,8 +144,8 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45901638" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18442623" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18442623" sideWeight="0.49713877" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24964234" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="R Packages" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="R Graphics" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -205,6 +201,10 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="[fix] fix merge error." />
+    <option name="LAST_COMMIT_MESSAGE" value="[fix] fix merge error." />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
     <watches-manager />
@@ -212,11 +212,22 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/team/codereviewer/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="118">
-          <caret line="831" column="45" lean-forward="false" selection-start-line="831" selection-start-column="45" selection-end-line="831" selection-end-column="45" />
+        <state relative-caret-position="461">
+          <caret line="692" column="70" lean-forward="false" selection-start-line="692" selection-start-column="70" selection-end-line="692" selection-end-column="70" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="270">
+            <caret line="18" column="60" lean-forward="false" selection-start-line="18" selection-start-column="60" selection-end-line="18" selection-end-column="60" />
+            <folding />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>

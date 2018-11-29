@@ -13,3 +13,7 @@ pip install Pillow
 
 # References
 1. Upload multiple files in Django https://docs.djangoproject.com/en/1.11/topics/http/file-uploads/#uploading-multiple-files
+
+# Endpoint
+
+http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com/
