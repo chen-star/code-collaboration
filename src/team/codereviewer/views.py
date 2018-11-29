@@ -330,7 +330,6 @@ def get_codes(request, file_id):
                 new_line = new_line + x
             lines[i] = new_line
     digits = len(str(len(lines)))  # make up for display indent
-    print(digits)
     for d in range(1, digits):
         for i in range(int('1' + '0' * (d)) - 1):
             lines[i] = ' ' + lines[i]
@@ -652,12 +651,13 @@ def search_bar(request):
         user = Repo.objects.filter(owner=owner)
         results = []
         for repo in user:
-            file = codereviewer.models.File.objects.get(repo=repo)
-            url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-            filename = url[url.rfind('/') + 1:]
-            if re.search(q, filename, re.IGNORECASE):
-                result = str(repo.id) + ',' + url[url.rfind('/') + 1:]
-                results.append(result)
+            files = codereviewer.models.File.objects.filter(repo=repo)
+            for file in files:
+                url = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
+                filename = url[url.rfind('/') + 1:]
+                if re.search(q, filename, re.IGNORECASE):
+                    result = str(repo.id) + ',' + url[url.rfind('/') + 1:]
+                    results.append(result)
         data = json.dumps(results)
         return HttpResponse(data, 'application/json')
     else:

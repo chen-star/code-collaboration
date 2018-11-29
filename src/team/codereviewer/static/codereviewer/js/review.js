@@ -3,6 +3,7 @@ var last_update_time;
 var linesWithComment=new Set();
 var openLines=new Set();
 var file_id;
+var totalLineNum=0;
 function show(id) {
   document.getElementById(id).style.visibility = "visible";
 }
@@ -16,6 +17,7 @@ function populateCode(file_id){
         var list = $('#code-block');
         list.html('');
         var html='<pre>';
+        totalLineNum = data.codes.length;
         for (var i = 0; i < data.codes.length; i++) {
               var new_line = (data.codes[i]);
               html+=('<code class="hljs" id="code-'+i+'"><a onMouseOver="show(\'guide-'+i+'\')" onMouseOut="hide(\'guide-'+i+'\')">'+new_line+'<span id="guide-'+i+'" style="visibility:hidden;font-style: italic;"> # click to comment</span></code></a>');
@@ -101,11 +103,9 @@ $(document).on("click", ".badge-dark", function(event){
       openLines.delete(line_num);
     }
     // TODO close other lines
-      for(var i=0;i<openLines.length;i++){
-        var line_num=openLines[i];
-        $("#cmt-span-"+line_num).slideUp(400);
+      for(let i=0;i<totalLineNum;i++){
+        $("#cmt-span-"+i).slideUp(400);
       }
-      // openLines=new Set();
 
   }
 
@@ -157,16 +157,16 @@ $(document).ready(function() {
  var openLines=new Set();
   console.log(file_id);
   populateCode(file_id);
+  // highlight
   $.getScript('https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js')
     .done(function(data, textStatus, jqxhr){
       $('pre code').each(function(i, block) {
-  hljs.highlightBlock(block);
-});
+        hljs.highlightBlock(block);
+      });
   })
   .fail(function( jqxhr, settings, exception ) {
     console.log(exception);
 });
-
   updateTime();
   window.setInterval(getUpdates, 5000);
   // CSRF set-up copied from Django docs
