@@ -26,13 +26,13 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from github import Github
+from datetime import datetime, timezone
 
 import codereviewer
 from codereviewer.forms import *
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 
-@login_required
 def index(request):
     context = {}
     user = request.user
@@ -286,7 +286,6 @@ def mark_read_then_review(request, msg_id):
 
     return redirect(reverse('review_repo', kwargs={'repo_id': message.project.id}))
 
-
 @login_required
 def mark_read_then_review_new_reply(request, msg_id):
     context = {}
@@ -296,11 +295,8 @@ def mark_read_then_review_new_reply(request, msg_id):
     message.save()
     return redirect(reverse('review', kwargs={'file_id': message.file.id}))
 
-
 @login_required
 def get_codes(request, file_id):
-    if not request.user.is_authenticated:
-        return redirect('login')
     try:
         file = File.objects.get(id=file_id)
     except File.DoesNotExist:
@@ -347,7 +343,6 @@ def get_codes(request, file_id):
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
-@login_required
 def get_comments(request, file_id, line_num):
     # TODO check existance
     comments = Comment.get_comments(file_id, line_num)
@@ -476,8 +471,6 @@ def github_login(request):
 
 
 def _get_refer_url(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
     refer_url = request.META.get('HTTP_REFER',
                                  '/')
     host = request.META['HTTP_HOST']
@@ -603,8 +596,9 @@ def resetpassword(request):
         form = ResetForm(request.POST)
         if form.is_valid():
             email = request.POST.get('email', '')
-            user = Developer.objects.get(user__email=email).user
+
             if Developer.objects.filter(user__email=email).exists():
+                user = Developer.objects.get(user__email=email).user
                 message = render_to_string('codereviewer/password_reset_link.html', {
                     'user': user,
                     'domain': "127.0.0.1:8000",
@@ -774,12 +768,9 @@ def unzip(file_name, store_dir, userid, repo):
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
 
-    # remove junk folder; ignore if not exists.
-    try:
-        junkfolder = os.path.join(store_dir, '__MACOSX')
-        shutil.rmtree(junkfolder)
-    except FileNotFoundError:
-        pass
+    # remove junk folder
+    junkfolder = os.path.join(store_dir, '__MACOSX')
+    shutil.rmtree(junkfolder)
 
     prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
 
@@ -823,10 +814,7 @@ def stat_console(request):
     return 0
 
 
-@login_required
 def send_new_reply_msg(request):
-    if not request.user.is_authenticated:
-        return redirect('login')
     user = request.user
     replier = Developer.get_developer(user)[0]
     comment_id = request.POST.get('comment_id')[6:]
