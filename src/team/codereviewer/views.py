@@ -153,6 +153,7 @@ def create_repo(request):
                 file_obj = File()
                 file_obj.file_name = uploaded_file
                 file_obj.file_name.name = str(owner.user.id) + '__' + str(new_repo.id) + '__' + uploaded_file.name
+                file_obj.display_name = file_obj.file_name.name.split('__')[-1]
                 file_obj.repo = new_repo
                 file_obj.save()
             else:
@@ -198,9 +199,10 @@ def review(request, file_id):
     f = open(furl, 'r')
     lines = f.read().splitlines()
     f.close()
+    context['all_repos'] = [file.repo]
     context['codes'] = lines
     context['repo'] = file.repo
-    context['filename'] = file.file_name.name[11:]
+    context['filename'] = file.display_name
     return render(request, 'codereviewer/review.html', context)
 
 
@@ -215,7 +217,11 @@ def review_repo(request, repo_id):
 
     # Serve the first file in the repo to user.
     # User may browse the whole repo once she gets into the repo.
-    file = File.objects.filter(repo=repo)[0]
+    try:
+        file = File.objects.filter(repo=repo)[0]
+    except:
+        return render(request, 'codereviewer/NotFound.html', {'error': "You do not have permission to this file."})
+
     return redirect(reverse('review', kwargs={'file_id': file.id}))
 
 
@@ -349,8 +355,7 @@ def get_codes(request, file_id):
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
-def get_comments(request, file_id, line_num):
-    # TODO check existance
+def get_comments(request, file_id, line_num):    
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments, 'current_user': request.user}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
@@ -463,7 +468,7 @@ def github_login(request):
     # define github account parameters
     GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
     GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
-    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
+    GITHUB_CALLBACK = 'http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com:80/codereviewer/github/'
     GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 
     data = {
@@ -472,7 +477,9 @@ def github_login(request):
         'redirect_uri': GITHUB_CALLBACK,
         'state': _get_refer_url(request),
     }
+    print("GITHUB_AUTHORIZE_URL: " + GITHUB_AUTHORIZE_URL)
     github_auth_url = '%s?%s' % (GITHUB_AUTHORIZE_URL, urllib.parse.urlencode(data))
+    print("github_auth_url: " + github_auth_url)
     return HttpResponseRedirect(github_auth_url)
 
 
@@ -480,8 +487,11 @@ def _get_refer_url(request):
     refer_url = request.META.get('HTTP_REFER',
                                  '/')
     host = request.META['HTTP_HOST']
+    print("refer_url before = " + refer_url)
+    print("host = " + host)
     if refer_url.startswith('http') and host not in refer_url:
         refer_url = '/'
+    print("refer_url after = " + refer_url)
     return refer_url
 
 
@@ -490,7 +500,7 @@ def github_auth(request):
     # define github account parameters
     GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
     GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
-    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
+    GITHUB_CALLBACK = 'http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com:80/codereviewer/github/'
 
     if 'code' not in request.GET:
         return redirect(reverse('index'))
@@ -586,8 +596,7 @@ def invite_email(request, sender, receiver, project):
         'domain': current_site.domain,
     })
     send_email([receiver.email], sbj, msg)
-    print(msg)
-    # TODO: change receiver parameter name
+    print(msg)    
     return render(request, 'codereviewer/registration_done.html', {'receiver': receiver})
 
 
@@ -602,12 +611,12 @@ def resetpassword(request):
         form = ResetForm(request.POST)
         if form.is_valid():
             email = request.POST.get('email', '')
-
+            user = Developer.objects.get(user__email=email).user
             if Developer.objects.filter(user__email=email).exists():
-                user = Developer.objects.get(user__email=email).user
+                domain = get_current_site(request)
                 message = render_to_string('codereviewer/password_reset_link.html', {
                     'user': user,
-                    'domain': "127.0.0.1:8000",
+                    'domain': domain,
                     'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode(),
                     'token': password_reset_token.make_token(user),
                 })
@@ -741,6 +750,7 @@ def create_github_file(download_url):
     code_file = urlopen(download_url)
     file_url = os.path.join(os.path.dirname(os.path.dirname(__file__)),
                             'media/sourcecode/' + download_url[download_url.rfind('/') + 1:])
+    print("**** file_url **** " + file_url)
     with open(file_url, 'wb') as output:
         output.write(code_file.read())
     input = open(file_url)
@@ -754,6 +764,7 @@ def create_file_model(file, repo, fname):
     file_model = codereviewer.models.File()
     file_model.file_name = myFile
     file_model.file_name.name = (str(user_id) + '/' + str(repo_id) + '/' + fname).replace('/', '__')
+    file_model.display_name = file_model.file_name.name.split('__')[-1]
     file_model.from_github = True
     file_model.repo = repo
     file_model.save()
@@ -774,9 +785,12 @@ def unzip(file_name, store_dir, userid, repo):
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
 
-    # remove junk folder
-    junkfolder = os.path.join(store_dir, '__MACOSX')
-    shutil.rmtree(junkfolder)
+    # remove junk folder; ignore if not exists.
+    try:
+        junkfolder = os.path.join(store_dir, '__MACOSX')
+        shutil.rmtree(junkfolder)
+    except:
+        pass
 
     prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
 
@@ -794,13 +808,17 @@ def unzip(file_name, store_dir, userid, repo):
             flat_file_name = tmp_flat_fname.replace('/', '__')
 
             # move to media folder and save it as a Django object
-            with open(fname, "r") as fh:
-                myFile = django.core.files.File(fh)
-                file_model = File()
-                file_model.file_name = myFile
-                file_model.file_name.name = flat_file_name
-                file_model.repo = repo
-                file_model.save()
+            try:
+                with open(fname, "r") as fh:
+                    myFile = django.core.files.File(fh)
+                    file_model = File()
+                    file_model.file_name = myFile
+                    file_model.file_name.name = flat_file_name
+                    file_model.display_name = flat_file_name.split('__')[-1]
+                    file_model.repo = repo
+                    file_model.save()
+            except:
+                pass
 
     # remove temp folder and original zip file
     try:
