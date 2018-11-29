@@ -25,7 +25,7 @@ SECRET_KEY = '&2e*omh%mm%%h#8ad-5t_s9@13!^zk55g$4xn)#sv(((8(8r%+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -121,6 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = 'static'
 
 SITE_ID = 1
 
@@ -131,3 +132,4 @@ MEDIA_URL = "/media/"
 
 # print email
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
