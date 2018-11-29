@@ -135,4 +135,4 @@ try:
     from codereviewer.local_settings import *
 except ImportError as e:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    raise Exception(e)
+    # raise Exception(e)

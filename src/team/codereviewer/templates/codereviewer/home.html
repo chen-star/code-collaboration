@@ -48,7 +48,7 @@
                             <a href="{% url 'review_repo' message.project.id %}">[{{ message.time }}] {{ message.sender.user.username }} invites you to review new code!</a>
                         {% else %}
                             <a href="{% url 'mark_read_then_review' message.id %}"
-                               style="font-weight:bold;">[{{ message.time }}] [New Message] {{ message.sender.user.username }} invites you to review new code!</a>
+                               class="new_msg">[{{ message.time }}] [New Message] {{ message.sender.user.username }} invites you to review new code!</a>
                         {% endif %}
                     </span>
                         </p>
@@ -59,6 +59,7 @@
                     <p class="media-body pb-2 mb-0 lh-150 pl-2">
                     <span>
                     <p>There is currently no new invitation for reviewing codes.</p>
+
                     </span>
                     </p>
 
@@ -75,7 +76,7 @@
                             <a href="{% url 'review' message.file.id %}">[{{ message.time }}] {{ message.reply_message_body }}</a>
                         {% else %}
                             <a href="{% url 'mark_read_then_review_new_reply' message.id %}"
-                               style="font-weight:bold;">[{{ message.time }}] [New Message] {{ message.reply_message_body }}</a>
+                               class="new_msg">[{{ message.time }}] [New Message] {{ message.reply_message_body }}</a>
                         {% endif %}
                     </span>
                         </p>
