@@ -767,9 +767,12 @@ def unzip(file_name, store_dir, userid, repo):
         zfile = zipfile.ZipFile(file)
         zfile.extractall(store_dir)
 
-    # remove junk folder
-    junkfolder = os.path.join(store_dir, '__MACOSX')
-    shutil.rmtree(junkfolder)
+    # remove junk folder; ignore if not exists.
+    try:
+        junkfolder = os.path.join(store_dir, '__MACOSX')
+        shutil.rmtree(junkfolder)
+    except FileNotFoundError:
+        pass
 
     prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
 
