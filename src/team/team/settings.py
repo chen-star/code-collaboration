@@ -130,6 +130,9 @@ SITE_ID = 1
 MEDIA_ROOT = BASE_DIR + '/media/'
 MEDIA_URL = "/media/"
 
-# print email
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+# sending emails
+try:
+    from codereviewer.local_settings import *
+except ImportError as e:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    raise Exception(e)

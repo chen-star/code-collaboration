@@ -404,7 +404,7 @@ def confirm_email(request, new_user):
 
 # send email helper function
 def send_email(address, sbj, msg):
-    send_mail(subject=sbj, message=msg, from_email="coderviewerTeam@andrew.cmu.edu", recipient_list=address)
+    send_mail(subject=sbj, message=msg, from_email=django_settings.FROM_EMAIL_ADDRESS, recipient_list=address)
 
 
 # activate account
