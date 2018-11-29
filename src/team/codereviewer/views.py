@@ -33,7 +33,6 @@ from codereviewer.forms import *
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 
-@login_required
 def index(request):
     context = {}
     user = request.user
@@ -138,6 +137,9 @@ def create_repo(request):
             owner = Developer.objects.get(user=request.user)
             files = form.cleaned_data['file_name']
             project_name = form.cleaned_data['repo_name']
+            # check name existance
+            if len(Repo.objects.filter(project_name=project_name))>0:
+                return render(request, 'codereviewer/NotFound.html', {'error': "Please use another name for new repository."})
             modify_frequency = 0
             new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
@@ -458,7 +460,7 @@ def github_login(request):
     # define github account parameters
     GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
     GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
-    GITHUB_CALLBACK = 'http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com:80/codereviewer/github/'
+    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
     GITHUB_AUTHORIZE_URL = 'https://github.com/login/oauth/authorize'
 
     data = {
@@ -485,7 +487,7 @@ def github_auth(request):
     # define github account parameters
     GITHUB_CLIENTID = 'b352efbb6fad5e996f99'
     GITHUB_CLIENTSECRET = '9f250736e1483fe5ffa3c0db00605b83ec344e5d'
-    GITHUB_CALLBACK = 'http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com:80/codereviewer/github/'
+    GITHUB_CALLBACK = 'http://127.0.0.1:8000/codereviewer/github/'
 
     if 'code' not in request.GET:
         return redirect(reverse('index'))
@@ -516,16 +518,14 @@ def github_auth(request):
     html = response.read()
     html = html.decode('ascii')
     data = json.loads(html)
-    username = data['login']
-    print(username)
-    email = data['email']
-    password = 'default_pw'
+    username = data['name']
+    password = 'admin'
 
     try:
         user1 = User.objects.get(username=username)
     except:
         user2 = User.objects.create_user(username=username,
-                                         password=password, email=email)
+                                         password=password)
         user2.save()
         new_developer = Developer(user=user2)
         new_developer.save()
@@ -668,12 +668,15 @@ def search_bar(request):
         fileName = request.POST.get('fileSearch', '')
         tmp = str(fileName).split(",")
         fileID = tmp[0]
+        print(fileID)
         if not id or not re.search('^[0-9]+,[0-9]+__[0-9]+__', str(fileName)):
             fileID = '-1'
+            print(fileID)
         else:
             repo = Repo.objects.get(id=fileID)
             file = File.objects.filter(repo=repo)[0]
             fileID = file.id
+            print(fileID)
         return redirect(reverse('review', kwargs={'file_id': fileID}))
 
 
@@ -688,15 +691,6 @@ def get_repo_from_github(request):
         username = request.POST.get('username', '')
         password = request.POST.get('password', '')
         repo = request.POST.get('repository', '')
-        user = request.user
-        print(user)
-        developer = Developer.objects.get(user=user)
-
-        if username != developer.user.username:
-            print(username)
-            print(developer.user.username)
-            return render(request, 'codereviewer/NotFound.html',
-                          {'error': 'Sorry, This repository is not under your Github Account. Please try again!'})
 
         # log into github account
         try:
@@ -707,8 +701,7 @@ def get_repo_from_github(request):
 
             # no file in github repo
             if len(contents) == 0:
-                return render(request, 'codereviewer/NotFound.html',
-                              {'error': 'Sorry, No file under this repository. Please check again!'})
+                return redirect(reverse('repo'))
 
             # only one file in github repo
             first_con = contents.pop(0)
@@ -716,7 +709,7 @@ def get_repo_from_github(request):
             fname = first_con.name
             file = create_github_file(download_url)
             # create models
-            repo_model = create_repo_model(reposi, username)
+            repo_model = create_repo_model(reposi)
             create_file_model(file, repo_model, fname)
 
             while len(contents) >= 1:
@@ -732,8 +725,7 @@ def get_repo_from_github(request):
 
         except Exception as e:
             print(e)
-            return render(request, 'codereviewer/NotFound.html',
-                          {'error': 'Sorry, No such repository under this username. Please check again!'})
+            return redirect(reverse('repo'))
 
     return redirect(reverse('repo'))
 
@@ -764,13 +756,10 @@ def create_file_model(file, repo, fname):
     file_model.save()
 
 
-def create_repo_model(repository, username):
-    print(username)
-    owner = User.objects.get(username=username)
+def create_repo_model(repository):
+    owner = User.objects.get(username=repository.owner.name)
     owner = Developer.objects.get(user=owner)
-    print(owner)
     repo = Repo(owner=owner, project_name=repository.name)
-    print(repo)
     repo.save()
     return repo
 
