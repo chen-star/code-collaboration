@@ -310,12 +310,6 @@ def get_codes(request, file_id):
         if lines[i].find('"') > -1:
             new_line = ""
             pass_flag = False
-        if lines[i].find('"')>-1:
-            new_line =""
-            pass_flag=False
-        if lines[i].find('"')>-1:
-            new_line =""
-            pass_flag=False
             for x in lines[i]:
                 if pass_flag:
                     pass_flag = False
@@ -327,6 +321,8 @@ def get_codes(request, file_id):
                     new_line = new_line + '\\'
                 new_line = new_line + x
             lines[i] = new_line
+        while lines[i].find('\t')>-1:
+            lines[i] = lines[i][0:lines[i].find('\t')]+'    '+lines[i][lines[i].find('\t')+1:]
     digits = len(str(len(lines)))  # make up for display indent
     for d in range(1, digits):
         for i in range(int('1' + '0' * (d)) - 1):
