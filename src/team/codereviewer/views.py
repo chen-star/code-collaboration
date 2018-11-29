@@ -196,13 +196,15 @@ def review(request, file_id):
         furl = os.path.dirname(os.path.dirname(__file__)) + file.file_name.url
     else:
         furl = os.path.join(os.path.dirname(os.path.dirname(__file__)), file.file_name.url[1:])
-    f = open(furl, 'r')
-    lines = f.read().splitlines()
-    f.close()
-    context['all_repos'] = [file.repo]
-    context['codes'] = lines
-    context['repo'] = file.repo
-    context['filename'] = file.display_name
+    try:
+        f = open(furl, 'r')
+        lines = f.read().splitlines()
+        f.close()
+        context['codes'] = lines
+        context['repo'] = file.repo
+        context['filename'] = file.file_name.name[11:]
+    except:
+        return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've uploaded a code-base file."})
     return render(request, 'codereviewer/review.html', context)
 
 
