@@ -2,4 +2,4 @@ This repository is for your course final project. Your project team
 should complete all project work using this repository.
 
 Before your project demo, add to this file a link to your deployed
-web site:  
+web site:  http://demo-env-3.a2w7n4fd3m.us-east-1.elasticbeanstalk.com/
