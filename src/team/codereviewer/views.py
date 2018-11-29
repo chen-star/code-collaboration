@@ -550,7 +550,9 @@ def invite(request):
         return HttpResponseRedirect('')
 
     receiver_name = request.POST.get('receiver')
-    receiver = Developer.objects.get(user__username=receiver_name)
+    receiver = Developer.objects.filter(user__username=receiver_name)
+    if len(receiver)==0:
+        return render(request, 'codereviewer/NotFound.html', {'error': "User "+receiver_name+" does not exist."})
     sender = Developer.objects.get(user=request.user)
     project_name = request.POST.get('project')
     project = Repo.objects.get(project_name=project_name)
