@@ -40,7 +40,7 @@ class Reply(models.Model):
         <div class='right' >\
         <p><a href='profile/%s'>  %s</a> replies on %s:</p>\
         <div class='divider'></div>\
-        <h6>  %s</h6><hr>" % (self.replier, self.replier.avatar.url, self.replier, self.replier, self.replier,
+        <h6>  %s</h6>" % (self.replier, self.replier.avatar.url, self.replier, self.replier, self.replier,
                               self.reply_time.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime(
                                   '%Y-%m-%d %H:%M:%S'), self.content)
         return res
