@@ -46,15 +46,15 @@
         <ul class="list-unstyled components">            
             {% if not user.is_anonymous %}            
 
-            {% if all_repos %}
+            {% if all_repos %}            
             <p>Project folders</p>
             {% for repo in all_repos %}
             <li>
-                <a href="#{{repo.id}}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{repo.project_name}}</a>
-                <ul class="collapse list-unstyled" id="{{repo.id}}">
+                <a href="#{{repo.project_name}}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{repo.project_name}}</a>
+                <ul class="collapse list-unstyled" id="{{repo.project_name}}">
                     {% for file in repo.repository.all %}
                     <li>
-                        <a href={% url 'review' file.id %}>{{file.file_name}}
+                        <a href={% url 'review' file.id %}>{{file.display_name}}
                         </a>
                     </li>  
                     {% endfor %}

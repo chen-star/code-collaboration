@@ -39,7 +39,8 @@
 
         <div class="col-sm-12 tab-content tab-pane active" name="new-repo">
             <div class="my-3 p-3 bg-white rounded box-shadow">
-                <h6>Create a new repository from local files...</h6>
+                <h5>Create a new repository</h5>
+                <h6>From local, upload a single file or a .zip file.</h6>
                 <form action="{% url 'create_repo' %}" method="post" enctype="multipart/form-data">
                     {{ form }}
                     <input class="btn btn-primary" type="submit" value="Create">
