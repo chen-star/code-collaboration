@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 {% load static %}
 <head>
     <meta charset="utf-8">
@@ -55,13 +55,13 @@
                     <li>
                         <a href={% url 'review' file.id %}>{{file.display_name}}
                         </a>
-                    </li>  
+                    </li>
                     {% endfor %}
                 </ul>
             </li>
             {% endfor %}
             {% endif %}
-            
+
         {% endif %}
         </ul>
         {% endif %}
