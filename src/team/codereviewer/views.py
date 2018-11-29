@@ -33,7 +33,10 @@ from codereviewer.forms import *
 from codereviewer.tokens import account_activation_token, password_reset_token
 
 
+@login_required
 def index(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     user = request.user
     if not request.user.is_authenticated:
@@ -50,6 +53,8 @@ def index(request):
 # display the 'settings' view
 @login_required
 def settings(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     if request.method == 'GET':
         user = request.user
@@ -78,6 +83,8 @@ def settings(request):
 
 @login_required
 def edit_profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     if request.method == 'GET':
         developer = Developer.objects.get(user=request.user)
@@ -103,6 +110,8 @@ def edit_profile(request):
 
 @login_required
 def repositories(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     if request.method == 'GET':
         form = CreateRepoForm()
@@ -130,6 +139,8 @@ def repositories(request):
 # create a new repository owned by the requesting user
 @login_required
 def create_repo(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     if request.method == 'POST':
         form = CreateRepoForm(request.POST, request.FILES)
@@ -174,6 +185,8 @@ def create_repo(request):
 
 @login_required
 def review(request, file_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     try:
         file = File.objects.get(id=file_id)
@@ -200,6 +213,8 @@ def review(request, file_id):
 
 @login_required
 def review_repo(request, repo_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     # If repo not exists, return Http404.
     try:
@@ -214,6 +229,8 @@ def review_repo(request, repo_id):
 
 
 def add_comment(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     if request.method == 'POST':
         print("post comment")
@@ -234,6 +251,8 @@ def add_comment(request):
 
 
 def delete_comment(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     # check if the cmt exists
     cmt_to_delete = Comment.objects.filter(id=request.POST.get('comment_id'))
     if len(cmt_to_delete)>0:
@@ -242,6 +261,8 @@ def delete_comment(request):
 
 
 def get_changed_comments(request, file_id, line_num, time):
+    if not request.user.is_authenticated:
+        return redirect('login')
     timestamp = dt.datetime.fromtimestamp(int(time) // 1000.0)  # convert
     file = File.objects.get(id=file_id)
     cmt = file.comments.all().filter(line_num=line_num)
@@ -252,6 +273,8 @@ def get_changed_comments(request, file_id, line_num, time):
 
 
 def add_reply(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     if request.method == 'POST':
         form = AddReplyForm(request.POST)
@@ -271,6 +294,8 @@ def add_reply(request):
 
 @login_required
 def mark_read_then_review(request, msg_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
 
     # Mark this message as read.
@@ -288,6 +313,8 @@ def mark_read_then_review(request, msg_id):
 
 @login_required
 def mark_read_then_review_new_reply(request, msg_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
     context = {}
     # Mark this message as read.
     message = NewReplyMessage.objects.get(id=msg_id)
@@ -297,6 +324,8 @@ def mark_read_then_review_new_reply(request, msg_id):
 
 @login_required
 def get_codes(request, file_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
     try:
         file = File.objects.get(id=file_id)
     except File.DoesNotExist:
@@ -344,6 +373,8 @@ def get_codes(request, file_id):
 
 
 def get_comments(request, file_id, line_num):
+    if not request.user.is_authenticated:
+        return redirect('login')
     # TODO check existance
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments, 'current_user': request.user}
@@ -471,6 +502,8 @@ def github_login(request):
 
 
 def _get_refer_url(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     refer_url = request.META.get('HTTP_REFER',
                                  '/')
     host = request.META['HTTP_HOST']
@@ -571,6 +604,8 @@ def invite(request):
 
 # email invitation
 def invite_email(request, sender, receiver, project):
+    if not request.user.is_authenticated:
+        return redirect('login')
     sbj = 'Code Viewer Project Contribution Invitation'
     current_site = get_current_site(request)
     msg = render_to_string('codereviewer/invitation_email.html', {
@@ -645,6 +680,8 @@ def confirmpassword_helper(request):
 @login_required
 @ensure_csrf_cookie
 def search_bar(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     if request.is_ajax():
         q = request.GET.get('term', '')
         userobject = request.user
@@ -678,6 +715,8 @@ def search_bar(request):
 
 @csrf_exempt
 def get_repo_from_github(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     if request.method == 'GET':
         new_form = GithubGetRepoForm()
         return render(request, 'codereviewer/githubAccount.html', {'form': new_form})
@@ -816,7 +855,10 @@ def stat_console(request):
     return 0
 
 
+@login_required
 def send_new_reply_msg(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     user = request.user
     replier = Developer.get_developer(user)[0]
     comment_id = request.POST.get('comment_id')[6:]
