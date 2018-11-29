@@ -26,4 +26,5 @@ urlpatterns = [
                   re_path(r'^codereviewer/', include('codereviewer.urls')),
                   path('admin/', admin.site.urls),
                   re_path('^accounts/', views.login, name='relogin'),
+                  re_path(r'^', views.page404),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

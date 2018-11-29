@@ -46,9 +46,12 @@ def index(request):
     context['new_reply_messages'] = new_reply_messages
     return render(request, 'codereviewer/home.html', context)
 
+@login_required(redirect_field_name="")
+def page404(request):
+    return render(request, 'codereviewer/NotFound.html', {'error': "Please use a valid URL."})
 
 # display the 'settings' view
-@login_required
+@login_required(redirect_field_name="")
 def settings(request):
     context = {}
     if request.method == 'GET':
@@ -76,7 +79,7 @@ def settings(request):
     return render(request, 'codereviewer/settings.html', context)
 
 
-@login_required
+@login_required(redirect_field_name="")
 def edit_profile(request):
     context = {}
     if request.method == 'GET':
@@ -101,7 +104,7 @@ def edit_profile(request):
     return render(request, 'codereviewer/edit_profile.html', context)
 
 
-@login_required
+@login_required(redirect_field_name="")
 def repositories(request):
     context = {}
     if request.method == 'GET':
@@ -128,7 +131,7 @@ def repositories(request):
 
 
 # create a new repository owned by the requesting user
-@login_required
+@login_required(redirect_field_name="")
 def create_repo(request):
     context = {}
     if request.method == 'POST':
@@ -175,7 +178,7 @@ def create_repo(request):
     return redirect(reverse('repo'))
 
 
-@login_required
+@login_required(redirect_field_name="")
 def review(request, file_id):
     context = {}
     try:
@@ -201,7 +204,7 @@ def review(request, file_id):
     return render(request, 'codereviewer/review.html', context)
 
 
-@login_required
+@login_required(redirect_field_name="")
 def review_repo(request, repo_id):
     context = {}
     # If repo not exists, return Http404.
