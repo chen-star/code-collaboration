@@ -101,3 +101,7 @@ Original highlight.js style (c) Ivan Sagalaev <maniac@softwaremaniacs.org>
 .cmt-block-span{
   background-color: #F0F0F0;
 }
+
+.badge-dark {
+  color:white;
+}

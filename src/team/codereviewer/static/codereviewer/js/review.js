@@ -151,7 +151,10 @@ function getUpdates(){
 $(document).ready(function() {
 
  file_id=window.location.href.substr(window.location.href.lastIndexOf('/')+1);
-
+ // generate button
+ var btn = $('#expand-all');
+ btn.html = '';
+ btn.append('<a class="badge badge-dark" style="color:white;" >Show All Comments</a>');
  var linesWithComment=new Set();
  var openLines=new Set();
   console.log(file_id);

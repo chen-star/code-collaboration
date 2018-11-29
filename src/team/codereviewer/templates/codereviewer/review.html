@@ -6,7 +6,6 @@
 
 {% block js %}
     <link rel="stylesheet" href="{% static 'codereviewer/css/default.css' %}">
-
     <script src="{% static 'codereviewer/js/search.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
     <script src="{% static 'codereviewer/js/review.js' %}"></script>
@@ -16,7 +15,7 @@
     <nav class="navbar navbar-expand-lg navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div>
-                <a href="/">Home</a>
+                <a href="{% url 'index' %}">Home</a>
                 <a href="{% url 'settings' %}">Settings</a>
                 <a class="active" href="{% url 'repo' %}">Repositories</a>
             </div>
@@ -36,10 +35,11 @@
 {% block content %}
     <div>
         <p>Owner: {{ repo.owner }} ({{ repo.owner.user.email }}) File: {{ filename }}</p>
-        <a class="badge badge-dark" id="expand-all" >Show All Comments</a>
+        <div id="expand-all"></div>
+        
     </div>
 
     <div class="col-md-2"></div>
 
-    <div class="code-block" id="code-block" style="line-height:0.7;background: #F0F0F0;"></div>
+    <div class="code-block" id="code-block" ></div>
 {% endblock %}
