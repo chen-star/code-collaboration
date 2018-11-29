@@ -26,6 +26,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from github import Github
+from datetime import datetime, timezone
 
 import codereviewer
 from codereviewer.forms import *
@@ -66,7 +67,7 @@ def settings(request):
         comTrend = Comment.objects.filter(commenter=this_developer,
                                           comment_time__gte=cur - dt.timedelta(days=7)).count()
         context['this_developer'] = this_developer
-        context['active'] = last_login
+        context['active'] = last_login.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime('%Y-%m-%d %H:%M:%S')
         context['repos'] = numOfRepo
         context['repoTrend'] = repoTrend
         context['comments'] = numOfCom
