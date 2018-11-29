@@ -62,7 +62,7 @@ def settings(request):
 
         userAct = User.objects.get(developer=username)
         last_login = dt.datetime.combine(userAct.last_login.date(),
-                                               dt.time(userAct.last_login.hour, userAct.last_login.minute))
+                                         dt.time(userAct.last_login.hour, userAct.last_login.minute))
 
         numOfRepo = Repo.objects.filter(owner=username).count()
         repoTrend = Repo.objects.filter(owner=username, create_time__gte=cur - dt.timedelta(days=7)).count()
@@ -477,9 +477,7 @@ def github_login(request):
         'redirect_uri': GITHUB_CALLBACK,
         'state': _get_refer_url(request),
     }
-    print("GITHUB_AUTHORIZE_URL: " + GITHUB_AUTHORIZE_URL)
     github_auth_url = '%s?%s' % (GITHUB_AUTHORIZE_URL, urllib.parse.urlencode(data))
-    print("github_auth_url: " + github_auth_url)
     return HttpResponseRedirect(github_auth_url)
 
 
@@ -487,11 +485,8 @@ def _get_refer_url(request):
     refer_url = request.META.get('HTTP_REFER',
                                  '/')
     host = request.META['HTTP_HOST']
-    print("refer_url before = " + refer_url)
-    print("host = " + host)
     if refer_url.startswith('http') and host not in refer_url:
         refer_url = '/'
-    print("refer_url after = " + refer_url)
     return refer_url
 
 
@@ -531,14 +526,16 @@ def github_auth(request):
     html = response.read()
     html = html.decode('ascii')
     data = json.loads(html)
-    username = data['name']
-    password = 'admin'
+    username = data['login']
+    print(username)
+    email = data['email']
+    password = 'default_pw'
 
     try:
         user1 = User.objects.get(username=username)
     except:
         user2 = User.objects.create_user(username=username,
-                                         password=password)
+                                         password=password, email=email)
         user2.save()
         new_developer = Developer(user=user2)
         new_developer.save()
