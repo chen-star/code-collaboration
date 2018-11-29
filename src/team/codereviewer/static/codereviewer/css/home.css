@@ -5,6 +5,10 @@ body {
     background: #fafafa;
 }
 
+new_msg {
+  font-weight:bold;
+}
+
 p {
     /* font-family: 'Poppins', sans-serif; */
     font-size: 1em;
@@ -171,13 +175,8 @@ a.email {
     }
 }
 
-/* pre {
-  background-color: #071540;
-} */
 
 code {
-  /* width: 70%; */
-    /* padding:2px; */
     box-sizing:border-box;
     -moz-box-sizing:border-box;
     webkit-box-sizing:border-box;
@@ -235,4 +234,17 @@ span.cmt-block-span{
     background-color: white;
     max-width: 80%;
     margin: 20px;
+}
+
+.add-user {
+  width: 500px;
+}
+
+.badge-dark {
+  color: white;
+}
+
+#code-block {
+  line-height:0.7;
+  background: #F0F0F0;
 }
