@@ -200,9 +200,10 @@ def review(request, file_id):
         f = open(furl, 'r')
         lines = f.read().splitlines()
         f.close()
+        context['all_repos'] = [file.repo]
         context['codes'] = lines
         context['repo'] = file.repo
-        context['filename'] = file.file_name.name[11:]
+        context['filename'] = file.display_name
     except:
         return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've uploaded a code-base file."})
     return render(request, 'codereviewer/review.html', context)
@@ -250,7 +251,7 @@ def add_comment(request):
 def delete_comment(request):
     # check if the cmt exists
     cmt_to_delete = Comment.objects.filter(id=request.POST.get('comment_id'))
-    if len(cmt_to_delete)>0:
+    if len(cmt_to_delete) > 0:
         cmt_to_delete.delete
     return render(request, 'codereviewer/json/comment.json', {}, content_type='application/json')
 
@@ -791,8 +792,6 @@ def unzip(file_name, store_dir, userid, repo):
     except:
         pass
 
-    prefix = os.path.join(django_settings.MEDIA_ROOT, 'sourcecode')
-
     # recursively traverse, flatten files, and move them to sourcecode folder
     for root, dirs, files in os.walk(store_dir):
         for file_ in files:
@@ -831,10 +830,6 @@ def unzip(file_name, store_dir, userid, repo):
 def save_zip(file_name, userid, repo):
     store_dir = file_name.split('.')[0]
     unzip(file_name, store_dir, userid, repo)
-
-
-def stat_console(request):
-    return 0
 
 
 def send_new_reply_msg(request):
