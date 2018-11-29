@@ -103,7 +103,7 @@ $(document).on("click", ".badge-dark", function(event){
       $("#cmt-span-"+line_num).slideUp(400);
       openLines.delete(line_num);
     }
-    // TODO close other lines
+    // close other lines
       for(let i=0;i<totalLineNum;i++){
         $("#cmt-span-"+i).slideUp(400);
       }
