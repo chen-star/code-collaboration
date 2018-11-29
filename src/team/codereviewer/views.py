@@ -194,7 +194,7 @@ def review(request, file_id):
     f.close()
     context['codes'] = lines
     context['repo'] = file.repo
-    context['filename'] = file.file_name
+    context['filename'] = file.file_name.name[11:]
     return render(request, 'codereviewer/review.html', context)
 
 
