@@ -525,8 +525,7 @@ def github_auth(request):
         user1 = User.objects.get(username=username)
     except:
         user2 = User.objects.create_user(username=username,
-                                         password=password)
-        user2.email = email
+                                         password=password, email=email)
         user2.save()
         new_developer = Developer(user=user2)
         new_developer.save()
@@ -689,6 +688,7 @@ def get_repo_from_github(request):
         password = request.POST.get('password', '')
         repo = request.POST.get('repository', '')
         user = request.user
+        print(user)
         developer = Developer.objects.get(user=user)
 
         if username != developer.user.username:
