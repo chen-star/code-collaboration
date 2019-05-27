@@ -32,7 +32,7 @@
             });
         });
     </script>
-{% block js %}{% endblock %}
+    {% block js %}{% endblock %}
 </head>
 
 <body>
@@ -45,25 +45,26 @@
         {% if not user.is_anonymous %}
             <ul class="list-unstyled components">
                 {% if not user.is_anonymous %}
-            {% if all_repos %}
-            <p>Project folders</p>
-            {% for repo in all_repos %}
-            <li>
-                <a href="#{{repo.project_name}}" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">{{repo.project_name}}</a>
-                <ul class="collapse list-unstyled" id="{{repo.project_name}}">
-                    {% for file in repo.repository.all %}
-                    <li>
-                        <a href={% url 'review' file.id %}>{{file.display_name}}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </li>
-            {% endfor %}
-            {% endif %}
+                    {% if all_repos %}
+                        <p>Project folders</p>
+                        {% for repo in all_repos %}
+                            <li>
+                                <a href="#{{ repo.project_name }}" data-toggle="collapse" aria-expanded="false"
+                                   class="dropdown-toggle">{{ repo.project_name }}</a>
+                                <ul class="collapse list-unstyled" id="{{ repo.project_name }}">
+                                    {% for file in repo.repository.all %}
+                                        <li>
+                                            <a href={% url 'review' file.id %}>{{ file.display_name }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
 
-        {% endif %}
-        </ul>
+                {% endif %}
+            </ul>
         {% endif %}
 
         <ul class="list-unstyled contacts">
@@ -74,7 +75,7 @@
             {% if user.is_anonymous %}
                 <li><a href="{% url 'login' %}">Log in</a></li>
                 <li><a href="{% url 'github_login' %}">Login With Github Account</a></li>
-                <li><a href="{% url 'registration' %}">Register</a > </li>
+                <li><a href="{% url 'registration' %}">Register</a></li>
             {% endif %}
 
         </ul>
@@ -83,13 +84,13 @@
     <!-- Page Content  -->
     <div id="content">
         {% if not user.is_anonymous %}
-        {% block navbar %}{% endblock %}
-        {% block content %}{% endblock %}
+            {% block navbar %}{% endblock %}
+            {% block content %}{% endblock %}
         {% else %}
-        <h3> Welcome to Code Reviewer! </h3><hr>
-        <h5> You can upload from local files or from GitHub account, and invite your group members to review your code!</h5>
-        <h5> If you try to proceed registration using GitHub account, Your default password is 'default_pw'. For security reasons, please reset your password later.</h6>
-
+            <h1> Welcome to Code Reviewer! </h1>
+            <hr><hr>
+            <h4> Your code comment Helper!</h4>
+            <img src="/static/codereviewer/img/geek.jpg" style="height: 800px">
         {% endif %}
     </div>
 </div>

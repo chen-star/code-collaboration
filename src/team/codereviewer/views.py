@@ -26,7 +26,6 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from github import Github
-from datetime import datetime, timezone
 
 import codereviewer
 from codereviewer.forms import *
@@ -38,7 +37,7 @@ def index(request):
     user = request.user
     if not request.user.is_authenticated:
         return render(request, 'codereviewer/home.html', context)
-    context['user']=user
+    context['user'] = user
     receiver = Developer.objects.get(user=user)
     messages = InvitationMessage.objects.filter(receiver=receiver).order_by('-time')
     context['messages'] = messages
@@ -46,9 +45,11 @@ def index(request):
     context['new_reply_messages'] = new_reply_messages
     return render(request, 'codereviewer/home.html', context)
 
+
 @login_required(redirect_field_name="")
 def page404(request):
     return render(request, 'codereviewer/NotFound.html', {'error': "Please use a valid URL."})
+
 
 # display the 'settings' view
 @login_required(redirect_field_name="")
@@ -141,8 +142,9 @@ def create_repo(request):
             files = form.cleaned_data['file_name']
             project_name = form.cleaned_data['repo_name']
             # check name existance
-            if len(Repo.objects.filter(project_name=project_name))>0:
-                return render(request, 'codereviewer/NotFound.html', {'error': "Please use another name for new repository."})
+            if len(Repo.objects.filter(project_name=project_name)) > 0:
+                return render(request, 'codereviewer/NotFound.html',
+                              {'error': "Please use another name for new repository."})
             modify_frequency = 0
             new_repo = Repo(owner=owner, project_name=project_name, modify_frequency=modify_frequency)
             new_repo.save()
@@ -185,7 +187,8 @@ def review(request, file_id):
     try:
         file = File.objects.get(id=file_id)
     except File.DoesNotExist:
-        return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've entered a correct filename"})
+        return render(request, 'codereviewer/NotFound.html',
+                      {'error': "Please make sure you've entered a correct filename"})
     # get the repo and check if current user has permission
     repo = file.repo
     if not (repo in Repo.get_membering_repos(request.user) or repo in Repo.get_owning_repos(request.user)):
@@ -205,7 +208,8 @@ def review(request, file_id):
         context['repo'] = file.repo
         context['filename'] = file.display_name
     except:
-        return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've uploaded a code-base file."})
+        return render(request, 'codereviewer/NotFound.html',
+                      {'error': "Please make sure you've uploaded a code-base file."})
     return render(request, 'codereviewer/review.html', context)
 
 
@@ -301,6 +305,7 @@ def mark_read_then_review(request, msg_id):
 
     return redirect(reverse('review_repo', kwargs={'repo_id': message.project.id}))
 
+
 @login_required
 def mark_read_then_review_new_reply(request, msg_id):
     context = {}
@@ -310,12 +315,14 @@ def mark_read_then_review_new_reply(request, msg_id):
     message.save()
     return redirect(reverse('review', kwargs={'file_id': message.file.id}))
 
+
 @login_required
 def get_codes(request, file_id):
     try:
         file = File.objects.get(id=file_id)
     except File.DoesNotExist:
-        return render(request, 'codereviewer/NotFound.html', {'error': "Please make sure you've entered a correct filename"})
+        return render(request, 'codereviewer/NotFound.html',
+                      {'error': "Please make sure you've entered a correct filename"})
 
     file = File.objects.get(id=file_id)
     furl = ''
@@ -341,8 +348,8 @@ def get_codes(request, file_id):
                     new_line = new_line + '\\'
                 new_line = new_line + x
             lines[i] = new_line
-        while lines[i].find('\t')>-1:
-            lines[i] = lines[i][0:lines[i].find('\t')]+'    '+lines[i][lines[i].find('\t')+1:]
+        while lines[i].find('\t') > -1:
+            lines[i] = lines[i][0:lines[i].find('\t')] + '    ' + lines[i][lines[i].find('\t') + 1:]
     digits = len(str(len(lines)))  # make up for display indent
     for d in range(1, digits):
         for i in range(int('1' + '0' * (d)) - 1):
@@ -358,7 +365,7 @@ def get_codes(request, file_id):
     return render(request, 'codereviewer/json/codes.json', context, content_type='application/json')
 
 
-def get_comments(request, file_id, line_num):    
+def get_comments(request, file_id, line_num):
     comments = Comment.get_comments(file_id, line_num)
     context = {'comments': comments, 'current_user': request.user}
     return render(request, 'codereviewer/json/comments.json', context, content_type='application/json')
@@ -567,8 +574,8 @@ def invite(request):
 
     receiver_name = request.POST.get('receiver')
     receiver_set = Developer.objects.filter(user__username=receiver_name)
-    if len(receiver_set)==0:
-        return render(request, 'codereviewer/NotFound.html', {'error': "User "+receiver_name+" does not exist."})
+    if len(receiver_set) == 0:
+        return render(request, 'codereviewer/NotFound.html', {'error': "User " + receiver_name + " does not exist."})
     receiver = receiver_set[0]
     sender = Developer.objects.get(user=request.user)
     project_name = request.POST.get('project')
@@ -844,9 +851,9 @@ def send_new_reply_msg(request):
         return render(request, 'codereviewer/json/reply.json', {}, content_type='application/json')
 
     file = File.objects.get(id=file_id)
-    new_msg = NewReplyMessage(replier = replier,
-                              new_reply_receiver = receiver,
-                              file = file,
-                              comment = comment)
+    new_msg = NewReplyMessage(replier=replier,
+                              new_reply_receiver=receiver,
+                              file=file,
+                              comment=comment)
     new_msg.save()
     return render(request, 'codereviewer/json/reply.json', {}, content_type='application/json')
